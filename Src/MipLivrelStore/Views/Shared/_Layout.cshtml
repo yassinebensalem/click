@@ -1,0 +1,212 @@
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@*@model DDD.Domain.Models.ApplicationUser*@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+	ViewData["ReturnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:url" content="@ViewBag.FacebookShareUrl" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Click2Read" />
+    <meta property="og:description" content="@ViewBag.FacebookShareDescription" />
+    <meta property="og:image" content="@ViewBag.FacebookShareImage" />
+	<meta name="facebook-domain-verification" content="jhttwvkf0208ub0rid21bfg3umqieg" />
+    <title>Clik2Read</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/Template/assets/img/favicon.png">
+    <!-- Font -->
+    @*<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">*@
+    <!-- CSS Implementing Plugins -->
+
+    <link rel="stylesheet" href="~/Template/assets/vendor/font-awesome/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="~/Template/assets/vendor/flaticon/font/flaticon.css">
+    <link rel="stylesheet" href="~/Template/assets/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="~/Template/assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="~/Template/assets/vendor/slick-carousel/slick/slick.css" />
+    <link rel="stylesheet" href="~/Template/assets/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" />
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.1.47/material.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+	<link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet" />
+
+    <!-- CSS Bookworm Template -->
+    @{
+        if (selectedCulture.Name.Equals("ar"))
+        {
+            <link href="@Url.Content("~/Template/assets/css/theme.rtl.css")" rel="stylesheet" type="text/css" />
+
+        }
+        else
+        {
+            <link href="@Url.Content("~/Template/assets/css/theme.css")" rel="stylesheet" type="text/css" />
+        }
+    }
+    @*
+        <link rel="stylesheet" href="~/Template/assets/css/theme.css">*@
+
+    @*
+        <link href="@Url.Content(" ~ /Template/assets/css/theme.rtl.css")" rel="stylesheet" type="text/css" />*@
+    <link rel="stylesheet" href="@Url.Content("~/css/loader.css")" />
+	<!-- Meta Pixel Code -->
+	<script>
+		!function (f, b, e, v, n, t, s) {
+			if (f.fbq) return; n = f.fbq = function () {
+				n.callMethod ?
+				n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+			};
+			if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+			n.queue = []; t = b.createElement(e); t.async = !0;
+			t.src = v; s = b.getElementsByTagName(e)[0];
+			s.parentNode.insertBefore(t, s)
+		}(window, document, 'script',
+			'https://connect.facebook.net/en_US/fbevents.js');
+		fbq('init', '892903658685826');
+		fbq('track', 'PageView');
+		fbq('track', 'ViewContent');
+	</script>
+	<noscript>
+		<img height="1" width="1" style="display:none"
+			 src="https://www.facebook.com/tr?id=892903658685826&ev=PageView&noscript=1" />
+	</noscript>
+	<!-- End Meta Pixel Code -->
+</head>
+<body class="left-sidebar">
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v15.0&appId=413607137603382&autoLogAppEvents=1" nonce="UJvyT2qE"></script>
+
+    <partial name="Navbar" />
+    <partial name="Sidebar" />
+    <div class="loader r"></div>
+    @*<div id="toast-container" class="toast-top-right">
+        <div role="alert" data-delay="5000" class="toast md-toast-error" style="display:none; background-color: #ff3547; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHOSURBVEhLrZa/SgNBEMZzh0WKCClSCKaIYOED+AAKeQQLG8HWztLCImBrYadgIdY+gIKNYkBFSwu7CAoqCgkkoGBI/E28PdbLZmeDLgzZzcx83/zZ2SSXC1j9fr+I1Hq93g2yxH4iwM1vkoBWAdxCmpzTxfkN2RcyZNaHFIkSo10+8kgxkXIURV5HGxTmFuc75B2RfQkpxHG8aAgaAFa0tAHqYFfQ7Iwe2yhODk8+J4C7yAoRTWI3w/4klGRgR4lO7Rpn9+gvMyWp+uxFh8+H+ARlgN1nJuJuQAYvNkEnwGFck18Er4q3egEc/oO+mhLdKgRyhdNFiacC0rlOCbhNVz4H9FnAYgDBvU3QIioZlJFLJtsoHYRDfiZoUyIxqCtRpVlANq0EU4dApjrtgezPFad5S19Wgjkc0hNVnuF4HjVA6C7QrSIbylB+oZe3aHgBsqlNqKYH48jXyJKMuAbiyVJ8KzaB3eRc0pg9VwQ4niFryI68qiOi3AbjwdsfnAtk0bCjTLJKr6mrD9g8iq/S/B81hguOMlQTnVyG40wAcjnmgsCNESDrjme7wfftP4P7SP4N3CJZdvzoNyGq2c/HWOXJGsvVg+RA/k2MC/wN6I2YA2Pt8GkAAAAASUVORK5CYII=) !important; ">
+            <div class="md-toast-message">@SharedLocalizer["PostJoinRequest.toastalerts"]</div>
+        </div>
+    </div>*@
+
+    @*<div id="toast-container" class="toast-top-right"><div class="toast toast-success" role="alert" data-delay="5000" style="display: none; background-color: #51a351; ">@SharedLocalizer["PostJoinRequest.toastSuccess"]</div></div>*@
+
+    <div id="MainContent" style="padding-top: 150px;">
+        @RenderBody()
+    </div>
+    @*<div id="SearchContent">
+
+    </div>*@
+
+    <partial name="Footer" />
+    <partial name="BookPDFContent_PartialView" />
+    <partial name="ErrorToastComponent" />
+    <partial name="SuccessToastComponent" />
+
+    <!--Messages-->
+    <input type="hidden" id="RemoveFromCart" value="@SharedLocalizer["Book.RemoveFromCart"]" />
+    <input type="hidden" id="AddToWishlist" value="@SharedLocalizer["Book.AddToWishlist"]" />
+    <input type="hidden" id="RemoveFromWishlist" value="@SharedLocalizer["Book.RemoveFromWishlist"]" />
+    <input type="hidden" id="AddToCart" value="@SharedLocalizer["Book.AddToCart"]" />
+    <input type="hidden" id="AddToLibrary" value="@SharedLocalizer["Book.AddToLibrary"]" />
+    <input type="hidden" id="RemoveFromLibrary" value="@SharedLocalizer["Book.RemoveFromLibrary"]" />
+    <input type="hidden" id="InLibrary" value="@SharedLocalizer["Book.InLibrary"]" />
+    <input type="hidden" id="EmptyFields" value="@SharedLocalizer["AccountSideBar.EmptyFields"]" />
+    <input type="hidden" id="UserNotFound" value="@SharedLocalizer["AccountSideBar.UserNotFound"]" />
+	<input type="hidden" id="AdminNotAuthorized" value="@SharedLocalizer["AccountSideBar.AdminNotAuthorized"]" />
+    <input type="hidden" id="EmailNotConfirmed" value="@SharedLocalizer["AccountSideBar.EmailNotConfirmed"]" />
+    <input type="hidden" id="PasswordRequiresDigit" value="@SharedLocalizer["AccountSideBar.PasswordRequiresDigit"]" />
+    <input type="hidden" id="PasswordRequiresLower" value="@SharedLocalizer["AccountSideBar.PasswordRequiresLower"]" />
+    <input type="hidden" id="PasswordRequiresUpper" value="@SharedLocalizer["AccountSideBar.PasswordRequiresUpper"]" />
+    <input type="hidden" id="PasswordRequiresNonAlphanumeric" value="@SharedLocalizer["AccountSideBar.PasswordRequiresNonAlphanumeric"]" />
+    <input type="hidden" id="DuplicateUserName" value="@SharedLocalizer["AccountSideBar.DuplicateUserName"]" />
+    <input type="hidden" id="WrongEmailFormat" value="@SharedLocalizer["AccountSideBar.WrongEmailFormat"]" />
+    <input type="hidden" id="Error_ConfirmPassword" value="@SharedLocalizer["AccountSideBar.Error_ConfirmPassword"]" />
+    <input type="hidden" id="Error_Password" value="@SharedLocalizer["AccountSideBar.Error_Password"]" />
+    @*<input type="hidden" id="Error_PasswordTooShort" value="@SharedLocalizer["AccountSideBar.Error_PasswordTooShort"]" />*@
+    <input type="hidden" id="WrongPassword" value="@SharedLocalizer["AccountSideBar.WrongPassword"]" />
+    <input type="hidden" id="AlreadyInCart" value="@SharedLocalizer["Cart.AlreadyInCart"]" />
+    <input type="hidden" id="AlreadyExists" value="@SharedLocalizer["Book.AlreadyExists"]" />
+    <input type="hidden" id="DescriptionMinimumLength" value="@SharedLocalizer["AccountSideBar.DescriptionMinimumLength"]" />
+    <input type="hidden" id="RecoverPasswordMailText" value="@SharedLocalizer["AccountSideBar.RecoverPasswordMailText"]" />
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="~/Template/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="~/Template/assets/vendor/jquery-migrate/dist/jquery-migrate.min.js"></script>
+    <script src="~/Template/assets/vendor/popper.js/dist/umd/popper.min.js"></script>
+    <script src="~/Template/assets/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="~/Template/assets/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/Template/assets/vendor/multilevel-sliding-mobile-menu/dist/jquery.zeynep.js"></script>
+    <script src="~/Template/assets/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/Template/assets/vendor/slick-carousel/slick/slick.min.js"></script>
+    @*<script src="~/Template/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>*@
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.syncfusion.com/ej2/20.1.47/dist/ej2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+	
+
+    <!-- JS HS Components -->
+    <script src="~/Template/assets/js/hs.core.js"></script>
+    <script src="~/Template/assets/js/components/hs.unfold.js"></script>
+    <script src="~/Template/assets/js/components/hs.malihu-scrollbar.js"></script>
+    <script src="~/Template/assets/js/components/hs.slick-carousel.js"></script>
+    <script src="~/Template/assets/js/components/hs.show-animation.js"></script>
+    <script src="~/Template/assets/js/components/hs.selectpicker.js"></script>
+    <script src="~/js/site.js"></script>
+	<script src="~/lib/PDFJSExpress/lib/webviewer.min.js"></script>
+	<link rel="stylesheet" href="@Configuration["MyConfigEntry"]/css/site.min.css">
+
+	<script src="@Configuration["MPGSCredentials:JSFile"]"
+			data-error="errorCallback"
+			data-cancel="cancelCallback">
+	</script>
+	<script type="text/javascript">
+		function errorCallback(error) {
+			console.log(JSON.stringify(error));
+		}
+		function cancelCallback() {
+			console.log('Payment cancelled');
+		}
+	</script>
+
+	<script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    @*Configurer le SDK Facebook pour JavaScript*@
+    @*<script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '{your-app-id}',
+                cookie: true,
+                xfbml: true,
+                version: '{api-version}'
+            });
+
+            FB.AppEvents.logPageView();
+
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>*@
+
+    <!--Syncfusion ASP.NET Core Script Manager-->
+    <ejs-scripts></ejs-scripts>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

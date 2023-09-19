@@ -1,0 +1,61 @@
+{
+  "id": "20f14c6c-313a-4cbb-afeb-ba500ddb2a57",
+  "version": "2.0",
+  "name": "test",
+  "url": "https://test.zone4code.com",
+  "tests": [{
+    "id": "72a11108-66d6-4b10-b96f-0ec4e55d57ac",
+    "name": "test",
+    "commands": [{
+      "id": "bf1e73bf-3287-44e9-a753-abba37002a81",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "df47da0f-b584-4791-8f52-968e822dbf68",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "697x728",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c118e483-61f5-4f85-bc46-af62a288d19f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Titre",
+      "targets": [
+        ["linkText=Titre", "linkText"],
+        ["css=.nav-item:nth-child(1) > .btn", "css:finder"],
+        ["xpath=//a[contains(text(),'Titre')]", "xpath:link"],
+        ["xpath=//div[@id='SearchTypeMobile']/div/ul/li/a", "xpath:idRelative"],
+        ["xpath=//div[3]/div/ul/li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Titre')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d4f72171-38de-49e7-bd69-fba1e686b552",
+      "comment": "",
+      "command": "click",
+      "target": "css=#slick-slide15 .img-fluid",
+      "targets": [
+        ["css=#slick-slide15 .img-fluid", "css:finder"],
+        ["xpath=(//img[@alt='Book Cover'])[9]", "xpath:img"],
+        ["xpath=//div[@id='slick-slide15']/div/div/div/div/a/img", "xpath:idRelative"],
+        ["xpath=//div[9]/div/div/div/div/a/img", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "48364587-ff1f-4af6-a286-aa7e2c931b45",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["72a11108-66d6-4b10-b96f-0ec4e55d57ac"]
+  }],
+  "urls": ["https://test.zone4code.com/"],
+  "plugins": []
+}

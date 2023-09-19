@@ -1,0 +1,704 @@
+﻿@using DDD.Application.ViewModels;
+@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@model PrizeDetailsVM
+@using MipLivrelStore;
+
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Mip Livrel";
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<style>
+	.container2 {
+		display: flex;
+		align-items: center;
+	}
+
+		.container2 img {
+			/*width: 50px;*/
+			margin-right: 20px;
+			margin-left: 20px;
+		}
+</style>
+
+<div class="page-header border-bottom Id_PrizeBookPartialView">
+	<div class="container">
+		<div class="d-md-flex justify-content-between align-items-center py-4">
+			<h1 class="page-title font-size-3 font-weight-medium m-0 text-lh-lg"></h1>
+			<nav class="woocommerce-breadcrumb font-size-2">
+				<a href="../Home/Index" class="h-primary">@SharedLocalizer["Menu.Home"]</a>
+				<span class="breadcrumb-separator mx-1"><i class="fas  @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+				<a class="h-primary" asp-action="Index" asp-controller="Prized">@SharedLocalizer["Menu.Awards"]</a>
+				<span class="breadcrumb-separator mx-1"><i class="fas @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+				<span>@Model.Prize.Name</span>
+			</nav>
+		</div>
+	</div>
+</div>
+<div class="page-header ">
+	<div class="container">
+	</div>
+</div>
+
+<div class="site-content space-bottom-1" id="content">
+
+	<div class="container">
+		<h2 class="d-none d-md-block mt-n4 mb-6 pt-6 pt-lg-7 px-3 px-md-5 pl-xl-6 pr-xl-6" style="color: #eaa64d;">@Model.Prize.Name</h2>
+		<div id="prize_web" class="d-none d-md-block mx-4 mb-4">
+			<div class="container2">
+				@if (!string.IsNullOrWhiteSpace(@Model.Prize.LogoPath))
+				{
+					<img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.Prize.LogoPath}")" class="img-fluid single-book  d-block  mx-4 attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" title="Award Picture Loading...">
+				}
+				else
+				{
+					<img src="/Template/Image/default-award.png" class="img-fluid  d-block mx-4 attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" style="width: 120px !important;" Alt="Award Picture Loading...">
+				}
+
+				<div class="font-size-2 mb-4 mx-4">
+					<p>@Model.Prize.Description</p>
+				</div>
+
+				@*<p class="mx-4">@Model.Prize.Description</p>*@
+			</div>
+		</div>
+		<div id="prize_mobile" class="d-md-none">
+			<h2 class="text-center mt-n4 mb-6 pt-6 pt-lg-7 px-3 px-md-5 pl-xl-6 pr-xl-6" style="color: #eaa64d;">@Model.Prize.Name</h2>
+			@if (!string.IsNullOrWhiteSpace(@Model.Prize.LogoPath))
+			{
+				<img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.Prize.LogoPath}")" class="img-fluid mb-4 d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" style="width: 120px !important;" Alt="Award Picture Loading...">
+			}
+			else
+			{
+				<img src="/Template/Image/default-award.png" class="img-fluid single-book mb-4 d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" title="Award Picture Loading...">
+			}
+			<div class="font-size-2 mb-4 mx-4">
+				<p>@Model.Prize.Description</p>
+			</div>
+			@*<p class="mx-4">@Model.Prize.Description</p>*@
+		</div>
+		<div class="row border-top">
+			@if (Model.EditionBooks.Count == 0)
+			{
+				<div class="container space-top-1">
+					<div class="row justify-content-center">
+						<div class="col-md-12 text-center">
+							<img src="~/Template/Image/NoResultFound.png" class="resultNotFound" alt="No Result Found" />
+							<div class="mb-4 lead">@SharedLocalizer["SearchResult.NoResultFound"]</div>
+							<p>@SharedLocalizer["SearchResult.NoResultFoundText"].</p>
+							<a asp-action="Index" asp-controller="Prized" class="btn btn-dark rounded-0">
+								@SharedLocalizer["Index.GoBack"]
+							</a>
+						</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div id="primary" class="content-area order-2">
+					<div class="shop-control-bar d-lg-flex justify-content-between align-items-center mb-5 mt-5 text-center text-md-left">
+						<div class="shop-control-bar__left mb-4 m-lg-0">
+						</div>
+						<div class="shop-control-bar__right d-md-flex align-items-center">
+							<form class="woocommerce-ordering mb-4 m-md-0" method="post">
+							</form>
+							<form class="number-of-items ml-md-4 mb-4 m-md-0 d-none d-xl-block" method="post">
+							</form>
+
+							<ul class="nav nav-tab ml-lg-4 @*justify-content-center*@  justify-content-md-start ml-md-auto " id="pills-tab" role="tablist">
+								<a id="sidebarNavToggler4" class=" @(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto") mt-3 d-md-none h-primary" href="javascript:;" role="button"
+							   aria-controls="sidebarContent4"
+							   aria-haspopup="true"
+							   aria-expanded="false"
+							   data-unfold-event="click"
+							   data-unfold-hide-on-scroll="false"
+							   data-unfold-target="#sidebarContent4"
+							   data-unfold-type="css-animation"
+							   data-unfold-overlay='{
+                                    "className": "u-sidebar-bg-overlay",
+                                    "background": "rgba(0, 0, 0, .7)",
+                                    "animationSpeed": 500
+                                }'
+							   data-unfold-animation-in="fadeInRight"
+							   data-unfold-animation-out="fadeOutRight"
+							   data-unfold-duration="50">
+									<i class="flaticon-filter mr-2"></i>@SharedLocalizer["Category.filter"]
+								</a>
+							</ul>
+							<!-- Account Sidebar Toggle Button -->
+							<!-- Account Sidebar Toggle Button -->
+							<!-- End Account Sidebar Toggle Button -->
+							<!-- Sidebar Navigation -->
+							<aside id="sidebarContent4" class="u-sidebar u-sidebar__md js-scrollbar" aria-labelledby="sidebarNavToggler4">
+								<div class="u-sidebar__scroller">
+									<div class="u-sidebar__container">
+										<div class="u-header-sidebar__footer-offset">
+											<!-- Toggle Button -->
+											<div class="d-flex align-items-center justify-content-between py-4 px-4 border-bottom mb-5">
+												<div class="font-size-3">
+													<i class="@(selectedCulture.Name.Equals("ar") ? " flaticon-filter mr-2 pl-2" : " flaticon-filter mr-2")"></i>@SharedLocalizer["Category.filter"]
+												</div>
+												<button type="button" class="close font-size-3 text-dark d-flex align-items-center"
+													aria-controls="sidebarContent4"
+													aria-haspopup="true"
+													aria-expanded="false"
+													data-unfold-event="click"
+													data-unfold-hide-on-scroll="false"
+													data-unfold-target="#sidebarContent4"
+													data-unfold-type="css-animation"
+													data-unfold-animation-in="fadeInRight"
+													data-unfold-animation-out="fadeOutRight"
+													data-unfold-duration="50">
+													@SharedLocalizer["AccountSideBar.Close"] <span aria-hidden="true"><i class=" @(selectedCulture.Name.Equals("ar") ? " flaticon-error" : "ml-2 flaticon-error")"></i></span>
+												</button>
+											</div>
+											<!-- End Toggle Button -->
+											<!-- Content -->
+											<div class="u-sidebar__body  @(selectedCulture.Name.Equals("ar") ? "px-4 ml-4" : "px-4") ">
+												<div class="u-sidebar__content u-header-sidebar__content">
+													<div class="sidebar widget-area">
+														<div id="widgetAccordion">
+															<div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories">
+																<div id="widgetHeadingOne" class="widget-head">
+																	<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+																   data-toggle="collapse"
+																   data-target="#widgetCollapseOne"
+																   aria-expanded="true"
+																   aria-controls="widgetCollapseOne">
+
+																		<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Prized.Edition"]</h3>
+
+																		<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+																		</svg>
+
+																		<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+																		</svg>
+																	</a>
+																</div>
+
+																<div id="widgetCollapse13_mobile" class="mt-3 widget-content collapse show"
+																 aria-labelledby="widgetHeading1"
+																 data-parent="#widgetAccordion">
+																	<ul class="product-categories" id="editionsListId_mobile">
+																		@foreach (var item in Model.EditionYears)
+																		{
+																			<li class="cat-item cat-item-31">
+																				<div class="js-form-message mb-2 ">
+																					<div class="custom-control custom-checkbox d-flex align-items-center  ">
+																						<input type="checkbox" id="m_@item" class="editionNameCB_AD custom-control-input arrow-cursor" value="@item.Trim()" name="@item.Trim()">
+																						<label class="custom-control-label arrow-cursor" for="m_@item">@item</label>
+																					</div>
+																				</div>
+																			</li>
+																		}
+																	</ul>
+																</div>
+															</div>
+
+															<div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories">
+																<div id="widgetHeadingOne" class="widget-head">
+																	<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+																   data-toggle="collapse"
+																   data-target="#widgetCollapseOne"
+																   aria-expanded="true"
+																   aria-controls="widgetCollapseOne">
+
+																		<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Category.cat"]</h3>
+
+																		<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+																		</svg>
+
+																		<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+																		</svg>
+																	</a>
+																</div>
+
+																<div id="widgetCollapse11_mobile" class="mt-3 widget-content collapse show"
+																 aria-labelledby="widgetHeading1"
+																 data-parent="#widgetAccordion">
+																	<ul class="product-categories" id="categoriesListId_mobile">
+																		@foreach (var item in Model.EditionCategories)
+																		{
+																			<li class="cat-item cat-item-31">
+																				<div class="js-form-message mb-2 ">
+																					<div class="custom-control custom-checkbox d-flex align-items-center  ">
+																						<input type="checkbox" id="m_@item.Id" class="categoryNameCB_AD custom-control-input arrow-cursor" value="@item.CategoryName.Trim()" name="@item.CategoryName.Trim()">
+																						<label class="custom-control-label arrow-cursor" for="m_@item.Id">@item.CategoryName</label>
+																					</div>
+																				</div>
+																			</li>
+																		}
+																	</ul>
+																</div>
+															</div>
+
+															<div id="Authors_mobile" class="widget widget_search widget_author p-4d875 border">
+																<div id="widgetHeading21" class="widget-head">
+																	<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+																   data-toggle="collapse"
+																   data-target="#widgetCollapse21"
+																   aria-expanded="true"
+																   aria-controls="widgetCollapse21">
+
+																		<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Navbar.auteur"]</h3>
+
+																		<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+																		</svg>
+
+																		<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+																			<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+																		</svg>
+																	</a>
+																</div>
+
+																<div id="widgetCollapse21" class="mt-4 widget-content collapse show"
+																 aria-labelledby="widgetHeading21"
+																 data-parent="#widgetAccordion">
+																	<form class="form-inline my-2 overflow-hidden">
+																		<div class="input-group flex-nowrap w-100">
+																			<div class="input-group-prepend">
+																				<i class="glph-icon flaticon-loupe py-2d75 bg-white-100 border-white-100 text-dark pl-3 pr-0 rounded-0"></i>
+																			</div>
+																			<input class="form-control bg-white-100 py-2d75 height-4 border-white-100 rounded-0"
+																			   id="searchTheKey_AD_mobile" type="search" placeholder='@SharedLocalizer["Auteur.SearchAuthor"]' aria-label="Search">
+																		</div>
+																		<button id="btnSearchAuthors" class="btn btn-outline-success my-2 my-sm-0 sr-only">Search</button>
+																	</form>
+																	<ul class="product-categories text-left authorsListId_AD_mobile" style="@(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+																		@foreach (var item in Model.EditionAuthors)
+																		{
+																			<li class="cat-item cat-item-31">
+																				<div class="js-form-message mb-2 ">
+																					<div class="custom-control custom-checkbox d-flex align-items-center  ">
+																						@*<a asp-controller="Author" asp-action="GetAuthorDetails" asp-route-authorInfos="@($"{item.Id}#{item.FirstName.Replace(" ","-")}")"></a>*@
+																						<input type="checkbox" class="authorNameCB_AD custom-control-input arrow-cursor" id="m_@item.Id" value="@item.AuthorName.Trim()">
+																						<label class="custom-control-label font-size-2 arrow-cursor" for="m_@item.Id">@item.AuthorName.Trim()</label>
+																					</div>
+																				</div>
+																			</li>
+																		}
+																	</ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</aside>
+							<!-- End Sidebar Navigation -->
+						</div>
+
+					</div>
+
+					@*<header class="mb-5 d-md-flex justify-content-between align-items-center">
+				<h2 class="font-size-7 mb-3 mb-md-0">@SharedLocalizer["BookPrize.CustomersAlsoConsidered"]</h2>
+				</header>*@
+					<!-- Tab Content -->
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-one-example1" role="tabpanel" aria-labelledby="pills-one-example1-tab">
+							<ul class="bookGridView products list-unstyled row no-gutters row-cols-2 row-cols-lg-3 row-cols-wd-4 mb-6">
+								<partial name="../Home/GridViewSearchResult" model="Model.EditionBooks" />
+							</ul>
+						</div>
+						@*add load button here*@
+						<div class="Full_List_Panel text-center mb-4" style="display: none;">
+							<div class="alert alert-info alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								@SharedLocalizer["Index.FullList"]
+							</div>
+						</div>
+						<div id="Div_loadMore_AD" class="my-4 text-center" style=" display: @(@Model.EditionBooks.Count < 12 ? "none": "block")">
+							<button id="loadMore_AD" type="button" class="btn btn-dark width-150">@SharedLocalizer["Index.ShowMore"]</button>
+						</div>
+					</div>
+					<!-- End Tab Content -->
+
+				</div>
+				<div id="secondary" class="mt-6 sidebar d-none d-sm-block widget-area order-1" role="complementary">
+					<div id="widgetAccordion">
+
+						<div id="woocommerce_product_edition" class="widget p-4d875 border woocommerce widget_product_edition ">
+							<div id="widgetHeadingOne0" class="widget-head">
+								<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+							   data-toggle="collapse"
+							   data-target="#widgetCollapseOne0"
+							   aria-expanded="true"
+							   aria-controls="widgetCollapseOne0">
+
+									<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Prized.Edition"]</h3>
+
+									<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+									</svg>
+
+									<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+									</svg>
+								</a>
+							</div>
+
+							<div id="widgetCollapseOne0" class="mt-3 widget-content collapse show"
+							 aria-labelledby="widgetHeadingOne0"
+							 data-parent="#widgetAccordion">
+								<ul class="product-edition" id="editionlistId" style="@(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+
+									@foreach (var item in Model.EditionYears)
+									{
+										if (Model.CurrentEdition.Trim() == item.Trim())
+										{
+											<li class="cat-item cat-item-31">
+												<div class="js-form-message mb-2 ">
+													<div class="custom-control custom-checkbox d-flex align-items-center  ">
+														<input type="checkbox" id="@item" class="editionNameCB_AD custom-control-input arrow-cursor" value="@item.Trim()" name="@item.Trim()" checked>
+														<label class="custom-control-label arrow-cursor" for="@item">@item</label>
+													</div>
+												</div>
+											</li>
+										}
+										else
+										{
+											<li class="cat-item cat-item-31">
+												<div class="js-form-message mb-2 ">
+													<div class="custom-control custom-checkbox d-flex align-items-center  ">
+														<input type="checkbox" id="@item" class="editionNameCB_AD custom-control-input arrow-cursor" value="@item" name="@item">
+														<label class="custom-control-label arrow-cursor" for="@item">
+															<span class="font-size-2 ">
+																@item
+															</span>
+														</label>
+													</div>
+												</div>
+											</li>
+
+										}
+									}
+								</ul>
+							</div>
+						</div>
+
+
+						<div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories mt-0">
+							<div id="widgetHeadingOne" class="widget-head">
+								<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+							   data-toggle="collapse"
+							   data-target="#widgetCollapseOne"
+							   aria-expanded="true"
+							   aria-controls="widgetCollapseOne">
+
+									<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Category.cat"]</h3>
+
+									<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+									</svg>
+
+									<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+									</svg>
+								</a>
+							</div>
+
+							<div id="widgetCollapseOne" class="mt-3 widget-content collapse show"
+							 aria-labelledby="widgetHeadingOne"
+							 data-parent="#widgetAccordion">
+								<ul class="product-categories " id="categoriesListId" style="@(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+									@foreach (var item in Model.EditionCategories)
+									{
+										<li class="cat-item cat-item-31">
+											<div class="js-form-message mb-2 ">
+												<div class="custom-control custom-checkbox d-flex align-items-center  ">
+													<input type="checkbox" id="@item.Id" class="categoryNameCB_AD custom-control-input arrow-cursor" value="@item.CategoryName.Trim()" name="@item.CategoryName.Trim()">
+													<label class="custom-control-label arrow-cursor" for="@item.Id">@item.CategoryName</label>
+												</div>
+											</div>
+										</li>
+									}
+								</ul>
+							</div>
+						</div>
+						<div id="Authors" class="widget widget_search widget_author p-4d875 border">
+							<div id="widgetHeading21" class="widget-head">
+								<a class="d-flex align-items-center justify-content-between text-dark" href="#"
+							   data-toggle="collapse"
+							   data-target="#widgetCollapse21"
+							   aria-expanded="true"
+							   aria-controls="widgetCollapse21">
+
+									<h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Navbar.auteur"]</h3>
+
+									<svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+									</svg>
+
+									<svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+										<path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+									</svg>
+								</a>
+							</div>
+
+							<div id="widgetCollapse21" class="mt-4 widget-content collapse show"
+							 aria-labelledby="widgetHeading21"
+							 data-parent="#widgetAccordion">
+								<form class="form-inline my-2 overflow-hidden">
+									<div class="input-group flex-nowrap w-100">
+										<div class="input-group-prepend">
+											<i class="glph-icon flaticon-loupe py-2d75 bg-white-100 border-white-100 text-dark pl-3 pr-0 rounded-0"></i>
+										</div>
+										<input class="form-control bg-white-100 py-2d75 height-4 border-white-100 rounded-0"
+										   id="searchTheKey_AD_web" type="search" placeholder='@SharedLocalizer["Auteur.SearchAuthor"]' aria-label="Search">
+									</div>
+									<button id="btnSearchAuthors" class="btn btn-outline-success my-2 my-sm-0 sr-only">Search</button>
+								</form>
+								<ul class="product-categories authorsListId_AD_web" style="@(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+									@foreach (var item in Model.EditionAuthors)
+									{
+										<li class="cat-item cat-item-31">
+											<div class="js-form-message mb-2 ">
+												<div class="custom-control custom-checkbox d-flex align-items-center  ">
+													<input type="checkbox" class="authorNameCB_AD custom-control-input arrow-cursor" id="@item.Id" value="@item.AuthorName.Trim()">
+													<label class="custom-control-label font-size-2 arrow-cursor" for="@item.Id">@item.AuthorName.Trim()</label>
+												</div>
+											</div>
+										</li>
+									}
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+
+</div>
+
+@section Scripts {
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var _CurrentEdition = @Model.CurrentEdition;
+			//filter all books
+			var GridViewItems = $(".bookGridView li");
+			GridViewItems.each(function (idx, li) {
+				if ($(this).attr('data-Edition') == _CurrentEdition) {
+					$(this).show();
+				}
+				else {
+					$(this).hide();
+				}
+			});
+			$(".bookGridView").addClass('show');
+		});
+
+		var authors_filter_list = [];
+		var categories_filter_list = [];
+		var editions_filter_list = [];
+
+		$("body").on("change", ".authorNameCB_AD", function () {
+			//debugger
+			//have the author name first
+			var author = $(this).attr('value');
+			//alert(author);
+			var isChecked = $(this).is(":checked");
+			if (isChecked) {
+				//add this author to the filter list
+				authors_filter_list.push(author);
+			}
+			else {
+				//remove this author from filter list
+				authors_filter_list = jQuery.grep(authors_filter_list, function (value) {
+					return value != author;
+				});
+			}
+			//debugger
+			//re-filter the original book list according to the remaining authors in the filter list
+			Multiple_Filtering(authors_filter_list, categories_filter_list, editions_filter_list);
+		});
+
+		$("body").on("change", ".categoryNameCB_AD", function () {
+			//have the author name first
+			var category = $(this).attr('value');
+			//alert(author);
+			var isChecked = $(this).is(":checked");
+			if (isChecked) {
+				//add this author to the filter list
+				categories_filter_list.push(category);
+			}
+			else {
+				//remove this author from filter list
+				categories_filter_list = jQuery.grep(categories_filter_list, function (value) {
+					return value != category;
+				});
+			}
+			//debugger
+			//re-filter the original book list according to the remaining authors in the filter list
+			Multiple_Filtering(authors_filter_list, categories_filter_list, editions_filter_list);
+		});
+
+		$("body").on("change", ".editionNameCB_AD", function () {
+
+			var edition = $(this).attr('value');
+
+			var isChecked = $(this).is(":checked");
+			if (isChecked) {
+				//add this author to the filter list
+				editions_filter_list.push(edition);
+			}
+			else {
+				//remove this author from filter list
+				editions_filter_list = jQuery.grep(editions_filter_list, function (value) {
+					return value != edition;
+				});
+			}
+			//debugger
+			//re-filter the original book list according to the remaining authors in the filter list
+			Multiple_Filtering(authors_filter_list, categories_filter_list, editions_filter_list);
+		});
+
+		function Multiple_Filtering(authors, categories, editions) {
+			var GridViewItems = $(".bookGridView li");
+			//debugger
+			GridViewItems.each(function (idx, li) {
+				//debugger
+				FilterTraitement($(this), authors, categories, editions);
+			});
+		}
+
+		function FilterTraitement(li, authors, categories, editions) {
+			//debugger
+			if (authors.length > 0 && categories.length == 0 && editions.length == 0) {
+				if ($.inArray(li.attr('data-author-name'), authors) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (categories.length > 0 && authors.length == 0 && editions.length == 0) {
+				if ($.inArray(li.attr('data-category-name'), categories) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (editions.length > 0 && authors.length == 0 && categories.length == 0) {
+				if ($.inArray(li.attr('data-edition'), editions) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (authors.length > 0 && categories.length > 0 && editions.length > 0) {
+				if ($.inArray(li.attr('data-author-name'), authors) != -1
+					&& $.inArray(li.attr('data-category-name'), categories) != -1
+					&& $.inArray(li.attr('data-Edition'), editions) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (authors.length > 0 && categories.length > 0 && editions.length == 0) {
+				if ($.inArray(li.attr('data-author-name'), authors) != -1
+					&& $.inArray(li.attr('data-category-name'), categories) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (authors.length > 0 && categories.length == 0 && editions.length > 0) {
+				if ($.inArray(li.attr('data-author-name'), authors) != -1
+					&& $.inArray(li.attr('data-Edition'), editions) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else if (authors.length == 0 && categories.length > 0 && editions.length > 0) {
+				if ($.inArray(li.attr('data-category-name'), categories) != -1
+					&& $.inArray(li.attr('data-Edition'), editions) != -1) {
+					li.show();
+				}
+				else {
+					li.hide();
+				}
+			}
+			else {
+				li.show();
+			}
+		}
+
+
+		$("#searchTheKey_AD_web").on('keyup', function () {
+			var value = $(this).val().toLowerCase();
+			//debugger
+			if (value != "") {
+				$(".authorsListId_AD_web li").each(function () {
+					if ($(this).text().toLowerCase().search(value) > -1) {
+						$(this).show();
+					}
+					else {
+						$(this).hide();
+					}
+				});
+			}
+			else {
+				$(".authorsListId_AD_web li").each(function () {
+					$(this).show();
+				});
+			}
+		});
+
+		$("#searchTheKey_AD_mobile").on('keyup', function () {
+			var value = $(this).val().toLowerCase();
+			//debugger
+			if (value != "") {
+				$(".authorsListId_AD_mobile li").each(function () {
+					if ($(this).text().toLowerCase().search(value) > -1) {
+						$(this).show();
+					}
+					else {
+						$(this).hide();
+					}
+				});
+			}
+			else {
+				$("#authorsListId_AD_mobile li").each(function () {
+					$(this).show();
+				});
+			}
+		});
+
+	</script>
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,555 @@
+﻿@using DDD.Application.ViewModels;
+@model CategoryDetailsVM
+@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@using MipLivrelStore;
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Mip Livrel";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+
+<div class="page-header border-bottom ">
+    <div class="container">
+        <div class="d-md-flex justify-content-between align-items-center py-4">
+            <h1 class="page-title font-size-4 font-weight-medium m-0 text-lh-lg">
+                @if (@Model.CurrentCategory == "TunisianEditions")
+                {
+                    @SharedLocalizer["Category.TunisianEditions"]
+                }
+                else if (@Model.CurrentCategory == "ForeignEditions")
+                {
+                    @SharedLocalizer["Category.ForeignEditions"]
+                }
+                else
+                {
+                    @Model.CurrentCategory
+                }
+            </h1>
+            <nav class="woocommerce-breadcrumb font-size-2">
+
+                <a href="../Home/Index" class="h-primary">@SharedLocalizer["Menu.Home"]</a>
+                <span class="breadcrumb-separator mx-1"><i class="fas  @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+                <span>@SharedLocalizer["Category.cat"]</span>
+                <span class="breadcrumb-separator mx-1"><i class="fas @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+                 
+                <span id="currentCategoryId" value="@Model.CurrentCategory">
+                    @if (@Model.CurrentCategory == "TunisianEditions")
+                    {
+                        @SharedLocalizer["Category.TunisianEditions"]
+                    }
+                    else if (@Model.CurrentCategory == "ForeignEditions")
+                    {
+                        @SharedLocalizer["Category.ForeignEditions"]
+                    }
+                    else
+                    {
+                        @Model.CurrentCategory
+                    }
+                </span>
+                 
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="page-header ">
+    <div class="container">
+
+    </div>
+</div>
+
+<div class="site-content space-bottom-1" id="content">
+
+    @if (Model.BooksList.Count == 0)
+    {
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 text-center">
+                    <img src="~/Template/Image/NoResultFound.png" class="resultNotFound" alt="No Result Found" />
+                    <div class="mb-4 lead">@SharedLocalizer["SearchResult.NoResultFound"]</div>
+                    <p>@SharedLocalizer["SearchResult.NoResultFoundText"]</p>
+                    <a href="/" class="btn btn-dark rounded-0"><i class="fa fa-home"></i> @SharedLocalizer["SearchResult.Back"]</a>
+
+                </div>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div id="primary" class="content-area order-2">
+                    <div class="shop-control-bar d-lg-flex justify-content-between align-items-center mb-5 mt-5 text-center text-md-left">
+                        <div class="shop-control-bar__left mb-4 m-lg-0">
+                            @*<p class="woocommerce-result-count m-0">Showing 1–12 of 126 results</p>*@
+                        </div>
+                        <div class="shop-control-bar__right d-md-flex align-items-center">
+                            <form class="woocommerce-ordering mb-4 m-md-0" method="post">
+                                <!-- Select
+                                -->
+                                @*<select class="js-select selectpicker dropdown-select orderby" name="orderby"
+                                            data-style="border-bottom shadow-none outline-none py-2">
+                                        <option value="popularity">Sort by popularity</option>
+                                        <option value="default" selected="selected">Default sorting</option>
+                                        <option value="date">Sort by newness</option>
+                                        <option value="price">Sort by price: low to high</option>
+                                        <option value="price-desc">Sort by price: high to low</option>
+                                    </select>*@
+                                @*End Select*@
+                            </form>
+                            <form class="number-of-items ml-md-4 mb-4 m-md-0 d-none d-xl-block" method="post">
+                                @*Select*@
+                                @*<select class="js-select selectpicker dropdown-select orderby" name="orderby"
+                                            data-style="border-bottom shadow-none outline-none py-2"
+                                            data-width="fit">
+                                        <option value="show10">Show 10</option>
+                                        <option value="show15">Show 15</option>
+                                        <option value="show20" selected="selected">Show 20</option>
+                                        <option value="show25">Show 25</option>
+                                        <option value="show30">Show 30</option>
+                                    </select>*@
+                                @*End Select*@
+                            </form>
+
+                            <ul class="nav nav-tab ml-lg-4 @*justify-content-center*@  justify-content-md-start ml-md-auto " id="pills-tab" role="tablist">
+
+                                <li class="nav-item border">
+                                    <a class="nav-link p-0 height-38 width-38 justify-content-center d-flex align-items-center active" id="grid-view-zone-tab" data-toggle="pill" href="#grid-view-zone" role="tab" aria-controls="grid-view-zone" aria-selected="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17px" height="17px">
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,0.000 L3.000,0.000 L3.000,3.000 L-0.000,3.000 L-0.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L10.000,0.000 L10.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,0.000 L17.000,0.000 L17.000,3.000 L14.000,3.000 L14.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,7.000 L3.000,7.000 L3.000,10.000 L-0.000,10.000 L-0.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L10.000,7.000 L10.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,7.000 L17.000,7.000 L17.000,10.000 L14.000,10.000 L14.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,14.000 L3.000,14.000 L3.000,17.000 L-0.000,17.000 L-0.000,14.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L10.000,14.000 L10.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,14.000 L17.000,14.000 L17.000,17.000 L14.000,17.000 L14.000,14.000 Z" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="nav-item border">
+                                    <a class="nav-link p-0 height-38 width-38 justify-content-center d-flex align-items-center" id="list-view-zone-tab" data-toggle="pill" href="#list-view-zone" role="tab" aria-controls="list-view-zone" aria-selected="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="17px">
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,0.000 L3.000,0.000 L3.000,3.000 L-0.000,3.000 L-0.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L23.000,0.000 L23.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,7.000 L3.000,7.000 L3.000,10.000 L-0.000,10.000 L-0.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L23.000,7.000 L23.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,14.000 L3.000,14.000 L3.000,17.000 L-0.000,17.000 L-0.000,14.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L23.000,14.000 L23.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="@(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto")">
+                                    <a id="Cat_sidebarNavToggler4" class=" @(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto") mt-3 d-md-none h-primary" href="javascript:;" role="button"
+                                       aria-controls="Cat_sidebarContent4"
+                                       aria-haspopup="true"
+                                       aria-expanded="false"
+                                       data-unfold-event="click"
+                                       data-unfold-hide-on-scroll="false"
+                                       data-unfold-target="#Cat_sidebarContent4"
+                                       data-unfold-type="css-animation"
+                                       data-unfold-overlay='{
+                                    "className": "u-sidebar-bg-overlay",
+                                    "background": "rgba(0, 0, 0, .7)",
+                                    "animationSpeed": 500
+                                }'
+                                       data-unfold-animation-in="fadeInRight"
+                                       data-unfold-animation-out="fadeOutRight"
+                                       data-unfold-duration="50">
+                                        <i class="flaticon-filter mr-2"></i>@SharedLocalizer["Category.filter"]
+                                    </a>
+                                </li>
+
+                            </ul>
+                            <!-- Account Sidebar Toggle Button -->
+                            <!-- Account Sidebar Toggle Button -->
+                            <!-- End Account Sidebar Toggle Button -->
+                            <!-- Sidebar Navigation -->
+                            <aside id="Cat_sidebarContent4" class="u-sidebar u-sidebar__md js-scrollbar" aria-labelledby="Cat_sidebarNavToggler4">
+                                <div class="u-sidebar__scroller">
+                                    <div class="u-sidebar__container">
+                                        <div class="u-header-sidebar__footer-offset">
+                                            <!-- Toggle Button -->
+                                            <div class="d-flex align-items-center justify-content-between py-4 px-4 border-bottom mb-5">
+                                                <div class="font-size-3">
+                                                    <i class="@(selectedCulture.Name.Equals("ar") ? " flaticon-filter mr-2 pl-2" : " flaticon-filter mr-2")"></i>@SharedLocalizer["Category.filter"]
+                                                </div>
+                                                <button type="button" class="close font-size-3 text-dark d-flex align-items-center"
+                                                        aria-controls="Cat_sidebarContent4"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false"
+                                                        data-unfold-event="click"
+                                                        data-unfold-hide-on-scroll="false"
+                                                        data-unfold-target="#Cat_sidebarContent4"
+                                                        data-unfold-type="css-animation"
+                                                        data-unfold-animation-in="fadeInRight"
+                                                        data-unfold-animation-out="fadeOutRight"
+                                                        data-unfold-duration="50">
+                                                    @SharedLocalizer["AccountSideBar.Close"] <span aria-hidden="true"><i class=" @(selectedCulture.Name.Equals("ar") ? " flaticon-error" : "ml-2 flaticon-error")"></i></span>
+                                                </button>
+                                            </div>
+                                            <!-- End Toggle Button -->
+                                            <!-- Content -->
+                                            <div class="u-sidebar__body  @(selectedCulture.Name.Equals("ar") ? "px-4 ml-4" : "px-4") ">
+                                                <div class="u-sidebar__content u-header-sidebar__content">
+                                                    <div class="sidebar widget-area">
+                                                        <div id="widgetAccordion">
+                                                            <div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories">
+                                                                <div id="widgetHeading1" class="widget-head">
+                                                                    <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                                                       data-toggle="collapse"
+                                                                       data-target="#widgetCollapse11"
+                                                                       aria-expanded="true"
+                                                                       aria-controls="widgetCollapse11">
+
+                                                                        <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Category.cat"]</h3>
+
+                                                                        <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                                                        </svg>
+
+                                                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </div>
+
+                                                                <div id="widgetCollapse11" class="mt-3 widget-content collapse show"
+                                                                     aria-labelledby="widgetHeading1"
+                                                                     data-parent="#widgetAccordion">
+																	<ul class="product-categories categoriesListId_mobile" style="overflow-y:auto; max-height: 500px;">
+                                                                        @foreach (var item in Model.CategoriesList)
+                                                                        {
+                                                                            if (Model.CurrentCategory.Trim() == item.CategoryName.Trim())
+                                                                            {
+                                                                                <li class="cat-item cat-item-31">
+                                                                                    <div class="js-form-message mb-2 ">
+                                                                                        <div class="custom-control custom-checkbox d-flex align-items-center  ">
+																							<input type="checkbox" id="m_@item.Id" class="categoryNameCB_Cat_Mobile initial_Cat filter_CAT_Mobile custom-control-input arrow-cursor" value="@item.Id" name="@Model.CurrentCategory.Trim()" checked>
+                                                                                            <label class="custom-control-label arrow-cursor text-black" for="m_@item.Id">@item.CategoryName</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <li class="cat-item cat-item-31">
+                                                                                    <div class="js-form-message mb-2 ">
+                                                                                        <div class="custom-control custom-checkbox d-flex align-items-center  ">
+																							<input type="checkbox" id="@item.Id" class="categoryNameCB_Cat_Mobile filter_CAT_Mobile custom-control-input arrow-cursor" value="@item.Id" name="@Model.CurrentCategory">
+                                                                                            <label class="custom-control-label arrow-cursor" for="@item.Id">
+                                                                                                <span class="font-size-2 ">
+                                                                                                    @item.CategoryName
+                                                                                                </span>
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            }
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                            <div id="Authors" class="widget widget_search widget_author p-4d875 border">
+                                                                <div id="widgetHeading21" class="widget-head">
+                                                                    <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                                                       data-toggle="collapse"
+                                                                       data-target="#widgetCollapse21"
+                                                                       aria-expanded="true"
+                                                                       aria-controls="widgetCollapse21">
+
+                                                                        <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Navbar.auteur"]</h3>
+
+                                                                        <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                                                        </svg>
+
+                                                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </div>
+
+                                                                <div id="widgetCollapse21" class="mt-4 widget-content collapse show"
+                                                                     aria-labelledby="widgetHeading21" 
+                                                                     data-parent="#widgetAccordion">
+                                                                    <form class="form-inline my-2 overflow-hidden mb-4">
+                                                                        <div class="input-group flex-nowrap w-100">
+                                                                            <div class="input-group-prepend">
+                                                                                <i class="glph-icon flaticon-loupe py-2d75 bg-white-100 border-white-100 text-dark pl-3 pr-0 rounded-0"></i>
+                                                                            </div>
+                                                                            <input class="form-control bg-white-100 py-2d75 height-4 border-white-100 rounded-0"
+                                                                                   id="searchTheKey_Cat_mobile" type="search" placeholder='@SharedLocalizer["Auteur.SearchAuthor"]' aria-label="Search">
+                                                                        </div>
+                                                                        <button id="btnSearchAuthors" class="btn btn-outline-success my-2 my-sm-0 sr-only">Search</button>
+                                                                    </form>
+																	<ul class="product-categories authorsListId_Cat_mobile" style="overflow-y:auto; max-height: 500px;">
+                                                                        @foreach (var item in Model.AuthorsList)
+                                                                        {
+                                                                            <li class="cat-item cat-item-31  ">
+                                                                                <div class="js-form-message mb-2 ">
+                                                                                    <div class="custom-control custom-checkbox d-flex align-items-center  ">
+																						<input type="checkbox" class="authorNameCB_Cat_Mobile filter_CAT_Mobile custom-control-input arrow-cursor" id="@item.Id" value="@item.Id">
+																						<label class="custom-control-label arrow-cursor" for="@item.Id">@item.AuthorName</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                            <div id="woocommerce_product_categories-3" class="widget p-4d875 border woocommerce widget_product_categories">
+                                                                <div id="widgetHeading2" class="widget-head">
+                                                                    <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                                                       data-toggle="collapse"
+                                                                       data-target="#widgetCollapse33"
+                                                                       aria-expanded="true"
+                                                                       aria-controls="widgetCollapse33">
+
+                                                                        <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Form.Langues"]</h3>
+
+                                                                        <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                                                        </svg>
+
+                                                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                                                            <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </div>
+
+                                                                <div id="widgetCollapse33" class="mt-3 widget-content collapse show"
+                                                                     aria-labelledby="widgetHeading2"
+                                                                     data-parent="#widgetAccordion">
+																	<ul class="product-categories languagesListId_mobile" style="overflow-y:auto; max-height: 500px;">
+                                                                        @foreach (var item in Model.LanguagesList)
+                                                                        {
+                                                                            <li class="cat-item cat-item-31">
+                                                                                <div class="js-form-message mb-2 ">
+                                                                                    <div class="custom-control custom-checkbox d-flex align-items-center  ">
+																						<input type="checkbox" class="languageNameCB_Cat_Mobile filter_CAT_Mobile custom-control-input arrow-cursor" id="@item.Id" value="@item.Id">
+                                                                                        <label class="custom-control-label arrow-cursor" for="m_@item.Id">@item.Name</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </aside>
+                            <!-- End Sidebar Navigation -->
+                        </div>
+
+                    </div>
+
+                    <!-- Tab Content -->
+
+                    <div class="tab-content" id="pills-tabContent1">
+                        <div class="tab-pane fade show active" id="grid-view-zone" role="tabpanel" aria-labelledby="pills-one-example1-tab">
+                            <ul class="bookGridView show products list-unstyled row no-gutters row-cols-2 row-cols-lg-3 row-cols-wd-4 mb-6">
+                                <partial name="../Home/GridViewSearchResult" model="@Model.BooksList" />
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="list-view-zone" role="tabpanel" aria-labelledby="pills-two-example1-tab">
+                            <ul class="bookListView show products list-unstyled mb-6">
+                                <partial name="../Home/ListViewSearchResult" model="@Model.BooksList" />
+                            </ul>
+                        </div>
+                        @*add load button here*@
+						<div class="Full_List_Panel text-center mb-4" style="display: none;">
+							<div class="alert alert-info alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								@SharedLocalizer["Index.FullList"]
+							</div>
+						</div>
+						<div id="Div_loadMore_CD" class="my-4 text-center">
+                            <button id="loadMore_CD" type="button" class="btn btn-dark width-150">@SharedLocalizer["Index.ShowMore"]</button>
+                        </div>
+                    </div>
+                    <!-- End Tab Content -->
+
+                </div>
+
+                <div id="secondary" class="sidebar d-none d-sm-block widget-area order-1" role="complementary">
+                    <div id="widgetAccordion">
+                        <div class="page-header container mb-8">
+
+                        </div>
+                        <div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories mt-5">
+                            <div id="widgetHeadingOne" class="widget-head">
+                                <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                   data-toggle="collapse"
+                                   data-target="#widgetCollapseOne"
+                                   aria-expanded="true"
+                                   aria-controls="widgetCollapseOne">
+
+                                    <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Category.cat"]</h3>
+
+                                    <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                    </svg>
+
+                                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div id="widgetCollapseOne" class="mt-3 widget-content collapse show"
+                                 aria-labelledby="widgetHeadingOne"
+                                 data-parent="#widgetAccordion">
+								<ul class="product-categories categoriesListId_web" style="overflow-y:auto; max-height: 500px; @(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+
+                                    @foreach (var item in Model.CategoriesList)
+                                    {
+                                        if (Model.CurrentCategory.Trim() == item.CategoryName.Trim())
+                                        {
+                                            <li class="cat-item cat-item-31">
+                                                <div class="js-form-message mb-2 ">
+                                                    <div class="custom-control custom-checkbox d-flex align-items-center  ">
+														<input type="checkbox" id="@item.Id" class="categoryNameCB_Cat initial_Cat filter_CAT custom-control-input arrow-cursor" value="@item.Id" name="@Model.CurrentCategory.Trim()" checked>
+                                                        <label class="custom-control-label arrow-cursor text-black" for="@item.Id">@item.CategoryName</label>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="cat-item cat-item-31">
+                                                <div class="js-form-message mb-2 ">
+                                                    <div class="custom-control custom-checkbox d-flex align-items-center  ">
+                                                        <input type="checkbox" id="Cat_@item.Id" class="categoryNameCB_Cat filter_CAT custom-control-input arrow-cursor" value="@item.Id" name="@Model.CurrentCategory">
+                                                        <label class="custom-control-label arrow-cursor" for="Cat_@item.Id">
+                                                            <span class="font-size-2 ">
+                                                                @item.CategoryName
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+
+
+                        <div id="Authors" class="widget widget_search widget_author p-4d875 border">
+                            <div id="widgetHeading21" class="widget-head">
+                                <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                   data-toggle="collapse"
+                                   data-target="#widgetCollapse21"
+                                   aria-expanded="true"
+                                   aria-controls="widgetCollapse21">
+
+                                    <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Navbar.auteur"]</h3>
+
+                                    <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                    </svg>
+
+                                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div id="widgetCollapse21" class="mt-4 widget-content collapse show"
+                                 aria-labelledby="widgetHeading21"
+                                 data-parent="#widgetAccordion">
+                                <form class="form-inline my-2 overflow-hidden">
+                                    <div class="input-group flex-nowrap w-100">
+                                        <div class="input-group-prepend">
+                                            <i class="glph-icon flaticon-loupe py-2d75 bg-white-100 border-white-100 text-dark pl-3 pr-0 rounded-0"></i>
+                                        </div>
+                                        <input class="form-control bg-white-100 py-2d75 height-4 border-white-100 rounded-0"
+                                               id="searchTheKey_Cat_web" type="search" placeholder='@SharedLocalizer["Auteur.SearchAuthor"]' aria-label="Search">
+                                    </div>
+                                    <button id="btnSearchAuthors" class="btn btn-outline-success my-2 my-sm-0 sr-only">Search</button>
+                                </form>
+                                <ul class="product-categories authorsListId_Cat_web" style="overflow-y:auto; max-height: 500px; @(selectedCulture.Name.Equals("ar") ? " padding-right:0px" : "")">
+                                    @foreach (var item in Model.AuthorsList)
+                                    {
+                                        <li class="cat-item cat-item-31  ">
+                                            <div class="js-form-message mb-2 ">
+                                                <div class="custom-control custom-checkbox d-flex align-items-center  ">
+                                                    <input type="checkbox" class="authorNameCB_Cat filter_CAT custom-control-input arrow-cursor" id="@item.Id" value="@item.Id">
+													<label class="custom-control-label font-size-2 arrow-cursor" for="@item.Id">@item.AuthorName</label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div id="woocommerce_product_categories-3" class="widget p-4d875 border woocommerce widget_product_categories">
+                            <div id="widgetHeading4" class="widget-head">
+                                <a class="d-flex align-items-center justify-content-between text-dark" href="#"
+                                   data-toggle="collapse"
+                                   data-target="#widgetCollapse4"
+                                   aria-expanded="true"
+                                   aria-controls="widgetCollapse4">
+
+                                    <h3 class="widget-title mb-0 font-weight-medium font-size-3">@SharedLocalizer["Form.Langues"]</h3>
+
+                                    <svg class="mins" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="2px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M0.000,-0.000 L15.000,-0.000 L15.000,2.000 L0.000,2.000 L0.000,-0.000 Z" />
+                                    </svg>
+
+                                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px">
+                                        <path fill-rule="evenodd" fill="rgb(22, 22, 25)" d="M15.000,8.000 L9.000,8.000 L9.000,15.000 L7.000,15.000 L7.000,8.000 L0.000,8.000 L0.000,6.000 L7.000,6.000 L7.000,-0.000 L9.000,-0.000 L9.000,6.000 L15.000,6.000 L15.000,8.000 Z" />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div id="widgetCollapse4" class="mt-3 widget-content collapse show"
+                                 aria-labelledby="widgetHeading4"
+                                 data-parent="#widgetAccordion">
+								<ul class="product-categories languagesListId_web" style="overflow-y:auto; max-height: 500px;">
+                                    @foreach (var item in Model.LanguagesList)
+                                    {
+                                        <li class="cat-item cat-item-31">
+                                            <div class="js-form-message mb-2 ">
+                                                <div class="custom-control custom-checkbox d-flex align-items-center  ">
+                                                    <input type="checkbox" class="languageNameCB_Cat filter_CAT custom-control-input arrow-cursor" id="@item.Id" value="@item.Id">
+                                                    <label class="custom-control-label font-size-2 arrow-cursor" for="@item.Id">@item.Name</label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

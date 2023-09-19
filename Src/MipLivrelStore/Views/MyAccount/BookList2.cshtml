@@ -1,0 +1,148 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@using DDD.Application.Enum
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using DDD.Application.ViewModels;
+@model List<BookViewModel>
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+    var appUser = await UserManager.FindByNameAsync(User.Identity.Name);
+}
+
+<div class=" pt-5 pl-md-5 pt-lg-8 pl-lg-9 space-bottom-lg-2 mb-lg-4">
+	<div class="font-size-5 mb-6">@SharedLocalizer["Booklist.bibliothèque"]</div>
+	@*<header class="entry-header space-top-2 space-bottom-1">
+        <label class="entry-title font-size-5">
+			@SharedLocalizer["Booklist.bibliothèque"]
+        </label>
+    </header>*@
+    @if (Model.Count == 0)
+    {
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 text-center">
+                    <img src="~/Template/Image/NoResultFound.png" class="resultNotFound" alt="No Result Found" />
+                    <div class="mb-4 lead">@SharedLocalizer["SearchResult.NoResultFound"]</div>
+                    <p>@SharedLocalizer["SearchResult.NoResultFoundText"].</p>
+					<a asp-controller="MyAccount" asp-action="Index" class="MyAccountGoBack btn btn-dark rounded-0 text-white">@SharedLocalizer["Index.GoBack"]</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="shop-control-bar d-lg-flex justify-content-between align-items-center mb-5 text-center text-md-left">
+            <div class="shop-control-bar__left mb-4 m-lg-0">
+            </div>
+            <div class="shop-control-bar__right d-md-flex align-items-center">
+                <form class="woocommerce-ordering mb-4 m-md-0" method="get">
+                </form>
+                <form class="number-of-items ml-md-4 mb-4 m-md-0 d-none d-xl-block" method="get">
+                </form>
+                <ul class="nav nav-tab ml-lg-4 justify-content-center justify-content-md-start ml-md-auto" id="pills-tab" role="tablist">
+                    <li class="nav-item border">
+                        <a class="nav-link p-0 height-38 width-38 justify-content-center d-flex align-items-center active" id="grid-view-zone-tab" data-toggle="pill" href="#grid-view-zone" role="tab" aria-controls="grid-view-zone" aria-selected="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17px" height="17px">
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,0.000 L3.000,0.000 L3.000,3.000 L-0.000,3.000 L-0.000,0.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L10.000,0.000 L10.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,0.000 L17.000,0.000 L17.000,3.000 L14.000,3.000 L14.000,0.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,7.000 L3.000,7.000 L3.000,10.000 L-0.000,10.000 L-0.000,7.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L10.000,7.000 L10.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,7.000 L17.000,7.000 L17.000,10.000 L14.000,10.000 L14.000,7.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,14.000 L3.000,14.000 L3.000,17.000 L-0.000,17.000 L-0.000,14.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L10.000,14.000 L10.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M14.000,14.000 L17.000,14.000 L17.000,17.000 L14.000,17.000 L14.000,14.000 Z" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li class="nav-item border">
+                        <a class="nav-link p-0 height-38 width-38 justify-content-center d-flex align-items-center" id="list-view-zone-tab" data-toggle="pill" href="#list-view-zone" role="tab" aria-controls="list-view-zone" aria-selected="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="17px">
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,0.000 L3.000,0.000 L3.000,3.000 L-0.000,3.000 L-0.000,0.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L23.000,0.000 L23.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,7.000 L3.000,7.000 L3.000,10.000 L-0.000,10.000 L-0.000,7.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L23.000,7.000 L23.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M-0.000,14.000 L3.000,14.000 L3.000,17.000 L-0.000,17.000 L-0.000,14.000 Z" />
+                                <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L23.000,14.000 L23.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="grid-view-zone" role="tabpanel" aria-labelledby="grid-view-zone-tab">
+                <ul class="bookGridView show products list-unstyled row no-gutters row-cols-2 row-cols-lg-3 row-cols-wd-4 mb-6">
+                    @foreach (var book in Model)
+                    {
+                        <li data-category-name="@book.CategoryName">
+                            <partial name="PartialSingleBook" model="book" />
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="tab-pane fade" id="list-view-zone" role="tabpanel" aria-labelledby="list-view-zone-tab">
+                <ul class="bookListView show products list-unstyled mb-6">
+                    @foreach (var book in Model)
+                    {
+                        <li class="product product__list" data-category-name="@book.CategoryName">
+                            <div class="product__inner overflow-hidden p-1 p-md-4d875">
+                                <div class="woocommerce-LoopProduct-link woocommerce-loop-product__link row position-relative">
+                                    <div class="col-md-auto woocommerce-loop-product__thumbnail mt-3 mb-md-0">
+                                        <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{book.Id}#{book.Title.Replace(" ", "-")}")" class="d-block">
+                                            <img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{book.CoverPath}")" width="180" height="180" class="img-fluid d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" alt="image-description">
+                                        </a>
+                                    </div>
+                                    <div class="col-md woocommerce-loop-product__body product__body mx-3 bg-white mt-3 mb-3 mb-md-0">
+                                        <div class="text-uppercase font-size-1 mb-1 text-truncate"> </div>
+                                        <h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 crop-text-2 h-dark">
+                                            <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{book.Id}#{book.Title.Replace(" ", "-")}")" tabindex="0">@book.Title</a>
+                                        </h2>
+                                        <div class="font-size-2  mb-2 text-truncate"><a href="../others/authors-single.html" class="text-gray-700">@book.AuthorName</a></div>
+                                        <p class="font-size-2 mb-2 crop-text-2">@book.Description</p>
+                                        <div class="price d-flex align-items-center font-weight-medium font-size-3">
+                                            <span class="woocommerce-Price-amount amount">@book.BusinessPrice <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .modal-dialog-full-width {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+    }
+
+    .modal-content-full-width {
+        height: auto !important;
+        min-height: 100% !important;
+        border-radius: 0 !important;
+        background-color: #ececec !important
+    }
+
+    .modal-header-full-width {
+        border-bottom: 1px solid #9ea2a2 !important;
+    }
+
+    .modal-footer-full-width {
+        border-top: 1px solid #9ea2a2 !important;
+    }
+</style>

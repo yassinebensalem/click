@@ -1,0 +1,75 @@
+.darkBack {
+	background: rgb(220 222 225) !important;
+}
+
+.color-white {
+	color: #fff4ca;
+}
+
+.yellow {
+	background: #ff0;
+}
+
+.red {
+	background: #f00;
+}
+
+.light-dark {
+	background: #fff;
+}
+
+.field {
+	color: black;
+	width: 300px;
+	margin: 10px 5px;
+}
+.placeholder-white {
+	color: black;
+}
+.placeholder-white::placeholder {
+	color: #fff !important;
+}
+.MuiSvgIcon-root {
+	font-size: '28px' !important;
+}
+
+.m-auto {
+	margin: auto;
+}
+
+.max-w-380 {
+	width: '350px';
+}
+.field {
+	color: #fff !important;
+}
+.bg-white {
+	background-color: white !important;
+	color: #121212;
+}
+.MuiInputBase-input {
+	color: black !important;
+}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+	border-color: black !important;
+}
+.cursor-pointer:hover {
+	cursor: pointer;
+}
+
+.MuiSvgIcon-root {
+	font-size: 20px !important;
+}
+
+@media screen and (max-width: 1200px) {
+      body {
+		background: #fff;
+	  }
+	 .left {
+		display: none;
+	 }
+	 .right {
+		width: 100%;
+		
+	 }
+}

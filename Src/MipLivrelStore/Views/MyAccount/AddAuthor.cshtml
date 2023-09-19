@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@using DDD.Domain.Models;
+
+
+
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<style>
+
+    label.error {
+        color: red;
+        font-size: 1rem;
+        display: block;
+        margin-top: 5px;
+    }
+
+    input.error, textarea.error {
+        border: 1px dashed red;
+        font-weight: 300;
+        color: red;
+    }
+</style>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+
+
+

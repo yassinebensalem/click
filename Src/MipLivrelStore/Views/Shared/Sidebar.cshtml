@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IViewLocalizer Localizer
+@using DDD.Application.Interfaces
+@inject ICartService _CartService
+@inject IBookService _IBookService 
+@inject SignInManager<ApplicationUser> SignInManager
+
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+
+}
+<!-- Account Sidebar Navigation - Desktop -->
+<partial name="AccountSidebar" />
+<!-- End Account Sidebar Navigation - Desktop -->
+<!-- Cart Sidebar Navigation -->
+<aside id="sidebarContent1" class="u-sidebar u-sidebar__xl" aria-labelledby="sidebarNavToggler1">
+    <div class="u-sidebar__scroller js-scrollbar">
+        <div class="u-sidebar__container">
+            <div class="u-header-sidebar__footer-offset">
+                <!-- Toggle Button -->
+                <div class="d-flex align-items-center position-absolute top-0 @(selectedCulture.Name.Equals("ar")?"left-0 ml-4":"right-0 mr-4") z-index-2 mt-5  ">
+                    <button type="button" class="close ml-auto"
+                            aria-controls="sidebarContent1"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            data-unfold-event="click"
+                            data-unfold-hide-on-scroll="false"
+                            data-unfold-target="#sidebarContent1"
+                            data-unfold-type="css-animation"
+                            data-unfold-animation-in="fadeInRight"
+                            data-unfold-animation-out="fadeOutRight"
+                            data-unfold-duration="50">
+                        <span aria-hidden="true"> @SharedLocalizer["AccountSideBar.Close"] <i class="fas fa-times ml-2"></i></span>
+                    </button>
+                </div>
+                <!-- End Toggle Button -->
+                <!-- Content -->
+                <div class="u-sidebar__body">
+                    <div id="CartListDiv" class="u-sidebar__content u-header-sidebar__content">
+                        @*load the partial view "CartListPartialView" here*@
+                    </div>
+                </div>
+                <!-- End Content -->
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- End Cart Sidebar Navigation -->
+<!-- Categories Sidebar Navigation -->
+<aside id="sidebarContent2" class="u-sidebar u-sidebar__md u-sidebar--left" aria-labelledby="sidebarNavToggler2">
+    <div class="u-sidebar__scroller js-scrollbar">
+        <div class="u-sidebar__container">
+            <div class="u-header-sidebar__footer-offset">
+                <!-- Content -->
+                <div class="u-sidebar__body">
+                    <div class="u-sidebar__content u-header-sidebar__content">
+                        <!-- Title -->
+                        <header class="border-bottom px-4 px-md-5 py-4 d-flex align-items-center justify-content-between">
+                            <h2 class="font-size-3 @(selectedCulture.Name.Equals("ar")?"mb-0 ml-3":"mb-0 ml-0")">@SharedLocalizer["sidebar.menu"]</h2>
+
+                            <!-- Toggle Button -->
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="close ml-auto"
+                                        aria-controls="sidebarContent2"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                        data-unfold-event="click"
+                                        data-unfold-hide-on-scroll="false"
+                                        data-unfold-target="#sidebarContent2"
+                                        data-unfold-type="css-animation"
+                                        data-unfold-animation-in="fadeInLeft"
+                                        data-unfold-animation-out="fadeOutLeft"
+                                        data-unfold-duration="50">
+                                    <span aria-hidden="true"><i class="fas fa-times ml-2"></i></span>
+                                </button>
+
+                            </div>
+                            <!-- End Toggle Button -->
+                        </header>
+                        <!-- End Title -->
+
+                        <div class="border-bottom">
+                            <div class="zeynep pt-3">
+                                <ul>
+                                    <li class="has-submenu">
+                                        <a href="javascript:;" data-submenu="art-photo">@SharedLocalizer["Menu.Categories"]</a>
+
+                                        <div id="art-photo" class="submenu">
+                                            <div class="submenu-header" data-submenu-close="art-photo">
+                                                <a href="javascript:;">@SharedLocalizer["Menu.Categories"]</a>
+                                            </div>
+
+                                            @await Component.InvokeAsync("Category", new { isDropDown = false })
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <a asp-action="GetEditorsList" asp-controller="Home" data-submenu="biography">@SharedLocalizer["Menu.Editors"]</a>
+
+                                    </li>
+
+                                    <li>
+                                        <a asp-action="NewBooks" asp-controller="Book" data-submenu="children">@SharedLocalizer["Book.Popular"]</a>
+
+                                    </li>
+
+                                    <li>
+                                        <a  asp-action="ComingSoon" asp-controller="Home" data-submenu="computers">@SharedLocalizer["Book.Bestsellers"]</a>
+                                    </li>
+
+                                    <li>
+                                        <a asp-action="DiscountBooks" asp-controller="Book" data-submenu="education">@SharedLocalizer["Menu.Promotions"]</a>
+
+                                    </li>
+
+                                    <li>
+                                        <a asp-action="Contact" asp-controller="Home" data-submenu="health">@SharedLocalizer["Menu.Contacts"]</a>
+
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <div class="py-3 px-5 border-bottom">
+                                <ul class="list-group list-group-flush list-group-borderless">
+                                    <li class="list-group-item py-2 border-0"><a asp-controller="MyAccount" asp-action="Index" class="h-primary h6"> @SharedLocalizer["Index.MyAccount"]</a></li>
+                                    <li class="list-group-item py-2 border-0">
+                                        <form asp-controller="MyAccount" asp-action="Logout" method="post" id="formLogout">
+                                            <a class="arrow-cursor px-0 h6" onclick="document.getElementById('formLogout').submit();">
+                                                <span class=" ">@SharedLocalizer["Index.Logout"]</span>
+                                            </a>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        <div class="border-bottom px-4 px-md-5 py-4 d-flex align-items-center justify-content-between">
+                            <a asp-action="ComingSoon" asp-controller="Home" class="h-primary h6 @(selectedCulture.Name.Equals("ar")?"mb-0 ml-3":"mb-0 ml-0")">@SharedLocalizer["Sidebar.help"] </a>
+                        </div>
+                        <form id="selectLanguage"
+                              class="px-4 py-5 @(selectedCulture.Name.Equals("ar")?"pr-5":"px-md-5")"
+                              asp-controller="Home"
+                              asp-action="SetLanguage"
+                              asp-route-returnUrl="@returnUrl"
+                              method="post"
+                              role="form">
+                            <select class="custom-select mb-4 rounded-0 pl-4 height-4 shadow-none text-dark"
+                                    name="culture"
+                                    onchange="this.form.submit();"
+                                    asp-for="@requestCulture.RequestCulture.UICulture.Name">
+                                <option value="ar-SA">@SharedLocalizer["Sidebar.Arabic"] </option>
+                                <option value="en-US">@SharedLocalizer["Sidebar.English"] </option>
+                                <option value="fr-FR">@SharedLocalizer["Sidebar.French"] </option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <!-- End Content -->
+            </div>
+        </div>
+    </div>
+</aside>
+<!-- End Categories Sidebar Navigation -->

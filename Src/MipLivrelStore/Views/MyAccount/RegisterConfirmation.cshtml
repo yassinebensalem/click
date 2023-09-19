@@ -1,0 +1,34 @@
+﻿@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@{
+
+    ViewData["Title"] = "Register Confirmation";
+}
+
+
+<!-- ====== MAIN CONTENT ===== -->
+<main id="content">
+    <div class="container">
+        <div class="space-2 space-md-3 space-lg-4 space-top-xl-6 space-bottom-xl-5">
+            <div class="d-flex flex-column align-items-center">
+                <div class="font-weight-medium font-size-15 font-size-xs-25 mb-3 text-success">
+                    @SharedLocalizer["Register.RegisterConfirmation"]
+                </div>
+                <h6 class="font-weight-medium mb-2 col-lg-7 text-center text-lh-lg mb-5">@SharedLocalizer["Register.RegisterConfirmationText"]</h6>
+                 
+            </div>
+        </div>
+    </div>
+</main>
+<!-- ====== END MAIN CONTENT ===== -->

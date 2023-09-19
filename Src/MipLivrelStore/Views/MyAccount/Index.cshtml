@@ -1,0 +1,314 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@using DDD.Application.Enum
+
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+    //var currentUser = System.Web.HttpContext.Current.User.Identity.Name;
+}
+
+@{
+    ViewData["Title"] = "My Account";
+    var currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
+    bool isEditor = User.IsInRole("Editor");
+}
+
+
+<!-- ====== MAIN CONTENT ===== -->
+<main id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3  @(selectedCulture.Name.Equals("ar")?"border-left":"border-right")">
+                @*<h6 class="font-weight-medium font-size-7 pt-5 pt-lg-8  mb-5 mb-lg-7">@SharedLocalizer["Index.MyAccount"]</h6>*@
+                <div class="d-md-flex shop-control-bar__right d-md-flex align-items-center">
+                    <ul class="nav nav-tab  " role="tablist">
+                        <li class="nav-item ">
+                            <h6 class="font-weight-medium font-size-7 pt-5 pt-lg-8  mb-5 mb-lg-7">@SharedLocalizer["Index.MyAccount"]</h6>
+                        </li>
+                        <li class="nav-item pt-5 pt-lg-8  mb-5 mb-lg-7 @(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto")">
+                            <a id="Dash_sidebarNavToggler4" class=" @(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto") mt-3 d-md-none h-primary" href="javascript:;" role="button"
+                               aria-controls="Dash_sidebarContent4"
+                               aria-haspopup="true"
+                               aria-expanded="false"
+                               data-unfold-event="click"
+                               data-unfold-hide-on-scroll="false"
+                               data-unfold-target="#Dash_sidebarContent4"
+                               data-unfold-type="css-animation"
+                               data-unfold-overlay='{
+                                    "className": "u-sidebar-bg-overlay",
+                                    "background": "rgba(0, 0, 0, .7)",
+                                    "animationSpeed": 500
+                                }'
+                               data-unfold-animation-in="fadeInRight"
+                               data-unfold-animation-out="fadeOutRight"
+                               data-unfold-duration="50">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="17px">
+                                    <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L23.000,0.000 L23.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                    <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L23.000,7.000 L23.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                    <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L23.000,14.000 L23.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-wrapper d-none d-md-flex">
+                    <ul class="my__account-nav nav flex-column mb-0" role="tablist" >
+                        <li class="nav-item mx-0">
+                            @if (User.IsInRole("Editor"))
+                            {
+                                <a class="my_dashboard nav-link d-flex align-items-center px-0" asp-action="EditorDashboard" asp-controller="MyAccount">
+                                    <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Dashboard"]</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="my_dashboard nav-link d-flex align-items-center px-0" asp-action="Dashboard" asp-controller="MyAccount">
+                                    <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Dashboard"]</span>
+                                </a>
+                            }
+
+                        </li>
+                        <li class="nav-item mx-0">
+                            <a class="nav-link d-flex align-items-center px-0 Account-details" asp-action="AccountDetails" asp-controller="MyAccount">
+                                <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Account Details"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mx-0">
+                            <a class="nav-link d-flex align-items-center px-0 " asp-action="BookList" asp-controller="MyAccount">
+								<span class="font-weight-normal text-gray-600">@(User.IsInRole("Editor") ? @SharedLocalizer["Index.MesLivres"] : @SharedLocalizer["Index.MyList"])</span>
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Subscriber"))
+                        {
+                            <li class="nav-item mx-0">
+                                <a class="nav-link d-flex align-items-center px-0" asp-action="GetCartListDashboard" asp-controller="MyAccount">
+                                    <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Orders"]</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item mx-0">
+                                <a class="nav-link d-flex align-items-center px-0" asp-controller="MyAccount" asp-action="GetWishlistBooks">
+                                    <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.wishlist"]</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item mx-0">
+                            <a class="nav-link d-flex align-items-center px-0" asp-controller="WalletTransaction" asp-action="GetWalletTransactions">
+                                <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.MyWallet"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mx-0">
+                            <form class="form-inline" asp-controller="MyAccount" asp-action="Logout" method="post" id="formLogout">
+                                <a class="nav-link d-flex align-items-center px-0" href="#" onclick="document.getElementById('formLogout').submit();">
+                                    <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Logout"]</span>
+                                </a>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                <aside id="Dash_sidebarContent4" class="u-sidebar u-sidebar__md js-scrollbar" aria-labelledby="Dash_sidebarNavToggler4">
+                    <div class="u-sidebar__scroller">
+                        <div class="u-sidebar__container">
+                            <div class="u-header-sidebar__footer-offset">
+                                <!-- Toggle Button -->
+                                <div class="d-flex align-items-center justify-content-between py-4 px-3 border-bottom mb-5">
+                                    <div class="font-size-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="17px">
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,0.000 L23.000,0.000 L23.000,3.000 L7.000,3.000 L7.000,0.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,7.000 L23.000,7.000 L23.000,10.000 L7.000,10.000 L7.000,7.000 Z" />
+                                            <path fill-rule="evenodd" fill="rgb(25, 17, 11)" d="M7.000,14.000 L23.000,14.000 L23.000,17.000 L7.000,17.000 L7.000,14.000 Z" />
+                                        </svg>
+                                        @SharedLocalizer["sidebar.menu"]
+                                    </div>
+                                    <button type="button" class="close font-size-3 text-dark d-flex align-items-center"
+                                            aria-controls="Dash_sidebarContent4"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                            data-unfold-event="click"
+                                            data-unfold-hide-on-scroll="false"
+                                            data-unfold-target="#Dash_sidebarContent4"
+                                            data-unfold-type="css-animation"
+                                            data-unfold-animation-in="fadeInRight"
+                                            data-unfold-animation-out="fadeOutRight"
+                                            data-unfold-duration="50">
+                                        @SharedLocalizer["AccountSideBar.Close"]
+                                        <span aria-hidden="true">
+                                            <i class=" flaticon-error  pl-1 "></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <!-- End Toggle Button -->
+                                <!-- Content -->
+                                <div class="u-sidebar__body  @(selectedCulture.Name.Equals("ar") ? "mr-4" : "ml-4") ">
+                                    <div class="u-sidebar__content u-header-sidebar__content">
+                                        <div class="sidebar widget-area">
+                                            <div id="widgetAccordion">
+                                                <ul class="my__account-nav nav flex-column mb-0" role="tablist" >
+                                                    <li class="nav-item mx-0">
+                                                        <a class="my_dashboard nav-link d-flex align-items-center px-0" asp-action="Dashboard" asp-controller="MyAccount">
+                                                            <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Dashboard"]</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+                                                        <a class="nav-link d-flex align-items-center px-0 Account-details" asp-action="AccountDetails" asp-controller="MyAccount">
+                                                            <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Account Details"]</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+                                                        <a class="nav-link d-flex align-items-center px-0 " asp-action="BookList" asp-controller="MyAccount">
+															<span class="font-weight-normal text-gray-600">@(User.IsInRole("Editor") ? @SharedLocalizer["Index.MesLivres"] : @SharedLocalizer["Index.MyList"])</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+
+                                                        <a class="nav-link d-flex align-items-center px-0" asp-action="GetCartListDashboard" asp-controller="MyAccount">
+                                                            <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Orders"]</span>
+
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+                                                        <a class="nav-link d-flex align-items-center px-0" asp-controller="MyAccount" asp-action="GetWishlistBooks">
+                                                            <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.wishlist"]</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+                                                        <a class="nav-link d-flex align-items-center px-0" asp-controller="WalletTransaction" asp-action="GetWalletTransactions">
+                                                            <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.MyWallet"]</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item mx-0">
+                                                        <form class="form-inline" asp-controller="MyAccount" asp-action="Logout" method="post" id="formLogoutMobile">
+                                                            <a class="nav-link d-flex align-items-center px-0" href="#" onclick="document.getElementById('formLogoutMobile').submit();">
+                                                                <span class="font-weight-normal text-gray-600">@SharedLocalizer["Index.Logout"]</span>
+                                                            </a>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+            </div>
+
+            <div class="col-md-9">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-myaccount-body" role="tabpanel" aria-labelledby="pills-one-example1-tab">
+                        <partial name="Dashboard" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+<!-- ====== END MAIN CONTENT ===== -->
+<div class="border-top space-top-3">
+</div>
+
+
+<div class="row">
+    <form class="modal fade " asp-controller="MyAccount" asp-action="AddAuthor" id="formauthorsId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content Addauthor">
+                <div class="modal-header border-bottom-1">
+                    <h5 class="modal-title" id="exampleModalLabel"><i class="flaticon-user mr-3 font-size-5"></i>@SharedLocalizer["Auteur.PostAuteur"] </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body p-3">
+
+                    <div class="row ">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="js-form-message js-focus-state">
+                                    <label class="form-label" for="AuthorFirstNameLabel">@SharedLocalizer["AccountSideBar.FirstName"]*</label>
+                                    <input type="text" class="form-control rounded-0 height-4 px-4" required="" name="FirstName" id="AuthorFirstNameLabel" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationFirstName"]">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="js-form-message js-focus-state">
+                                <label id="AuthorLastNameLabel" class="form-label" for="signinLastName">@SharedLocalizer["AccountSideBar.LastName"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" required="" name="LastName" id="AuthorLastName" aria-describedby="signinLastNameLabel" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationLastName"]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="row mb-2  ">
+                            <div class="col-md-12">
+                                <div class="js-form-message js-focus-state">
+                                    <label id="EmailLabel" class="form-label" for="signinFirstName">@SharedLocalizer["AccountSideBar.Email"]</label>
+                                    <input type="email" class="form-control rounded-0 height-4 px-4" name="Email" id="AuthorEmail" aria-label="jackwayley@gmail.com" aria-describedby="signinEmailLabel" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row mb-2 ">
+                            <div class="col-md-6">
+                                <div class="js-form-message js-focus-state">
+                                    <label id="AuthorPhoneLabel" class="form-label" for="signinLastName">@SharedLocalizer["Account.Phone"] </label>
+                                    <input type="tel" class="form-control rounded-0 height-4 px-4" name="PhoneNumber" id="AuthorPhone">
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="js-form-message js-focus-state">
+                                    <label for="exampleFormControlInput6">@SharedLocalizer["Form.Country"] </label>
+                                    @await Component.InvokeAsync("Country")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row mb-3 ">
+                            <div class="col-md-12">
+                                <div class="js-form-message">
+                                    <label for="exampleFormControlInput4">@SharedLocalizer["Book.BookDescription"]</label>
+                                    <textarea name="Biography" type="text" placeholder="" rows="3" size="30" class="form-control rounded-0 pl-3 placeholder-color-3" id="AuthorDescription" data-error-class="u-has-error" data-success-class="u-has-success" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationDescription"]"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-dark">@SharedLocalizer["Form.Save"]</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@SharedLocalizer["Auteur.BtnClose"]</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

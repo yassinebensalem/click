@@ -1,0 +1,146 @@
+﻿@using Syncfusion.EJ2
+@model DDD.Application.ViewModels.BookViewModel
+
+<ejs-pdfviewer id="pdfviewer" interactionMode="Pan" style="height:641px;" serviceUrl="/api/bookViewer"
+			   documentPath="@($"{ViewBag.BookId}_{ViewBag.PDFPath}")"
+			   enableDownload='false' documentLoad="documentLoaded" enablePrint='false' disableContextMenuItems='true' contextMenuOption='None'
+			   enableToolbar='false'
+			   InteractionMode='Syncfusion.EJ2.PdfViewer.InteractionMode.Pan'
+			   enableMagnification='true'>
+</ejs-pdfviewer>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		//pdfViewer.toolbar.showToolbarItem(new Array("OpenOption"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("DownloadOption"), false);
+		//      pdfViewer.toolbar.showToolbarItem(new Array("PrintOption"), false);
+		//      pdfViewer.toolbar.showToolbarItem(new Array("SearchOption"), true);
+		//pdfViewer.toolbar.showToolbarItem(new Array("PageNavigationTool"), true);
+		//pdfViewer.toolbar.showToolbarItem(new Array("MagnificationTool"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("UndoRedoTool"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("SelectionTool"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("CommentTool"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("AnnotationEditTool"), false);
+		//pdfViewer.toolbar.showToolbarItem(new Array("PanTool"), true);
+
+
+
+		$('#pdfviewer').bind('cut copy', function (e) {
+			e.preventDefault();
+		});
+		$('#detailsModal, #pdfviewer').on('keydown', function (e) {
+			if (e.ctrlKey && (e.key == "p" || e.charCode == 16 || e.charCode == 112 || e.keyCode == 80)) {
+				alert("Sorry, you are not authorized to take a Print");
+				e.cancelBubble = true;
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			}
+		});
+		var currentPage = 0;
+
+		$('#pdfviewer_viewerContainer').scroll(function () {
+			var viewer = document.getElementById('pdfviewer').ej2_instances[0];
+			var pageNumber = viewer.currentPageNumber;
+			if ($('#currentLibraryIdOfViewer').val() != "-1" && pageNumber != currentPage) {
+				currentPage = pageNumber;
+				var _bookId = $('#currentBookIdOfViewer').val();
+				var libraryId = $('#currentLibraryIdOfViewer').val();
+				var link = '/Book/UpdateCurrentPage'
+				$.ajax({
+					url: link,
+					method: "POST",
+					dataType: "json",
+					data: {
+						'Id': libraryId,
+						'BookId': _bookId,
+						'CurrentPage': pageNumber
+					},
+					success: function (data) {
+						console.log("sucess updating current page");
+
+					},
+					error: function (xhr, status, error) {
+						//debugger
+						alert("error");
+					}
+				});
+			}
+
+		});
+
+	});
+
+	function documentLoaded() {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		if (window.matchMedia("only screen and (max-width: 768px)").matches){
+			pdfViewer.magnificationModule.fitToPage();
+		}
+		pdfViewer.navigation.goToFirstPage();
+		$('#pageNumber').val(1);
+		$('#totalpage').html(pdfViewer.pageCount);
+
+	}
+	$('#goToFirstPage').click(function () {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		pdfViewer.navigation.goToFirstPage();
+		$('#pageNumber').val(1);
+	});
+
+	$('#nextpage').click(function () {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		pdfViewer.navigation.goToNextPage();
+		if (pdfViewer.currentPageNumber != pdfViewer.pageCount)
+			$('#pageNumber').val(pdfViewer.currentPageNumber + 1);
+
+	});
+	$('#previouspage').click(function () {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		pdfViewer.navigation.goToPreviousPage();
+		if (pdfViewer.currentPageNumber != 1)
+			$('#pageNumber').val(pdfViewer.currentPageNumber - 1);
+
+	});
+	$('#goToLastPage').click(function () {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		pdfViewer.navigation.goToLastPage();
+		$('#pageNumber').val(pdfViewer.pageCount);
+
+	});
+	$("#pageNumber").keypress(function (event) {
+		var pdfViewer = document.getElementById('pdfviewer').ej2_instances[0];
+		if ((event.which < 48 || event.which > 57) && event.which !== 8 && event.which !== 13) {
+			event.preventDefault();
+			return false;
+		}
+		else {
+			var currentPageNumber = parseInt($("#pageNumber").val());
+			if (event.which === 13) {
+				if (currentPageNumber > 0 && currentPageNumber <= pdfViewer.pageCount) {
+					pdfViewer.navigation.goToPage(currentPageNumber);
+				}
+				else {
+					currentPageBox.value = pdfViewer.currentPageNumber.toString();
+				}
+			}
+			return true;
+		}
+	});
+</script>
+
+<style>
+	.control-section {
+		width: 100%;
+		height: 716px;
+	}
+
+	@@media (max-width: 768px) {
+		.e-pv-viewer-container {
+		overflow: hidden !important;
+		touch-action: none;
+		-ms-touch-action: none;
+	}
+	}
+</style>
+<!--Syncfusion ASP.NET Core Script Manager-->
+<ejs-scripts></ejs-scripts>

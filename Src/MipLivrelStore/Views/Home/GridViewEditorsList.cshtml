@@ -1,0 +1,48 @@
+﻿@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using DDD.Application.ViewModels;
+@model List<SingleEditorDetailsVM>
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<ul id="editorsListId_EL" class="products list-unstyled mb-0 row mx-0">
+    @foreach (var user in Model)
+    {
+        <li class="col">
+            <div class="product product__space product__space-primary border rounded-md bg-white mb-5" style="max-width:230px;">
+                <div class="product__inner overflow-hidden p-3 p-md-4d875">
+                    <div class="woocommerce-LoopProduct-link woocommerce-loop-product__link d-block position-relative">
+                        <div class="woocommerce-loop-product__thumbnail">
+                            @*#{($"{user.Editor.FirstName} {user.Editor.LastName}").Replace(" ", "-")}*@
+                            <a class="d-block mb-2" asp-controller="Home" asp-action="GetEditorDetails" asp-route-EditorInfos="@($"{user.Editor.Id}")">
+                                @if (user.Editor.PhotoPath != null & user.Editor.PhotoPath != "")
+                                {
+                                    <img loading="lazy" src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{user.Editor.PhotoPath}")" class="py-3 rounded-circle mb-3"
+                                         style="height: 200px; width: 170px; object-fit: cover;" alt="Editor Cover">
+
+                                }
+                                else
+                                {
+                                    <img src="~/Template/Image/Standard-Editor-Pic.jpg" class="py-3 rounded-circle mb-3"
+                                         style="height: 200px; width: 170px; object-fit: cover;" alt="Editor Cover">
+                                }
+                            </a>
+                        </div>
+                        <div class="woocommerce-loop-product__body product__body pt-3 bg-white">
+                            <div class="text-uppercase font-size-1 mb-1 text-truncate"></div> @*#{($"{user.Editor.FirstName} {user.Editor.LastName}").Replace(" ", "-")}*@
+                            <h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 text-height-2 crop-text-2 h-dark"> <a asp-controller="Home" asp-action="GetEditorDetails" asp-route-EditorInfos="@($"{user.Editor.Id}")">@($"{user.Editor.RaisonSocial}")</a></h2>
+                            <div class="font-size-2  mb-1 text-truncate"><span class="text-gray-700">@user.PublishedBooksCount @SharedLocalizer["Navbar.Books"]</span></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+</ul>

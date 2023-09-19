@@ -1,0 +1,226 @@
+.MuiCheckbox-colorPrimary.Mui-checked {
+	color: #333 !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cell:focus-within {
+	outline: none !important;
+	cursor: pointer;
+}
+
+.table-cell-trucate {
+	cursor: pointer !important;
+}
+.field-admin {
+	color: #000 !important;
+}
+
+.header {
+	/*background-color: red;*/
+	padding: 0;
+
+	border-top-right-radius: 20px;
+}
+
+.MuiDataGrid-iconSeparator {
+	display: none !important;
+}
+.MuiDataGrid-row:hover {
+	cursor: pointer;
+}
+
+.MuiDataGrid-colCellTitle {
+	font-weight: bold !important;
+}
+
+MuiDataGrid-root {
+	border-top-left-radius: 40px !important;
+	border-top-right-radius: 40px !important;
+}
+.MuiDataGrid-columnsContainer {
+	border-top-left-radius: 40px !important;
+	border-top-right-radius: 40px !important;
+
+}
+
+.MuiDataGrid-colCellMoving {
+	background: #fff !important;
+}
+.makeStyles-contentCard-443 {
+	border-top-left-radius: 20px !important;
+	-webkit-border-top-left-radius: 20px !important;
+	-moz-border-top-right-radius: 20px !important;
+	border-top-right-radius: 20px !important;
+	-moz-border-top-right-radius: 20px !important;
+	-webkit-border-top-right-radius: 20px !important;
+}
+.makeStyles-contentCard-105 {
+	border-top-left-radius: 20px !important;
+	-webkit-border-top-left-radius: 20px !important;
+	-moz-border-top-right-radius: 20px !important;
+	border-top-right-radius: 20px !important;
+	-moz-border-top-right-radius: 20px !important;
+	-webkit-border-top-right-radius: 20px !important;
+}
+.save-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	outline: 0px;
+	border: 0px;
+	margin: 0px;
+	cursor: pointer;
+	user-select: none;
+	vertical-align: middle;
+	appearance: none;
+	text-decoration: none;
+	font-family: 'Inter var', Roboto, Helvetica, Arial, sans-serif;
+	font-weight: 500;
+	font-size: 1.4rem;
+	line-height: 1.75;
+	min-width: 64px;
+	padding: 6px 16px;
+	transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+		box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+		border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+		color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	color: rgb(255, 255, 255);
+	background-color: #f75454;
+	text-transform: none;
+	box-shadow: none;
+	border-radius: 20px;
+	height: 40px;
+	min-height: 40px;
+	max-height: 40px;
+}
+.save-btn-prize {
+	margin: 10px 0;
+}
+.save-btn:hover {
+	background: #f75454;
+}
+.ag-theme-alpine {
+	/* use theme parameters where possible */
+	--ag-foreground-color: deeppink;
+}
+
+/* or write CSS selectors to make customisations beyond what the parameters support */
+.ag-header {
+	border-bottom: 1px solid #eee !important;
+	color: #333;
+
+	font-weight: bold;
+
+	height: 800px;
+	margin-left: 5px;
+	padding-left: 20px;
+}
+
+.ag-theme-custom .ag-header-row {
+	font-size: 16px;
+	height: 400px;
+	font-weight: bold;
+	padding-top: 20px;
+	background: rebeccapurple;
+}
+
+input[type='checkbox'] {
+	font-size: 2.4rem;
+	cursor: pointer;
+	color: #fff;
+	border-color: #fff;
+	width: 15px;
+	height: 15px;
+}
+
+input[type='checkbox']:checked:before {
+	color: #777777;
+}
+
+input[type='checkbox']:checked {
+	accent-color: #f75454 !important;
+	background-color: #fff !important;
+	color: #fff;
+}
+
+.ag-theme-material .ag-checkbox-input-wrapper.ag-checked::after {
+	color: #ff0 !important;
+}
+
+.ag-row-even,
+.ag-row-odd {
+	border-bottom: 1px solid #eee;
+	cursor: pointer;
+}
+.Mui-checked {
+	color: #f75454 !important;
+}
+
+.drag-row .ag-row-drag {
+	position: absolute;
+	width: 1200px;
+	z-index: 2;
+}
+.ag-dnd-ghost-label {
+	visibility: hidden;
+}
+.mt-10 {
+	margin-top: 10px !important;
+}
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.list-item-text {
+	padding-top: 2.6px;
+	color: #c0c0c0;
+	font-weight: 600;
+}
+
+.row {
+	display: flex;
+}
+
+.rowBackground {
+	background-color: #000;
+}
+
+.makeStyles-inputRoot-541 {
+	/*width: 900px !important;*/
+}
+.MuiInputBase-input-551 > input {
+	/*min-width: 471px !important;*/
+}
+.makeStyles-inputRoot-541 input {
+	min-width: 400px !important;
+}
+/*.MuiOutlinedInput-root:hover fieldset {
+	border: 2px solid red !important;
+}
+*/
+.Mui-error {
+	color: royalblue;
+}
+
+.save-btn-promotion {
+	background: #f75454;
+}
+.MuiTable-stickyHeader{
+       background: #f75454
+}
+
+span.text-red {
+	margin: 0px !important;
+}
+
+div.flex-col.mt-8 {
+	margin: 0 !important;
+}
+
+.MuiTablePagination-caption:first-child {
+	color: red !important;
+}

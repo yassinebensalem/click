@@ -1,0 +1,40 @@
+.loader {
+    width: 0px;
+    height: 8px;
+    background: linear-gradient(to left, #88cf00, rgba(255,255,255,.0));
+    animation: speed 1s ease-in forwards, via 1.5s ease-out forwards;
+    display: none;
+}
+
+.r {
+    animation: speed 1s cubic-bezier(1,.01,0,1) infinite, via 4s ease-out infinite;
+    background: linear-gradient(to left, #88cf00,rgba(255,255,255,.0));
+}
+
+    .loader.show {
+        display:flex;
+    }
+
+@keyframes speed {
+    0% {
+        width: 0px;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes via {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

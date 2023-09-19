@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@using DDD.Application.ViewModels;
+@model List<PrizeVM>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Mip Livrel";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<div class="site-content space-bottom-1">
+    <main id="main">
+        <div class="product">
+            <div class="page-header border-bottom ">
+                <div class="container">
+                    <div class="d-md-flex justify-content-between align-items-center py-4">
+                        <h1 class="page-title font-size-3 font-weight-medium m-0 text-lh-lg"> @SharedLocalizer["Menu.Awards"]</h1>
+                        <nav class="woocommerce-breadcrumb font-size-2">
+                            <a href="../Home/Index" class="h-primary">@SharedLocalizer["Menu.Home"]</a>
+                            <span class="breadcrumb-separator mx-1"><i class="fas  @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+                            <span> @SharedLocalizer["Menu.Awards"]</span>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            @if (Model.Count == 0)
+            {
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12 text-center">
+                            <img src="~/Template/Image/NoResultFound.png" class="resultNotFound" alt="No Result Found" />
+                            <div class="mb-4 lead">@SharedLocalizer["SearchResult.NoResultFound"]</div>
+                            <p>@SharedLocalizer["SearchResult.NoResultFoundText"].</p>
+                            <a href="/" class="btn btn-dark rounded-0"><i class="fa fa-home"></i> @SharedLocalizer["SearchResult.Back"]</a>
+                             
+                        </div>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <section class="space-bottom-1">
+                    <div class="container">
+                        <div class="row">
+                            <div id="" class="content-area order-2 my-4 mx-6">
+                                <div class="tab-content" @*style="overflow-y: auto; height: 80%"*@>
+                                    <div role="tabpanel">
+                                        <ul id="editorsListId_EL" class="products list-unstyled mb-0 row ">
+                                            @foreach (var award in Model)
+                                            {
+                                                <li class="col">
+													<div class="product product__space product__space-primary border rounded-md bg-white mb-5" style="max-width:230px;">
+                                                        <div class="product__inner overflow-hidden p-3 p-md-4d875">
+                                                            <div class="woocommerce-LoopProduct-link woocommerce-loop-product__link d-block position-relative">
+                                                                <div class="woocommerce-loop-product__thumbnail">
+                                                                    <a class="d-block text-center" asp-controller="Prized" asp-action="Details" asp-route-Id="@award.Id">
+                                                                        @if (award.LogoPath != null & award.LogoPath != "")
+                                                                        {
+                                                                            <img loading="lazy" src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{award.LogoPath}")" class="mb-4" alt="user Cover" style="height: 200px; width: 140px;">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src="~/Template/Image/default-award.png" class="mb-4" alt="user Cover" style="height: 200px; width: 140px;">
+                                                                        }
+                                                                    </a>
+                                                                </div>
+                                                                <div class="woocommerce-loop-product__body bg-white">
+                                                                    @*pt-3 product__body*@
+                                                                @*<div class="text-uppercase font-size-1 mb-1 text-truncate"></div>*@
+                                                                <h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 text-height-1 crop-text-2 h-dark">
+                                                                    <a asp-controller="Prized" asp-action="Details" asp-route-Id="@award.Id">@award.Name</a>
+                                                                </h2>
+                                                                <div class="font-size-2  mb-1  text-gray-600" style="height: 60px; width: 200px;">@(award.Description.Length > 90 ? award.Description.Substring(0, 90) + "..." : award.Description)</div>@*text-truncate*@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+        </div>
+    </main>
+</div>

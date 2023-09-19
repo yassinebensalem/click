@@ -1,0 +1,5 @@
+http://localhost:53535/account/login
+
+http://localhost:53535/account/current
+
+http://localhost:53535/account/UsersByRole

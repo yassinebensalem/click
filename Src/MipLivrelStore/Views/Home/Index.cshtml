@@ -1,0 +1,380 @@
+﻿@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@model DDD.Application.ViewModels.IndexVM
+
+@{
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+@{
+
+	ViewData["Title"] = @ViewData["Title"];
+}
+
+<!-- ==== MAIN CONTENT ===== -->
+<main id="main">
+	<section class="space-bottom-1">
+		<div class="bg-gray-200 space-2 space-lg-0 bg-img-hero" style="background-image:url(/Template/assets/img/background/foire-backgrund.jpg)">
+			<div class="container">
+				<div class="js-slick-carousel slick u-slick"
+				@*data-autoplay="true"
+					 data-speed="5000"*@
+					 data-pagi-classes="text-center u-slick__pagination position-absolute right-0 left-0 mb-n8 mb-lg-4 bottom-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")>
+					 <div class="js-slide">
+						<div class="hero row min-height-588 align-items-center @(selectedCulture.Name.Equals("ar") ? " d-flex flex-row-reverse" : "")">
+							<div class="col-lg-5 col-wd-6 col-xs-6 @(selectedCulture.Name.Equals("ar") ? " animated fadeinleft" : "animated fadeinright")"
+								 data-scs-animation-in=@(selectedCulture.Name.Equals("ar") ? "fadeInLeft" : "fadeInRight")
+								 data-scs-animation-delay="500">
+								@if (selectedCulture.Name.Equals("fr-FR"))
+								{
+									<img src="~/img/slides/Texte-png-685-x-496.png" class="img-fluid" alt="image-description">
+								}
+								@if (selectedCulture.Name.Equals("ar"))
+								{
+									<img src="~/img/slides/Arabic-text-png-685x-496.png" class="img-fluid" alt="image-description">
+								}
+								@if (selectedCulture.Name.Equals("en-US"))
+								{
+									<img src="~/img/slides/English-text-png-685x496.png" class="img-fluid" alt="image-description">
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="space-bottom-2">
+		<div class="container">
+			<header class="border-bottom mb-8d75 pb-4d75 d-md-flex justify-content-between align-items-center">
+				<h2 class="font-size-7 mb-3 mb-md-0">@SharedLocalizer["Book.Arrivals"]</h2>
+				<ul class="nav justify-content-md-center nav-gray-700 flex-nowrap flex-md-wrap overflow-auto overflow-md-visible" id="featuredBooks" role="tablist">
+					<li class="nav-item mx-5 mb-1 flex-shrink-0 flex-md-shrink-1">
+						<a class="nav-link px-0 active" id="featured-tab" data-toggle="tab" href="#featured" role="tab" aria-controls="featured" aria-selected="true">
+							@SharedLocalizer["Book.Selection"]
+						</a>
+					</li>
+					@*<li class="nav-item mx-5 mb-1 flex-shrink-0 flex-md-shrink-1">
+					<a class="nav-link px-0" id="onsale-tab" data-toggle="tab" href="#onsale" role="tab" aria-controls="onsale" aria-selected="false"> @SharedLocalizer["Book.Bestsellers"] </a>
+					</li>*@
+					<li class="nav-item mx-5 mb-1 flex-shrink-0 flex-md-shrink-1">
+						<a class="nav-link px-0" id="mostviewed-tab" data-toggle="tab" role="tab" href="#mostviewed" aria-controls="mostviewed" aria-selected="false"> @SharedLocalizer["Book.Viewed"] </a>
+					</li>
+				</ul>
+			</header>
+			<div class="tab-content u-slick__tab" id="featuredBooksContent">
+				<div class="tab-pane fade show active" id="featured" role="tabpanel" aria-labelledby="featured-tab">
+					<div id="SelectionSection" class="js-slick-carousel products list-unstyled no-gutters my-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+						 data-pagi-classes="d-md-none text-center u-slick__pagination u-slick__pagination mt-5 mb-0"
+						 data-arrows-classes="d-none d-md-block u-slick__arrow u-slick__arrow-centered--y rounded-circle"
+						 data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-xl-n7"
+						 data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-xl-n7"
+						 data-slides-show="5" data-slick='{"autoplaySpeed": 5000,"autoplay": true,"slidesToShow": 5, "slidesToScroll": 5, "infinite": true}'
+						 data-responsive='[{
+                           "breakpoint": 1500,
+                           "settings": {
+                             "slidesToShow": 4
+                           }
+                        }, {
+                           "breakpoint": 992,
+                           "settings": {
+                             "slidesToShow": 3
+                           }
+                        }, {
+                           "breakpoint": 554,
+                           "settings": {
+                             "slidesToShow": 2
+                           }
+                        }]'>
+
+						@if (@Model.Books != null)
+						{
+
+
+
+							@foreach (var book in Model.Books)
+
+							{
+								<div class="sb__@book.Id">
+									<partial name="PartialSingleBook" model="book" />
+								</div>
+
+							}
+						}
+					</div>
+				</div>
+				@* <div class="tab-pane fade" id="onsale" role="tabpanel" aria-labelledby="onsale-tab">
+				<div class="js-slick-carousel products list-unstyled no-gutters my-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+				data-pagi-classes="d-md-none text-center u-slick__pagination u-slick__pagination mt-5 mb-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+				data-arrows-classes="d-none d-md-block u-slick__arrow u-slick__arrow-centered--y rounded-circle"
+				data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-xl-n7"
+				data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-xl-n7"
+				data-slides-show="5"
+				data-responsive='[{
+				"breakpoint": 1500,
+				"settings": {
+				"slidesToShow": 4
+				}
+				}, {
+				"breakpoint": 992,
+				"settings": {
+				"slidesToShow": 3
+				}
+				}, {
+				"breakpoint": 554,
+				"settings": {
+				"slidesToShow": 2
+				}
+				}]'>
+
+
+
+				@foreach (var book in Model.Books)
+				{
+				<div class="sb__@book.Id">
+				<partial name="PartialSingleBook" model="book" />
+				</div>
+				}
+
+				</div>
+				</div>*@
+				<div class="tab-pane fade" id="mostviewed" role="tabpanel" aria-labelledby="mostviewed-tab">
+					<div class="js-slick-carousel products list-unstyled no-gutters my-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+						 data-pagi-classes="d-md-none text-center u-slick__pagination u-slick__pagination mt-5 mb-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+						 data-arrows-classes="d-none d-md-block u-slick__arrow u-slick__arrow-centered--y rounded-circle"
+						 data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-xl-n7"
+						 data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-xl-n7"
+						 data-slides-show="5"
+						 data-responsive='[{
+                           "breakpoint": 1500,
+                           "settings": {
+                             "slidesToShow": 4
+                           }
+                        }, {
+                           "breakpoint": 992,
+                           "settings": {
+                             "slidesToShow": 3
+                           }
+                        }, {
+                           "breakpoint": 554,
+                           "settings": {
+                             "slidesToShow": 2
+                           }
+                        }]'>
+
+
+						@foreach (var book in Model.PrizeBookVM.BookListVM)
+						{
+							<partial name="PartialSingleBookPrized" model="book" />
+						}
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	@if (Model.PromotionsList.Count > 0)
+	{
+		<div class="banner space-bottom-3">
+			<div class="container">
+				<div class="rounded-md bg-punch-light border px-xl-10 px-6 py-5 ">
+					<div class="media d-block d-lg-flex">
+						<div class="media-body align-self-center mb-4 mb-lg-0">
+							<p class="banner__pretitle text-uppercase text-primary font-weight-bold">@SharedLocalizer["Annonce.MSG1"]</p>
+							<h2 class="banner__title font-size-10 font-weight-bold text-dark mb-4">@SharedLocalizer["Annonce.MSG2"]</h2>
+                            <h6 class="font-weight-bold text-dark mb-4">@SharedLocalizer["Register.TombolaMessage"]</h6>
+							<a asp-controller="book" asp-action="FreeBooks" class="banner_btn btn btn-wide btn-primary text-white">@SharedLocalizer["Slideshow.Explore"]</a>
+						</div>
+						<img src="~/Template/Image/img1.png" class="img-fluid" alt="image-description">
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (Model.Cat1books.Count > 0)
+	{
+		<section class="space-bottom-1">
+			<div class="container">
+				<div id="Cat1booksDiv" class="row align-items-center">
+					<div class="col-md-5 col-lg-4 col-xl-3 mb-4 mb-md-0">
+						<div class="bg-img-hero min-height-440 rounded" style="background-color: #d9cde0;">
+
+							<div class="p-5">
+								<h4 class="font-size-22">@Model.Cat1books.ElementAt(0).CategoryName</h4>
+								<a asp-action="Index" asp-controller="Category" asp-route-CategoryName="@Model.Cat1books.ElementAt(0).CategoryName" class="text-dark font-weight-medium text-uppercase stretched-link">@SharedLocalizer["Explore.view"]</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-7 col-lg-8 col-xl-9">
+						<div class="mx-lg-8 mx-wd-4">
+							<div class="js-slick-carousel products no-gutters"
+							 data-pagi-classes="d-lg-none text-center u-slick__pagination u-slick__pagination mt-5 mb-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+							 data-arrows-classes="d-none d-lg-block u-slick__arrow u-slick__arrow-centered--y rounded-circle"
+							 data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-lg-n8 ml-wd-n4"
+							 data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-lg-n8 mr-wd-n4"
+							 data-slides-show="4"
+							 data-responsive='[{
+                                   "breakpoint": 1500,
+                                   "settings": {
+                                     "slidesToShow": 3
+                                   }
+                                }, {
+                                   "breakpoint": 1199,
+                                   "settings": {
+                                     "slidesToShow": 2
+                                   }
+                                }, {
+                                   "breakpoint": 554,
+                                   "settings": {
+                                     "slidesToShow": 2
+                                   }
+                                }]'>
+								@foreach (var book in Model.Cat1books)
+								{
+									<div class="sb__@book.Id">
+										<partial name="PartialSingleBook" model="book" />
+									</div>
+
+
+								}
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	}
+
+	@if (Model.Cat2books.Count > 0)
+	{
+		<section class="space-bottom-1">
+			<div class="container">
+				<div id="Cat2booksDiv" class="row align-items-center">
+					<div class="col-md-5 col-lg-4 col-xl-3 mb-4 mb-md-0">
+						<div class="bg-img-hero min-height-440 rounded" style="background-color: #fff6f6 ">
+							<div class="p-5">
+								<h4 class="font-size-22">@Model.Cat2books.ElementAt(0).CategoryName</h4>
+								<a asp-action="Index" asp-controller="Category" asp-route-CategoryName="@Model.Cat2books.ElementAt(0).CategoryName" class="text-dark font-weight-medium text-uppercase stretched-link">@SharedLocalizer["Explore.view"]</a>
+							</div>
+						</div>
+					</div>
+					<div id="Cat2booksDiv" class="col-md-7 col-lg-8 col-xl-9">
+						<div class="mx-lg-8 mx-wd-4">
+							<div class="js-slick-carousel products no-gutters"
+							 data-pagi-classes="d-lg-none text-center u-slick__pagination u-slick__pagination mt-5 mb-0" @(selectedCulture.Name.Equals("ar") ? "data-rtl=true" : "data-rtl=false")
+							 data-arrows-classes="d-none d-lg-block u-slick__arrow u-slick__arrow-centered--y rounded-circle"
+							 data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-lg-n8 ml-wd-n4"
+							 data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-lg-n8 mr-wd-n4"
+							 data-slides-show="4"
+							 data-responsive='[{
+                                   "breakpoint": 1500,
+                                   "settings": {
+                                     "slidesToShow": 3
+                                   }
+                                }, {
+                                   "breakpoint": 1199,
+                                   "settings": {
+                                     "slidesToShow": 2
+                                   }
+                                }, {
+                                   "breakpoint": 554,
+                                   "settings": {
+                                     "slidesToShow": 2
+                                   }
+                                }]'>
+
+								@foreach (var book in Model.Cat2books)
+								{
+
+									<div class="sb__@book.Id">
+										<partial name="PartialSingleBook" model="book" />
+									</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	}
+
+
+	<div>
+		<div class="container">
+			<div class="space-1 space-lg-2">
+				<div class="d-lg-flex align-items-center justify-content-between">
+					<marquee behavior="scroll" direction="left" width="100%">
+						@foreach (var editor in Model.EditorsList)
+						{
+							<img class=" mb-5 mb-lg-0 mr-4 img-fluid" src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{editor.PhotoPath}")" style="max-height: 100px;" alt="Image-Description">
+						}
+					</marquee>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="site-features border-top space-1d625">
+		<div class="container">
+			<ul class="list-unstyled my-0 list-features d-flex align-items-center justify-content-xl-between overflow-auto overflow-xl-visible">
+
+				<li class="flex-shrink-0 flex-xl-shrink-1 list-feature">
+					<div class="media">
+						<div class="feature__icon font-size-14 text-primary text-lh-xs">
+							<i class="glyph-icon flaticon-credit"></i>
+						</div>
+						<div class="media-body  @(selectedCulture.Name.Equals("ar") ? "mr-4" : "ml-4")">
+							<h4 class="feature__title font-size-3"> @SharedLocalizer["Footer.Paiement"]</h4>
+							<p class="feature__subtitle m-0">@SharedLocalizer["Footer.Paiement2"]</p>
+						</div>
+					</div>
+				</li>
+				<li class="flex-shrink-0 flex-xl-shrink-1 separator mx-4 mx-xl-0 border-left h-fixed-80" aria-hidden="true" role="presentation"></li>
+				<li class="flex-shrink-0 flex-xl-shrink-1 list-feature">
+					<div class="media">
+						<div class="feature__icon font-size-14 text-primary text-lh-xs">
+							<i class="glyph-icon flaticon-warranty"></i>
+						</div>
+						<div class="media-body  @(selectedCulture.Name.Equals("ar") ? "mr-4" : "ml-4")">
+							<h4 class="feature__title font-size-3">
+								@SharedLocalizer["Footer.Guarantee"]
+							</h4>
+							<p class="feature__subtitle m-0"> @SharedLocalizer["Footer.Guarantee2"]</p>
+						</div>
+					</div>
+				</li>
+				<li class="flex-shrink-0 flex-xl-shrink-1 separator mx-4 mx-xl-0 border-left h-fixed-80" aria-hidden="true" role="presentation"></li>
+				<li class="flex-shrink-0 flex-xl-shrink-1 list-feature">
+					<div class="media">
+						<div class="feature__icon font-size-14 text-primary text-lh-xs">
+							<i class="glyph-icon flaticon-help"></i>
+						</div>
+						<div class="media-body @(selectedCulture.Name.Equals("ar") ? "mr-4" : "ml-4")">
+							<h4 class="feature__title font-size-3"> @SharedLocalizer["Footer.Support"]</h4>
+							<p class="feature__subtitle m-0"> @SharedLocalizer["Footer.Support2"]</p>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</main>

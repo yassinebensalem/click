@@ -1,0 +1,51 @@
+services:
+  web-prod:
+    #build: Src\MipLivrelStore
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    #command: sh /entrypoint.sh
+    #image: ramzifekhi/docker-demo:clikprodimage
+    #environment:
+    #  - ConnectionString=Server=db;Database=master;User=sa;Password=S3cur3P@ssW0rd!
+    depends_on:
+      - db
+    ports:
+      - "8090:80"
+
+  web-dev:
+    #build: Src\MipLivrelStore
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    #command: sh /entrypoint.sh
+    #image: ramzifekhi/docker-demo:clikprodimage
+    #environment:
+    #  - ConnectionString=Server=db;Database=master;User=sa;Password=S3cur3P@ssW0rd!
+    depends_on:
+      - db
+    networks:
+      - letsencrypt-docker-compose    
+    ports:
+      - "8090:80" 
+  db:
+    #image: "mcr.microsoft.com/mssql/server:2017-CU17-ubuntu"
+    build:
+      context: .
+      dockerfile: DockerfileDB
+    #environment:
+    #  SA_PASSWORD: "S3cur3P@ssW0rd!"
+    #  ACCEPT_EULA: "Y"
+    #ports:
+    #  - "1444:1433"
+    volumes:
+      - mssqldata:/var/opt/mssql
+
+networks:
+  letsencrypt-docker-compose:
+    name: letsencrypt-docker-compose_default
+    external: true
+
+volumes:
+  mssqldata:
+

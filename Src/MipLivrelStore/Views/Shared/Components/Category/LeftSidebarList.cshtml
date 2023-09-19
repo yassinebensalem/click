@@ -1,0 +1,10 @@
+﻿@model IEnumerable<DDD.Application.ViewModels.CategoryViewModel>;
+<ul>
+    @foreach (var item in Model)
+        {
+            <li>
+			<a asp-action="Index" asp-controller="Category" asp-route-CategoryName="@item.CategoryName.Trim()">@item.CategoryName</a>
+
+            </li>
+        }
+</ul>

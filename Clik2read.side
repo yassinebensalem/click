@@ -1,0 +1,215 @@
+{
+  "id": "18b99c9f-28b8-438a-b16d-28861d7a07a3",
+  "version": "2.0",
+  "name": "Clik2read",
+  "url": "https://test.zone4code.com",
+  "tests": [{
+    "id": "bbb41fd7-6de7-4645-bdaa-642c354fad4b",
+    "name": "User SignIN",
+    "commands": [{
+      "id": "9a1ac402-5501-46ba-82a8-8e71c26a3a10",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8ef8c93d-c0d9-4d30-8937-6b132c806c41",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1552x840",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5049dd11-0602-4f67-bb28-a6509bac1c78",
+      "comment": "",
+      "command": "click",
+      "target": "css=#iconsUL > .nav-item:nth-child(3) > #sidebarNavTogglerLogin",
+      "targets": [
+        ["css=#iconsUL > .nav-item:nth-child(3) > #sidebarNavTogglerLogin", "css:finder"],
+        ["xpath=(//a[@id='sidebarNavTogglerLogin'])[3]", "xpath:attributes"],
+        ["xpath=//ul[@id='iconsUL']/li[3]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, 'javascript:;')])[4]", "xpath:href"],
+        ["xpath=//li[3]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "28af6a9d-c5c1-464b-9319-b2e4ebb125bd",
+      "comment": "",
+      "command": "click",
+      "target": "id=signinEmail",
+      "targets": [
+        ["id=signinEmail", "id"],
+        ["name=email", "name"],
+        ["css=#formLogin #signinEmail", "css:finder"],
+        ["xpath=//input[@id='signinEmail']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c5b20ded-a073-4c3e-b1a7-24ff0885805c",
+      "comment": "",
+      "command": "type",
+      "target": "id=signinEmail",
+      "targets": [
+        ["id=signinEmail", "id"],
+        ["name=email", "name"],
+        ["css=#formLogin #signinEmail", "css:finder"],
+        ["xpath=//input[@id='signinEmail']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": "malek.nasr@novencia.com"
+    }, {
+      "id": "4be27d9c-f57c-4620-8a20-1c9f9137b0b3",
+      "comment": "",
+      "command": "click",
+      "target": "id=passwordToggleLogin",
+      "targets": [
+        ["id=passwordToggleLogin", "id"],
+        ["name=password", "name"],
+        ["css=#passwordToggleLogin", "css:finder"],
+        ["xpath=//input[@id='passwordToggleLogin']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[4]/div/input", "xpath:idRelative"],
+        ["xpath=//div[4]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c72c7cdb-7242-4d49-88a4-22c02aa414ab",
+      "comment": "",
+      "command": "type",
+      "target": "id=passwordToggleLogin",
+      "targets": [
+        ["id=passwordToggleLogin", "id"],
+        ["name=password", "name"],
+        ["css=#passwordToggleLogin", "css:finder"],
+        ["xpath=//input[@id='passwordToggleLogin']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[4]/div/input", "xpath:idRelative"],
+        ["xpath=//div[4]/div/input", "xpath:position"]
+      ],
+      "value": "Azerty123-"
+    }, {
+      "id": "90d09838-e415-4d42-9f48-6be8f6c09d5f",
+      "comment": "",
+      "command": "click",
+      "target": "id=loginBtn",
+      "targets": [
+        ["id=loginBtn", "id"],
+        ["css=#loginBtn", "css:finder"],
+        ["xpath=//button[@id='loginBtn']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[7]/button", "xpath:idRelative"],
+        ["xpath=//div[7]/button", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "6b0772b6-80cc-45d5-8f41-ab42851ff021",
+    "name": "Editor SignIN",
+    "commands": [{
+      "id": "b60fe179-35e9-47d2-ab5f-acc2de266181",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "75384ecf-4387-4604-981f-821b9f2e2b6e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1552x840",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8dee7b07-c127-416a-92ec-ca2e3ae5ba2f",
+      "comment": "",
+      "command": "click",
+      "target": "css=#iconsUL .flaticon-user",
+      "targets": [
+        ["css=#iconsUL .flaticon-user", "css:finder"],
+        ["xpath=(//a[@id='sidebarNavTogglerLogin']/i)[3]", "xpath:idRelative"],
+        ["xpath=//li[3]/a/i", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d3e34d93-f9ea-41d6-9867-f811fe9028d3",
+      "comment": "",
+      "command": "click",
+      "target": "id=signinEmail",
+      "targets": [
+        ["id=signinEmail", "id"],
+        ["name=email", "name"],
+        ["css=#formLogin #signinEmail", "css:finder"],
+        ["xpath=//input[@id='signinEmail']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "013ffea6-2605-466e-b267-bf04ee73b541",
+      "comment": "",
+      "command": "type",
+      "target": "id=signinEmail",
+      "targets": [
+        ["id=signinEmail", "id"],
+        ["name=email", "name"],
+        ["css=#formLogin #signinEmail", "css:finder"],
+        ["xpath=//input[@id='signinEmail']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": "Malek.nasr09@gmail.com"
+    }, {
+      "id": "71b0e691-7d9a-449f-90cb-f2c8fa0512b1",
+      "comment": "",
+      "command": "click",
+      "target": "id=passwordToggleLogin",
+      "targets": [
+        ["id=passwordToggleLogin", "id"],
+        ["name=password", "name"],
+        ["css=#passwordToggleLogin", "css:finder"],
+        ["xpath=//input[@id='passwordToggleLogin']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[4]/div/input", "xpath:idRelative"],
+        ["xpath=//div[4]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b1daf1c4-6eba-456e-935f-72ed9fe38c26",
+      "comment": "",
+      "command": "type",
+      "target": "id=passwordToggleLogin",
+      "targets": [
+        ["id=passwordToggleLogin", "id"],
+        ["name=password", "name"],
+        ["css=#passwordToggleLogin", "css:finder"],
+        ["xpath=//input[@id='passwordToggleLogin']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[4]/div/input", "xpath:idRelative"],
+        ["xpath=//div[4]/div/input", "xpath:position"]
+      ],
+      "value": "Azerty123-"
+    }, {
+      "id": "da069400-e59d-45f4-9cd8-e070a085a6e3",
+      "comment": "",
+      "command": "click",
+      "target": "id=loginBtn",
+      "targets": [
+        ["id=loginBtn", "id"],
+        ["css=#loginBtn", "css:finder"],
+        ["xpath=//button[@id='loginBtn']", "xpath:attributes"],
+        ["xpath=//form[@id='formLogin']/div/div[7]/button", "xpath:idRelative"],
+        ["xpath=//div[7]/button", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "56de6c3b-e5a4-4fe8-b0ef-4c644349a027",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["https://test.zone4code.com/"],
+  "plugins": []
+}

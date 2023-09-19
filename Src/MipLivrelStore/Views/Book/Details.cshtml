@@ -1,0 +1,162 @@
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@using DDD.Application.ViewModels;
+@model BookDetailsVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Mip Livrel";
+}
+
+<div>
+    <main id="main">
+        <div class="product">
+            <div class="container border-bottom mb-8">
+                <div class="row">
+                    <div class="col-md-3 woocommerce-product-gallery woocommerce-product-gallery--with-images images">
+                        <figure class="woocommerce-product-gallery__wrapper pt-6 mb-4">
+                            <img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.Book.CoverPath}")" alt="Image Description" class="mx-auto img-fluid">
+                        </figure>
+                        <ul id="SocialMediaLoginIcons" class="list-inline text-center">  
+                            <li class="list-inline-item">
+                                <a class="h-primary pr-2 font-size-2">
+                                    <span class=" font-weight-medium"><i class="flaticon-share mr-2"></i>@SharedLocalizer["Book.Share"]</span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h-primary font-weight-bold text-gray-600 pr-2 font-size-2" href="#">
+                                    <span class="fab fa-facebook-f btn-icon__inner"></span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h-primary pr-2 font-weight-bold font-size-2 text-gray-600" href="#">
+                                    <span class="fab fa-google btn-icon__inner"></span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h-primary pr-2 font-weight-bold font-size-2 text-gray-600" href="#">
+                                    <span class="fab fa-twitter btn-icon__inner"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-8 pl-0 summary entry-summary border-left">
+                        <div class="space-top-2 px-4 px-xl-7 pb-9">
+                            <h1 class="product_title entry-title font-size-7 mb-3">@Model.Book.Title</h1>
+                            <div class="font-size-2 mb-3">
+                                <span class=" font-weight-medium">@SharedLocalizer["Book.ByAuthor"]</span>
+                                <a href="#" class="font-weight-bold ml-1 text-gray-600">@Model.Book.AuthorName</a>
+                            </div>
+                            <p class="price font-size-22 font-weight-medium mb-3">
+                                <span class="woocommerce-Price-amount amount">
+                                    <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"] </span>@Model.Book.BusinessPrice
+                                </span>
+                            </p>
+                            <div class="font-size-2 mb-4">
+                                <span style="display: inline-block" class=" font-weight-bold mb-2">@SharedLocalizer["Book.AboutBook"]</span><br />
+                                <p>@Model.Book.Description</p>
+                            </div>
+                            <a href="#" name="add-to-cart" value="7145" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt">@Model.Book.CategoryName</a><br />
+                            <span class="font-size-2 font-weight-bold">@SharedLocalizer["Book.BookDetails"]</span>
+                            <ul class="list-group list-group-flush border-bottom mb-4 ">
+                                <li class="list-group-item">@Model.Book.PageNumbers @SharedLocalizer["Book.NumberPages"]</li>
+                                <li class="list-group-item">@SharedLocalizer["Book.PublicationDate"] @Model.Book.PublicationDate.Year </li>
+                                <li class="list-group-item">@SharedLocalizer["Book.ISBN"] @Model.Book.ISBN</li>
+                                <li class="list-group-item">@SharedLocalizer["Book.PublisherName"] <a href="#" class="ml-2 font-weight-bold text-gray-600">@Model.Book.PublisherName</a></li>
+                            </ul>
+                        </div>
+                        <div class="px-4 px-xl-7 py-5 d-flex align-items-center" style="position: absolute; bottom: 0;">
+                            <ul class="list-unstyled nav">
+                                <li class="mr-6 mb-4 mb-md-0">
+                                    <a href="#" class="h-primary"><i class="flaticon-icon-126515 mr-2"></i> @SharedLocalizer["Book.AddToCart"]</a>
+                                </li>
+                                <li class="mr-6 mb-4 mb-md-0">
+                                    <a href="#" class="h-primary"><i class="flaticon-heart mr-2"></i> @SharedLocalizer["Book.AddToWishlist"]</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Nav Classic -->
+            <!-- End Nav Classic -->
+            <section class="space-bottom-3">
+                <div class="container">
+                    <header class="mb-5 d-md-flex justify-content-between align-items-center">
+                        <h2 class="font-size-7 mb-3 mb-md-0">@SharedLocalizer["Book.CustomersAlsoConsidered"]</h2>
+                    </header>
+                    <div class="js-slick-carousel products no-gutters  " style="margin:30px"
+                         data-arrows-classes="u-slick__arrow u-slick__arrow-centered--y"
+                         data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-lg-n10"
+                         data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-lg-n10"
+                         data-slides-show="4"
+                         data-responsive='[{
+                               "breakpoint": 1500,
+                               "settings": {
+                                 "slidesToShow": 4
+                               }
+                            },{
+                               "breakpoint": 1199,
+                               "settings": {
+                                 "slidesToShow": 3
+                               }
+                            }, {
+                               "breakpoint": 992,
+                               "settings": {
+                                 "slidesToShow": 2
+                               }
+                            }, {
+                               "breakpoint": 554,
+                               "settings": {
+                                 "slidesToShow": 2
+                               }
+                            }]'>
+
+
+                        @foreach (var book in @Model.RelatedBooks)
+                        {
+                            @*<partial name="PartialBookDetails" model="book" />*@
+                            <div class="product border-left border-right border-top border-bottom">
+                                <div class="product__inner overflow-hidden p-3 p-md-4d875">
+                                    <div class="woocommerce-LoopProduct-link woocommerce-loop-product__link d-block position-relative">
+                                        <div class="woocommerce-loop-product__thumbnail">
+                                            <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{book.Id}#{book.Title.Replace(" ", "-")}")" class="d-block">
+                                                <img src="~/Template/Image/img02.jpg" class="img-fluid d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" alt="image-description">
+                                            </a>
+                                        </div>
+                                        <div class="woocommerce-loop-product__body product__body pt-3 bg-white">
+                                            <h2 class="woocommerce-loop-product__title product__title h5 text-lh-md mb-0 text-height-2 crop-text-2 h-dark">
+                                                <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{book.Id}#{book.Title.Replace(" ", "-")}")">@book.Title</a>
+                                            </h2>
+                                            <div class="font-size-2  mb-1 text-truncate"><a href="../others/authors-single.html" class="text-gray-700">@book.AuthorName</a></div>
+                                            <div class="price d-flex align-items-center font-weight-medium font-size-3">
+                                                <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span> @book.BusinessPrice </span>
+                                            </div>
+                                        </div>
+                                        <div class="product__hover d-flex align-items-center">
+                                            <a href="../shop/single-product-v3.html" class="text-uppercase text-dark h-dark font-weight-medium mr-auto">
+                                                <span class="product__add-to-cart">@SharedLocalizer["Book.AddToCart"]</span>
+                                                <span class="product__add-to-cart-icon font-size-4"><i class="flaticon-icon-126515"></i></span>
+                                            </a>
+                                            <a href="../shop/single-product-v3.html" class="mr-1 h-p-bg btn btn-outline-primary border-0">
+                                                <i class="flaticon-switch"></i>
+                                            </a>
+                                            <a href="../shop/single-product-v3.html" class="h-p-bg btn btn-outline-primary border-0">
+                                                <i class="flaticon-heart"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

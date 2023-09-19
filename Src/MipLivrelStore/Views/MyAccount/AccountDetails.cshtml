@@ -1,0 +1,504 @@
+﻿@using DDD.Application.ViewModels;
+@using DDD.Infra.CrossCutting.Identity.Models.AccountViewModels;
+@using DDD.Domain.Models;
+@*@model DDD.Infra.CrossCutting.Identity.Models.AccountViewModels.RegisterViewModel*@
+
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
+@using (Html.BeginForm()) ;
+
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+
+
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var appUser = await UserManager.FindByNameAsync(User.Identity.Name);
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+<link rel="stylesheet" href="../../assets/vendor/animate.css/animate.min.css">
+<script src="../../assets/js/components/hs.unfold.js"></script>
+<form id="FormAccount" asp-controller="MyAccount" asp-action="UpdateAccount" class="mb-6 pb-6 mb-lg-8 pb-lg-9" enctype="multipart/form-data">
+    <!--<partial name="ErrorToastComponent" />--> @*class="@(selectedCulture.Name.Equals("ar") ? "mr-auto" : " ml-auto")"*@
+    <!--<partial name="SuccessToastComponent"/>-->
+    <div class="pt-5 pl-md-5 pt-lg-8 pl-lg-9">
+        <h6 class="font-weight-medium font-size-7 ml-lg-1 mb-lg-8 pb-xl-1">@SharedLocalizer["Index.Account Details"]</h6>
+
+        <a asp-controller="MyAccount" asp-action="Index" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt @(selectedCulture.Name.Equals("ar") ? "flaticon-next" : "flaticon-back")">  @SharedLocalizer["Index.GoBack"]</a><br />
+        @*<div id="toast-container" class="toast-top-right"><div class="toast toast-success" role="alert" data-delay="5000" style="display: none; background-color: #51a351; ">@SharedLocalizer["PostJoinRequest.toastSuccess"]</div></div>*@
+        <div id="validationSummaryUpdate" asp-validation-summary="All" class="text-danger validation-summary-valid"></div>
+        <div id="emptyFieldsMsg" class="text-danger validation-summary-valid mb-3" style="display:none;"></div>
+
+        <div class="row">
+            @if (User.IsInRole("Editor"))
+            {
+                <div class="col-md-6 mb-4 ">
+                    <div class="js-form-message">
+                        <label for="exampleFormControlInput4"> @SharedLocalizer["AccountSideBar.RaisonSocial"] *</label>
+                        <input type="text" class="form-control rounded-0" value="@appUser.RaisonSocial" @*placeholder="@SharedLocalizer["AccountSideBar.RaisonSocial"]"*@ name="RaisonSocial" id="exampleFormControlInput4" aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-success-class="u-has-success"
+                               style="color: gray; background-color: white; ">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4 ">
+                    <div class="js-form-message">
+                        <label for="exampleFormControlInput4"> @SharedLocalizer["AccountSideBar.IdFiscal"] *</label>
+                        <input type="text" class="form-control rounded-0" value="@appUser.IdFiscal" @*placeholder="@SharedLocalizer["AccountSideBar.IdFiscal"]"*@ name="IdFiscal" id="exampleFormControlInput4" aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-success-class="u-has-success"
+                               style="color: gray; background-color: white; ">
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="js-form-message">
+
+                        <label for="exampleFormControlInput1">@SharedLocalizer["AccountSideBar.LastName"] *</label>
+
+                        @if (appUser != null)
+                        {
+                            <input type="text" class="form-control rounded-0 pl-3 placeholder-color-3" id="exampleFormControlInput1" name="LastName" value="@appUser.LastName"
+                                   aria-label="Jack Wayley" @*placeholder="@SharedLocalizer["AccountSideBar.LastName"] "*@ required="" data-error-class="u-has-error" data-success-class="u-has-success">
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control rounded-0 pl-3 placeholder-color-3" id="exampleFormControlInput1" name="LastName"
+                                   aria-label="Jack Wayley" @*placeholder="@SharedLocalizer["AccountSideBar.LastName"] "*@ required="" data-error-class="u-has-error" data-success-class="u-has-success">
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="js-form-message">
+                        <label for="exampleFormControlInput2">@SharedLocalizer["AccountSideBar.FirstName"] *</label>
+                        @if (appUser != null)
+                        {
+                            <input type="text" class="form-control rounded-0 pl-3 placeholder-color-3" id="exampleFormControlInput2" name="FirstName" value="@appUser.FirstName" aria-label="Jack Wayley" @*placeholder="@SharedLocalizer["AccountSideBar.FirstName"] "*@ required="" data-error-class="u-has-error" data-success-class="u-has-success">
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control rounded-0 pl-3 placeholder-color-3" id="exampleFormControlInput2" name="FirstName" value="" varia-label="Jack Wayley" @*placeholder="@SharedLocalizer["AccountSideBar.FirstName"] "*@ required="" data-error-class="u-has-error" data-success-class="u-has-success">
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="col-md-12 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput4"> @SharedLocalizer["AccountSideBar.Email"] *</label>
+                    @if (appUser != null)
+                    {
+                        <input type="email" class="form-control rounded-0" value="@appUser.Email" @*placeholder="@SharedLocalizer["AccountSideBar.Email"]"*@ name="Email" id="exampleFormControlInput4" aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-success-class="u-has-success"
+                               style="color: gray; background-color: white; " readonly>
+                    }
+                    else
+                    {
+                        <input type="email" class="form-control rounded-0" value="" @*placeholder="@SharedLocalizer["AccountSideBar.Email"]"*@ name="Email" id="exampleFormControlInput4" aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-success-class="u-has-success">
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput4"> @SharedLocalizer["Account.Address"] </label>
+                    @if (appUser != null)
+                    {
+                        <input type="text" class="form-control rounded-0" value="@(appUser != null? appUser.Address : "")" placeholder="" name="Address" id="exampleFormControlInput4" aria-label="Jack Wayley" data-error-class="u-has-error" data-success-class="u-has-success">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control rounded-0" value="" placeholder="" name="Address" id="exampleFormControlInput4" aria-label="Jack Wayley" data-error-class="u-has-error" data-success-class="u-has-success">
+                    }
+                </div>
+            </div>
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput4"> @SharedLocalizer["Form.Country"] </label>
+                    @await Component.InvokeAsync("Country", appUser.CountryId)
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput8">@SharedLocalizer["Account.Phone"] </label>
+                    <input type="tel" class="form-control rounded-0 " value="@appUser.PhoneNumber"
+                           @*placeholder="ex. +216-**-***-***"*@ pattern="+[0-9]{3}-[0-9]{2}-[0-9]{3}-[0-9]{3}" name="PhoneNumber" id="exampleFormControlInput8" aria-label="Jack Wayley" data-error-class="u-has-error" data-success-class="u-has-success">
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput9">@SharedLocalizer["Account.image"] </label>
+                    <input type="file" id="ImageFileId" value="@(appUser.PhotoPath == null ? null: appUser.PhotoPath)" class="form-control rounded-0" accept="image/png, image/jpg, image/jpeg" @*placeholder="@SharedLocalizer["Account.image"]"*@ name="PhotoFile" aria-label="Jack Wayley" data-error-class="u-has-error" data-success-class="u-has-success">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="pl-md-5 pl-lg-9 space-bottom-2 space-bottom-lg-3">
+        <div class="row">
+            <div class="js-form-message mb-4">
+                <div class="custom-control custom-checkbox d-flex align-items-center  ">
+                    <input type="checkbox" id="ChangePasswordCheckbox" class="custom-control-input arrow-cursor">
+                    <label class="custom-control-label arrow-cursor" for="ChangePasswordCheckbox">
+                        <span class="font-size-2 ">
+                            @SharedLocalizer["Account.Password"]
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="form">
+            <div class="col-md-12 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput5">@SharedLocalizer["Account.CurrentPassword"] *</label>
+                    <input type="password" id="password-field" class="form-control rounded-0" name="Password" reqqui aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-msg="Please enter your password." data-success-class="u-has-success" />
+                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon-view toggle-password" style=" @(selectedCulture.Name.Equals("ar")?"margin-left: 10px":" margin-right: 10px"); cursor: pointer; @(selectedCulture.Name.Equals("ar")?"float: left":"float: right") ; margin-top: -30px; position: relative;"></span>
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput6">@SharedLocalizer["Account.NewPassword"] *</label>
+                    <input type="password" id="newpassword-field" @*data-validation-regexp="^[A-Z]+$"*@ class="form-control rounded-0" name="NewPassword" reqqui aria-label="Jack Wayley" required="" data-error-class="u-has-error" data-msg="Please enter your new password." data-success-class="u-has-success" />
+                    <span toggle="#newpassword-field" class="fa fa-fw fa-eye field-icon-view toggle-password" style=" @(selectedCulture.Name.Equals("ar")?"margin-left: 10px":" margin-right: 10px"); cursor: pointer; @(selectedCulture.Name.Equals("ar")?"float: left":"float: right") ; margin-top: -30px; position: relative;"></span>
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-4 ">
+                <div class="js-form-message ">
+                    <label for="exampleFormControlInput7">@SharedLocalizer["Account.Confirm"] *</label>
+                    <input data-val="true" data-val-equalto="Password and Confirmation Password must match." type="password" id="confirmpassword-field" required="" class="form-control rounded-0" name="ConfirmPassword" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="Please enter your confirmPassword." data-success-class="u-has-success">
+                    <span toggle="#confirmpassword-field" class="fa fa-fw fa-eye field-icon-view toggle-password " style="@(selectedCulture.Name.Equals("ar")?"margin-left: 10px":" margin-right: 10px"); cursor: pointer; @(selectedCulture.Name.Equals("ar")?"float: left":"float: right") ; margin-top: -30px; position: relative;"></span>
+                    <span id='message'></span>
+                    <span id="conpasscheck" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <button type="button" id="myBtn" class="UpdateUserBtn btn btn-dark width-150 ">@SharedLocalizer["Form.Save"]</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.HSCore.components.HSUnfold.init($('[data-unfold-target]'));
+
+        $('.alert-success').hide();
+        $('.alert-danger').hide();
+
+        $('#passcheck').hide();
+        let passwordError = true;
+
+        // Validate Confirm Password
+        $('#conpasscheck').hide();
+        let confirmPasswordError = true;
+        $('#confirmpassword-field').keyup(function () {
+            validateConfirmPassword();
+        });
+
+        $('#newpassword-field').keyup(function () {
+            if ($('#confirmpassword-field').val() != "") {
+                validateConfirmPassword();
+            }
+            else $('#conpasscheck').hide();
+        });
+
+        function validateConfirmPassword() {
+            if ($('#ChangePasswordCheckbox').is(":checked")) {
+                let passwordValue = $('#newpassword-field').val();
+                let confirmPasswordValue = $('#confirmpassword-field').val();
+                ////debugger
+                if (passwordValue == confirmPasswordValue && passwordValue != "") {
+                    $('#conpasscheck').hide();
+                    confirmPasswordError = true;
+                    //$('#myBtn').prop("disabled", false);
+                    $('#myBtn').removeAttr('disabled');
+                    return true;
+                }
+                else {
+                    $('#conpasscheck').show();
+                    $('#conpasscheck').html($('#Error_ConfirmPassword').val());
+                    //$('#myBtn').prop("disabled", true);
+                    $('#myBtn').attr('disabled', 'disabled');
+                    //$('#conpasscheck').css("color", "red");
+                    confirmPasswordError = false;
+                    return false;
+                }
+            }
+        }
+
+        $(".closebtn").on("click", function (event) {
+            $(this).parent().fadeOut();
+            event.preventDefault();
+        });
+
+        $(".closebtnDanger").on("click", function (event) {
+            $(this).parent().fadeOut();
+            event.preventDefault();
+        });
+
+        $('.UpdateUserBtn').click(function () {
+            var $summaryUl = $("#validationSummaryUpdate").find("ul");
+            $summaryUl.empty();
+            $("#emptyFieldsMsg").empty();
+            $("#emptyFieldsMsg").hide();
+            var inputs = $("#FormAccount").find('.form-control');
+            var NbrEmptyFields = 0;
+            for (let field of inputs) {
+                let elt = $(field)[0];
+                $(elt).css('border-color', '');
+                if ($(elt).val() == '') {
+                    $(elt).css('border-color', 'red');
+                    NbrEmptyFields++;
+                }
+            }
+            ////debugger
+            if ($('#ImageFileId').attr('value')) {
+                $('#ImageFileId').css('border-color', '');
+                NbrEmptyFields--;
+            }
+
+            if ($('#ChangePasswordCheckbox').is(":checked")) {
+                ////debugger
+                if ($('#password-field').val() != "") {
+                    NbrEmptyFields--;
+                    $('#password-field').css('border-color', '');
+                }
+                else {
+                    NbrEmptyFields++;
+                    $('#password-field').css('border-color', 'red');
+                }
+
+                if ($('#newpassword-field').val() != "") {
+                    NbrEmptyFields--;
+                    $('#newpassword-field').css('border-color', '');
+                }
+                else {
+                    NbrEmptyFields++;
+                    $('#newpassword-field').css('border-color', 'red');
+                }
+
+                if ($('#confirmpassword-field').val() != "") {
+                    NbrEmptyFields--;
+                    $('#confirmpassword-field').css('border-color', '');
+                }
+                else {
+                    NbrEmptyFields++;
+                    $('#confirmpassword-field').css('border-color', 'red');
+                }
+            }
+            else {
+                $('#password-field').css('border-color', '');
+                $('#newpassword-field').css('border-color', '');
+                $('#confirmpassword-field').css('border-color', '');
+                NbrEmptyFields -= 3;
+            }
+
+            if (NbrEmptyFields > 0) {
+                $summaryUl.append("<li> " + $('#EmptyFields').val() + "</li>");
+                $summaryUl.show();
+                $("html, body").animate({ scrollTop: 0 }, 1000);
+            }
+            else {
+                $summaryUl.empty();
+                $('#FormAccount').submit();
+            }
+        });
+
+        $('#FormAccount').submit(function (e) {
+            e.preventDefault();
+            $(this).validate();
+            //validatePassword();
+            validateConfirmPassword();
+            if ($('#ChangePasswordCheckbox').is(":checked")) {
+                if ((confirmPasswordError == true) /*&& (passwordError == true)*/) {
+                    //  $('.alert-success').show(); //debugger;
+                    //return true;
+                }
+                else {
+                    //return false;
+                    $("#error-toast-message").text("Error related to passwords !");
+                    $("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+                        $(".md-toast-error").slideUp(500);
+                    });
+                    return
+                }
+            }
+            var form = $(this);
+            var formData = new FormData($(this)[0]);
+            ////debugger
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'put',
+                datatype: 'json',
+                contentType: false,
+                data: formData,
+                async: true,
+                cache: false,
+                processData: false,
+
+                success: function (data) {
+                    var $summaryUl = $("#validationSummaryUpdate").find("ul");
+                    $summaryUl.empty();
+
+                    $("#sidebarNavTogglerMyAccount").load(" #sidebarNavTogglerMyAccount > *");
+                    $("#sidebarNavTogglerMyAccountMobile").load(" #sidebarNavTogglerMyAccountMobile > *");
+                    $("#userInfosPanel").load(" #userInfosPanel > *");
+                    $("#userInfosPanel2").load(" #userInfosPanel2 > *");
+
+                    //debugger
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+
+                    $("#md-toast-success-Id").fadeTo(2000, 500).slideUp(2000, function () {
+                        $(".md-toast-success").slideUp(500);
+                    });
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    //debugger
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    var $summaryUl = $("#validationSummaryUpdate").find("ul");
+                    $summaryUl.empty();
+                    if (jqXhr.responseJSON.errors.length > 0) {
+                        var listErroroMessages = new Array();
+                        $.each(jqXhr.responseJSON.errors,
+                            function (a, b) {
+                                listErroroMessages.push(b);
+                            });
+                        translateErrorMessages(listErroroMessages, $summaryUl);
+                        return
+                    }
+                    $("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+                        $(".md-toast-error").slideUp(500);
+                    });
+                }
+            });
+        })
+
+        $(".toggle-password").click(function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+
+        $('#password-field').attr('required', false);
+        $('#newpassword-field').attr('required', false);
+        $('#confirmpassword-field').attr('required', false);
+        $("#form").hide();
+
+        $("#ChangePasswordCheckbox").click(function (event) {
+            if ($(this).is(":checked")) {
+                //debugger
+
+                $("#form").show();
+                $('#myBtn').attr('disabled', 'disabled');
+
+                $('#password-field').attr('required', true);
+                $('#newpassword-field').attr('required', true);
+                $('#confirmpassword-field').attr('required', true);
+            }
+
+            else {
+                //debugger
+
+                $("#form").hide();
+                $('#myBtn').removeAttr('disabled');
+                $('#password-field').attr('required', false);
+                $('#newpassword-field').attr('required', false);
+                $('#confirmpassword-field').attr('required', false);
+            }
+
+        });
+
+        $('#closeBtnId').click((function (e) {
+            e.preventDefault();
+            //debugger
+            $('.alert-success').hide();
+        }));
+
+        function translateErrorMessages(listErroroMessages, $summaryUl) {
+            //var $summaryUl = $("#validationSummaryLogin").find("ul");
+            var i;
+            for (i = 0; i < listErroroMessages.length; ++i) {
+                var value = listErroroMessages[i];
+                switch (value) {
+                    case "UserNotFound": {
+                        $summaryUl.append("<li> " + $('#UserNotFound').val() + "</li>");
+                        break;
+                    }
+                    case "EmailNotConfirmed": {
+                        $summaryUl.append("<li> " + $('#EmailNotConfirmed').val() + "</li>");
+                        break;
+                    }
+                    case "PasswordRequiresDigit": {
+                        $summaryUl.append("<li> " + $('#PasswordRequiresDigit').val() + "</li>");
+                        break;
+                    }
+                    case "PasswordRequiresLower": {
+                        $summaryUl.append("<li> " + $('#PasswordRequiresLower').val() + "</li>");
+                        break;
+                    }
+                    case "PasswordRequiresUpper": {
+                        $summaryUl.append("<li> " + $('#PasswordRequiresUpper').val() + "</li>");
+                        break;
+                    }
+                    case "PasswordRequiresNonAlphanumeric": {
+                        $summaryUl.append("<li> " + $('#PasswordRequiresNonAlphanumeric').val() + "</li>");
+                        break;
+                    }
+                    case "DuplicateUserName": {
+                        $summaryUl.append("<li> " + $('#DuplicateUserName').val() + "</li>");
+                        break;
+                    }
+                    case "Error_Email": {
+                        $summaryUl.append("<li> " + $('#WrongEmailFormat').val() + "</li>");
+                        break;
+                    }
+                    case "Error_ConfirmPassword": {
+                        $summaryUl.append("<li> " + $('#Error_ConfirmPassword').val() + "</li>");
+                        break;
+                    }
+                    case "Error_Password": {
+                        $summaryUl.append("<li> " + $('#Error_Password').val() + "</li>");
+                        break;
+                    }
+                    case "PasswordTooShort": {
+                        $summaryUl.append("<li> " + $('#Error_Password').val() + "</li>");
+                        break;
+                    }
+                    case "WrongPassword": {
+                        $summaryUl.append("<li> " + $('#WrongPassword').val() + "</li>");
+                        break;
+                    }
+                    default: {
+                        $summaryUl.append("<li> " + "Unknown error" + "</li>");
+                        break;
+                    }
+                }
+            }
+        }
+
+    });
+
+</script>

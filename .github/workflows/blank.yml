@@ -1,0 +1,202 @@
+name: Clik2read
+
+on:
+  push:
+    branches:
+      - master
+      - maine
+      - 'feature/devops'
+      - develop
+  pull_request:
+    branches:
+      - master
+      - main
+      - 'feature/devops'
+
+jobs:
+ build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout feature/devops branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.x'
+      - name: Build
+        run: |
+            dotnet restore "Src/MipLivrelStore/MipLivrelStore.csproj"
+            cd Src/MipLivrelStore
+          
+            dotnet build "MipLivrelStore.csproj" -c Release 
+ test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '19'
+    - name: Install Selenium IDE Runner
+      run: npm install -g selenium-side-runner
+    - name: Install Chrome and ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget curl unzip
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo dpkg -i google-chrome-stable_current_amd64.deb
+        LATEST_CHROMEDRIVER=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+        wget "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER}/chromedriver_linux64.zip"
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+
+    
+    - name: install chrome
+      run : npm install -g chromedriver
+    - name: Run Selenium IDE test
+      run: selenium-side-runner -c "browserName=chrome"  Clik2read.side || true
+           selenium-side-runner -c "goog:chromeOptions.args=[--headless,--nogpu] browserName=chrome" Clik2read.side || true
+
+ 
+
+ 
+    
+ modifyHelmChart:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          repository: yassinebensalem/helm
+          ref: main
+          token: ${{ secrets.HELMM }}
+
+      - name: Modify Helm Chart
+        run: |
+          sed -i "s/tag:.*/tag: ${{ github.sha }}/g" helmchart/values-test.yaml
+          
+
+
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "yassine.bensalem@esprit.tn"
+          git config --local user.name "yassinebensalem"
+          git add .
+          git commit -m "Update Helm chart with XYZ changes ${{ github.sha }}"
+          git push origin main   
+
+ build-and-push-private:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERP_USERNAME }}
+          password: ${{ secrets.DOCKERP_PASSWORD }}
+          registry: https://registry.zone4code.com
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          ref: 'develop'
+          context: .
+          push: true
+          tags: registry.zone4code.com/your-imagee:${{ github.sha }} 
+ trivy-scan-image:
+    
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
+
+      - name: Log into Private Docker Registry
+        run: docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} docker.io
+      
+      
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/yassinedockeer/my-docker-image:latest'
+          
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          format: 'json'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.json'
+          severity: 'CRITICAL,HIGH'
+          
+      - name: Upload Trivy scan results
+        uses: actions/upload-artifact@v2
+        with:
+             name: trivy-report
+             path: trivy-results.json  # Update with the correct path to your report file
+
+
+          
+
+ build-and-push-to-hub:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
+      - name: Build Docker image front for releases
+        run: |
+          docker build -t my-docker-image .
+          docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} docker.io
+          docker tag my-docker-image docker.io/yassinedockeer/my-docker-image:latest
+          docker push docker.io/yassinedockeer/my-docker-image:latest
+      - name: Build Docker image back for releases
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Src/MipLivrelStore/ClientApp
+          dockerfile: ./Src/MipLivrelStore/ClientApp/Dockerfile
+          tags: docker.io/yassinedockeer/backoffice:latest
+          push: true
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+ deploy:
+  needs: build-and-push-to-hub
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Connect to SSH server
+      uses: appleboy/ssh-action@master
+      with:
+        host: 137.74.94.71 
+        username: user
+        key: ${{ secrets.SSH }}
+        port: 7830
+        script: |
+          # Commands to execute on the server after logging in
+          echo "Hello, SSH server!"
+         
+          ls 
+          
+          cd last/microk8s-hetzner-deployment/whoami
+          ls  
+           kubectl rollout restart deployment/whoami
+           kubectl get deployment whoami
+            kubectl rollout restart deployment/back  
+           kubectl get deployment back
+           
+

@@ -1,0 +1,245 @@
+﻿@using DDD.Infra.CrossCutting.Identity.Models.AccountViewModels
+
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+@model ExternalLoginViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+<form id="ExternalLoginForm" >
+    <main id="content">
+        <div>
+            <div class="row mb-3 my-7">
+                <div class="col-md-12">
+                    <div class="row mb-3 justify-content-center mt-3 text-center">
+						<div class="col-md-6 ">
+							<div class="alert alert-success" role="alert">
+								<h4 class="alert-heading">@SharedLocalizer["Register.RegisterConfirmation"]</h4>
+								<hr>
+								<p class="mb-0">@SharedLocalizer["Register.RegisterAccomplishment"]</p>
+							</div>
+						</div>
+                    </div>
+                    <div class="row mb-3 justify-content-center mt-3">
+                        <div class="col-md-4 ">
+                            <div id="validationSummaryUpdate_ExtLog" asp-validation-summary="All" class="text-danger validation-summary-valid"></div>
+                            <div id="emptyFieldsMsg" class="text-danger validation-summary-valid mb-3" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!--<div class="row mb-3 justify-content-center mt-3">
+                        <div class="col-md-4 ">
+                            <ul class="text-info">
+                                <li>
+                                    @SharedLocalizer["AccountSideBar.PasswordRequiresDigit"]
+                                </li>
+                                <li>
+                                    @SharedLocalizer["AccountSideBar.PasswordRequiresLower"]
+                                </li>
+                                <li>
+                                    @SharedLocalizer["AccountSideBar.PasswordRequiresUpper"]
+                                </li>
+                                <li>
+                                    @SharedLocalizer["AccountSideBar.PasswordRequiresNonAlphanumeric"]
+                                </li>
+                                <li>
+                                    @SharedLocalizer["AccountSideBar.Error_Password"]
+                                </li>
+                            </ul>
+                        </div>
+                    </div>-->
+                    <div class="row mb-3 justify-content-center mt-3">
+                        <div class="col-md-4 ">
+                            <div class="js-form-message js-focus-state">
+                                <label asp-for="Email" class="form-label">Email*</label>
+                                <input asp-for="Email" class="form-control rounded-0 height-4 px-4"  />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center " style="display:none">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control rounded-0 height-4 px-4" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center " style="display:none">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control rounded-0 height-4 px-4" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center " style="display:none">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label asp-for="PhotoPath" class="form-label"></label>
+                                <input asp-for="PhotoPath" class="form-control rounded-0 height-4 px-4" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center my-4">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" id="myBtn_ExtLog" onClick="externalLoginConfirmation()" class="UpdateUserBtn btn btn-dark width-150 rounded-0 btn-wide font-weight-medium" >@SharedLocalizer["Authenticated.Continue"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</form>
+
+
+
+
+<script>
+	function externalLoginConfirmation(){
+		var data = $("#ExternalLoginForm").serialize();
+		$.ajax({
+			type: 'POST',
+			url: '/MyAccount/ExternalLoginConfirmation',
+			contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // when we use .serialize() this generates the data in query string format. this needs the default contentType (default content type is: contentType: 'application/x-www-form-urlencoded; charset=UTF-8') so it is optional, you can remove it
+			data: data,
+			success: function (response) {
+				console.log(JSON.stringify(response))
+				alert("resp1" +response)
+				if (response.result != 'undefined' && response.result != null && response.result == 'registrationSuccess') {
+				window.location.pathname = response.url;
+				}
+			},
+			error: function (response) {
+				alert("resp1" + response)
+
+				if (response.responseJSON.result != 'undefined' && response.responseJSON.result != null && response.responseJSON.result == 'infoError') {
+					console.log(JSON.stringify(response))
+					console.log(response.responseJSON.result)
+					window.location.pathname = response.responseJSON.url;
+				}
+				
+			}
+		})
+	}
+</script>
+
+
+@*@section Scripts{
+        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    }*@
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+
+            // Validate Confirm Password
+            $('#conpasscheck_ExtLog').hide();
+            $('#confirmpassword-field_ExtLog').keyup(function () {
+                //debugger
+                validateConfirmPassword();
+                aler("working");
+            });
+
+            function validateConfirmPassword() {
+                    let passwordValue = $('#newpassword-field_ExtLog').val();
+                    let confirmPasswordValue = $('#confirmpassword-field_ExtLog').val();
+                    //debugger
+                    if (passwordValue == confirmPasswordValue && passwordValue != "") {
+                        $('#conpasscheck_ExtLog').hide();
+                        $('#myBtn_ExtLog').removeAttr('disabled');
+                        return true;
+                    }
+                    else {
+                        $('#conpasscheck_ExtLog').show();
+                        $('#conpasscheck_ExtLog').html($('#Error_ConfirmPassword').val());
+                        $('#myBtn_ExtLog').attr('disabled', 'disabled');
+                        return false;
+                    }
+             }
+        });
+    </script>*@
+
+<!--<form asp-controller="MyAccount" asp-action="ExternalLoginConfirmation" method="post" role="form" asp-route-returnurl="@ViewData["ReturnUrl"]">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row mb-3">
+        <h3> @ViewData["ProviderDisplayName"] </h3>
+        <p>
+            @SharedLocalizer["Authenticated.SuccessfullyAuthenticatedPart2"]
+        </p>
+        <div class="col-md-12">
+            <div class="row mb-3 justify-content-center ">
+                <div class="col-md-4 ">
+                    <div class="js-form-message js-focus-state">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control rounded-0 height-4 px-4" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4 ">
+                    <div class="js-form-message js-focus-state">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control rounded-0 height-4 px-4" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4 ">
+                    <div class="js-form-message js-focus-state">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control rounded-0 height-4 px-4" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4 ">
+                    <div class="js-form-message js-focus-state">
+                        <label asp-for="PhotoPath" class="form-label"></label>
+                        <input asp-for="PhotoPath" class="form-control rounded-0 height-4 px-4" />
+                    </div>
+                </div>
+                <div class="row mb-3 justify-content-center">
+                    <div class="col-md-4" align="right">
+                        <div class="ml">
+                            <button type="submit" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Register.RegisterConfirmation"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+<!--<div class="form-group">
+        <label asp-for="Email" class="col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="Email" class="form-control" readonly />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group" style="display:none">
+        <label asp-for="FirstName" class="col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="FirstName" class="form-control" readonly />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group" style="display:none">
+        <label asp-for="LastName" class="col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="LastName" class="form-control" readonly />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group" style="display:none">
+        <label asp-for="PhotoPath" class="col-md-2"></label>
+        <div class="col-md-10">
+            <input asp-for="PhotoPath" class="form-control" />
+            <span asp-validation-for="PhotoPath" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success form-control">@SharedLocalizer["Register.RegisterConfirmation"]</button>
+        </div>
+    </div>-->

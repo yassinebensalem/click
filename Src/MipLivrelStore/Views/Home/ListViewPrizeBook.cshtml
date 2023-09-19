@@ -1,0 +1,114 @@
+﻿@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using DDD.Application.ViewModels;
+@model List<BookViewModel>
+
+@{
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+
+
+
+@foreach (var book in Model)
+{
+	<li data-prize-name="@book.CategoryName" data-author-name="@book.AuthorName" data-language-name="@book.LanguageName">
+		@*<li class="product product__list" data-category-name="@book.CategoryName" data-author-name="@book.AuthorName" data-language-name="@book.LanguageName">*@
+		<div class="product__inner overflow-hidden p-1 p-md-4d875">
+			<div class="woocommerce-LoopProduct-link woocommerce-loop-product__link row position-relative">
+				<div class="col-md-auto woocommerce-loop-product__thumbnail mb-3 mb-md-0">
+					<a asp-action="Details" asp-controller="Prized" asp-route-id="@($" {book.Title.Replace(" "," -")}#{book.Id}")" class="d-block mb-2">
+						<img loading="lazy" src="https://miplivrelstorage.blob.core.windows.net/bookscover/63439190-d2c8-465e-9e1a-d2b89d9eff72.PNG" width="180" height="180" class="img-fluid single-book  d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" alt="Book Cover">
+					</a>
+				</div>
+				<div class="col-md woocommerce-loop-product__body product__body pt-3 bg-white mb-3 mb-md-0">
+					<div class="text-uppercase font-size-1 mb-1 text-truncate"> </div>
+					<h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 crop-text-2 h-dark">
+						<a asp-action="Details" asp-controller="Prized" asp-route-id="@($"{book.Title.Replace(" ", "-")}#{book.Id}")" tabindex="0">@book.Title</a>
+					</h2>
+					<div class="font-size-2  mb-2 text-truncate"><a asp-controller="Author" asp-action="GetAuthorDetails" asp-route-authorInfos="@($"{book.AuthorId}#{book.AuthorName.Replace(" ","-")}")" class="text-gray-700">@book.AuthorName</a></div>
+					<p class="font-size-2 mb-2 crop-text-2">@book.Description</p>
+					<div class="price d-flex align-items-center font-weight-medium font-size-3">
+						@if (@book.Price == 0)
+						{
+							<a class="banner_btn btn btn-primary-green text-white d-flex align-items-center justify-content-center  rounded-0 transition-3d-hover font-size-2  height-38 width-60" href="../shop/v5.html">@SharedLocalizer["Book.Free"]</a>
+
+						}
+						else
+						{
+							<span class="woocommerce-Price-amount amount">@book.Price <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span></span>
+
+						}
+
+					</div>
+				</div>
+				<div class="col-md-auto d-flex align-items-center" style="justify-content: center;">
+					@if (SignInManager.IsSignedIn(User))
+					{
+						<a value="@book.Id" data-cart="@book.inCart" class="addToCartLink_LV text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")">
+							<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary-green border-0" style="@(book.inCart ? "background-color: #f75454" : "")">
+								<i class="flaticon-icon-126515 text-black" style="display: inline-block;"></i>
+							</span>
+						</a>
+					}
+					else
+					{
+						<a href="javascript:;" role="button"
+				   class="text-black text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+							<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary-green border-0">
+								<i class="flaticon-icon-126515 text-black" style="display: inline-block;"></i>
+							</span>
+						</a>
+					}
+					@if (SignInManager.IsSignedIn(User))
+					{
+						<a value="@book.Id" data-favorite="@book.isFavorite" style="@(book.isFavorite ? "background-color: #f75454" : "")" class="addToFavoriteLink_LV h-p-bg btn btn-outline-primary-green border-0">
+							<i id="addToFavoriteIcon" class="flaticon-heart"></i>
+						</a>
+					}
+					else
+					{
+						<a href="javascript:;" role="button" class="text-black h-p-bg btn btn-outline-primary-green border-0"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+							<i class="flaticon-heart"></i>
+						</a>
+					}
+				</div>
+			</div>
+		</div>
+	</li>
+
+}

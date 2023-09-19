@@ -1,0 +1,17 @@
+﻿@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Localization
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<div id="toast-container" class="badge-success font-weight-bold @(selectedCulture.Name.Equals("ar") ? "toast-top-left" : " toast-top-right") " style="top: 170px;">
+    <div id="md-toast-success-Id" role="alert" data-delay="5000" class="toast md-toast-success row  w-auto px-2 m-0 text-black"
+         style="display: none; opacity: 500;">
+        <i class="flaticon-tick m-2"></i>
+        <div id="success-toast-message" class="md-toast-message p-2">
+            @SharedLocalizer["PostJoinRequest.toastSuccess"]
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using DDD.Application.ViewModels;
+@model PrizeDetailsVM
+
+
+
+
+
+    @foreach (var book in @Model.EditionBooks)
+    { 
+        <li data-prize-name="@book.BookListVM" data-author-name="@book.AuthorName" data-language-name="@book.LanguageName">
+            <partial name="PartialSingleBook" model="book" />
+        </li>
+    }
+
+
+

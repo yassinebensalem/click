@@ -1,0 +1,393 @@
+﻿@using DDD.Application.ViewModels;
+@using DDD.Infra.CrossCutting.Identity.Models.AccountViewModels;
+@using DDD.Domain.Models;
+
+
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+@*<partial name="AddAuthor" />*@
+
+
+<div class="mb-6 pb-6 mb-lg-8 pb-lg-9">
+	<form id="CreateForm" class="pt-5 pl-md-5 pt-lg-8 pl-lg-9" asp-controller="MyAccount" asp-action="AddBook" enctype="multipart/form-data">
+
+		<div class="font-size-5 mb-6">@SharedLocalizer["Index.Add Book"]</div>
+
+		<div class="d-flex row">
+			<div class="col-md-3 pl-3">
+				<a asp-action="BookList" asp-controller="MyAccount" class="goBackBtn btn btn-dark border-0 rounded-1 p-2 mb-5 single_add_to_cart_button button alt @(selectedCulture.Name.Equals("ar") ? "flaticon-next" : "flaticon-back")">  @SharedLocalizer["Index.GoBack"]</a>
+			</div>
+		</div>
+		<div class="row">
+			<div id="validationSummaryCreate" asp-validation-summary="All" class="text-danger validation-summary-valid"></div>
+			<div id="emptyFieldsMsg" class="text-danger validation-summary-valid mb-3" style="display:none;"></div>
+			<div class="col-md-12 mb-4">
+				<div class="js-form-message">
+					<label for="InputNomlivre">@SharedLocalizer["Form.NomLivre"] *</label>
+					<input type="text" class="form-control rounded-0 pl-3 placeholder-color-3" required="" id="InputNomlivre"
+						   name="Title" aria-label="Jack Wayley" data-error-class="u-has-error"
+						   data-msg="@SharedLocalizer["Valdationmsg.ChampNomlivre"] *" data-success-class="u-has-success">
+				</div>
+			</div>
+
+			<div class="col-md-12 mb-4">
+				<div class="js-form-message">
+
+					<label for="InputDescription">@SharedLocalizer["Book.BookDescription"]*</label>
+					<textarea name="Description" type="text" rows="3" size="30" class="form-control rounded-0 pl-3 placeholder-color-3"
+							  id="InputDescription" required="" data-error-class="u-has-error" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationDescription"] *" data-success-class="u-has-success"></textarea>
+				</div>
+			</div>
+
+
+			<div class="col-md-6 mb-4">
+				<div class="js-form-message">
+					<label for="InputPublicationdate">@SharedLocalizer["Form.Date"] *</label>
+					<input type="date" class="form-control rounded-0 " name="PublicationDate" id="InputPublicationdate" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.ChampDate"] *" data-success-class="u-has-success">
+				</div>
+
+			</div>
+			<div class="col-md-6 mb-4 ">
+				<div class="js-form-message">
+					<label for="InputIsbn">@SharedLocalizer["Book.ISBN"] *</label>
+					<input type="text" class="form-control rounded-0 " name="ISBN" id="InputIsbn" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.ChampISBN"] *" data-success-class="u-has-success">
+
+				</div>
+			</div>
+			<div class="col-md-6 mb-4">
+				<div class="js-form-message">
+
+					<label>@SharedLocalizer["Form.NbPages"] *</label>
+					<input type="text" oninput="this.value = this.value.replace(/\D/gm, '');" id="InputNbpage" class="form-control rounded-0" name="PageNumbers" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.ChampNbPage"] *" data-success-class="u-has-success">
+
+				</div>
+			</div>
+			<div class="col-md-6 mb-4">
+				<div class="js-form-message">
+					<label for="Inputprix">@SharedLocalizer["Form.Prix"] *</label>
+					<input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control rounded-0 " name="Price" id="Inputprix" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.Champprix"] *" data-success-class="u-has-success">
+
+				</div>
+			</div>
+
+			<div class="col-md-6 mb-4">
+				@*<div class="input-group-prepend mr-0 d-xl-block">*@
+
+				<div class="js-form-message">
+					<label for="exampleFormControlInput2">@SharedLocalizer["Menu.Categories"] *</label>
+					<select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark "
+							required="" data-msg="@SharedLocalizer["Valdationmsg.ChampCategorie"] *" id="inputGroupSelect2" name="CategoryId">
+
+						@foreach (var item in ViewBag.categories)
+						{
+								<option value="@item.Id">@item.CategoryName</option>
+						}
+
+					</select>
+					@*</div>*@
+
+				</div>
+			</div>
+
+			<div class="col-md-4 mb-4">
+				<div class="js-form-message">
+					@*<div class="input-group-prepend mr-0 d-xl-block">*@
+
+					<label for="Inputauteur">@SharedLocalizer["Slideshow.Auteur"] *</label>
+					<select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark" id="Inputauteur" name="AuthorId"
+							required="" data-msg="@SharedLocalizer["Valdationmsg.Champauteur"] *">
+
+
+						@foreach (var item in ViewBag.allAuthors)
+						{
+								<option value="@item.Id">@item.FirstName @item.LastName</option>
+						}
+
+					</select>
+					@*</div>*@
+				</div>
+
+
+			</div>
+
+			<div class="col-md-2 text-right  p-3">
+				<div class="col-md ml-3 p-3">
+					<a asp-controller="MyAccount" asp-action="AddAuthor" class="btn btn-dark border-1 rounded-1 p-2" data-toggle="modal" data-target="#formauthorsId"><i class="far fa-user pr-2" aria-hidden="true"></i> @SharedLocalizer["Auteur.PostAuteur"] </a>
+				</div>
+			</div>
+
+			<div class="col-md-6 mb-4">
+				<div class="js-form-message">
+					@*<div class="input-group-prepend mr-0  d-xl-block">*@
+
+					<label for="Inputlangue">@SharedLocalizer["Form.Langues"] *</label>
+
+					<select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark" id="inputlangue" name="LanguageId" type="int"
+							required="" data-msg="@SharedLocalizer["Valdationmsg.Champlangue"] *">
+						@foreach (var item in ViewBag.language)
+
+						{
+								<option value="@item.Id">@item.Name</option>
+						}
+
+					</select>
+				</div>
+			</div>
+			@*</div>*@
+			<div class="col-md-6 mb-4">
+				<div class="js-form-message">
+					@*<div class="input-group-prepend mr-0  d-xl-block">  *@
+					<label for="Inputcountry">@SharedLocalizer["Form.Country"] *</label>
+					@await Component.InvokeAsync("Country")
+				</div>
+			</div>
+			<div class="col-md-6 mb-2">
+				<div class="js-form-message">
+					<label for="Inputcoverpath">@SharedLocalizer["Form.CoverPath"] *</label>
+					<input type="file" class="form-control rounded-0" name="CoverFile" id="Inputcoverpath" accept="image/png, image/jpg, image/jpeg" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.Champcoverpath"] * " data-success-class="u-has-success"
+						   required="" value="Upload">
+					<span id="validateCoverSize" style="color:red"></span>
+
+				</div>
+			</div>
+
+
+			<div class="col-md-6 mb-2">
+				<div class="js-form-message">
+					<label for="InputPdf">@SharedLocalizer["Form.PDFPath"] *</label>
+					<input type="file" class="form-control rounded-0" name="PDFFile" id="InputPdf" accept="application/pdf" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Valdationmsg.ChampPdfpath"] *" data-success-class="u-has-success"
+						   required="">
+					<span id="validatePDFSize" style="color:red"></span>
+
+				</div>
+			</div>
+
+			@*<div class="col-md-12 ">
+                    <div class="js-form-message">
+                        <input type="checkbox" id="ChangePasswordCheckbox" name="" class="js-animation-link text-dark font-size-2 t-d-u link-muted font-weight-medium " style="cursor: pointer;">
+                        <label for="checkboxOneInput"> Valider </label>
+                    </div>
+                </div>*@
+
+			<div class="col-md-12">
+				<button type="button" class="CreateBookBtn btn btn-dark width-150">@SharedLocalizer["Form.Save"]</button>
+			</div>
+		</div>
+	</form>
+
+
+
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+	$("#Inputcoverpath").change(function(){
+		var coverSize = document.getElementById('Inputcoverpath').files[0].size;
+				if (coverSize > 5 * 1024 * 1024)
+				{
+						document.getElementById('validateCoverSize').innerHTML = 'La taille de la couverture ne doit pas dépasser 5MB'
+				}else{
+					document.getElementById('validateCoverSize').innerHTML =''
+				}
+	});
+		$("#InputPdf").change(function(){
+		var coverSize = document.getElementById('InputPdf').files[0].size;
+				if (coverSize > 20 * 1024 * 1024)
+				{
+						document.getElementById('validatePDFSize').innerHTML = 'La taille du livre ne doit pas dépasser 20MB'
+				}else{
+					document.getElementById('validatePDFSize').innerHTML =''
+				}
+	});
+		$('.CreateBookBtn').click(function () {
+			
+			if (typeof FileReader !== "undefined") {
+				var coverSize = document.getElementById('Inputcoverpath').files[0].size;
+				if (coverSize > 5 * 1024 * 1024)
+				{
+						document.getElementById('validateCoverSize').innerHTML = 'La taille de la couverture ne doit pas dépasser 5MB'
+				}
+				var Filesize = document.getElementById('InputPdf').files[0].size;
+				if (Filesize > 20 * 1024 * 1024)
+				{
+						document.getElementById('validatePDFSize').innerHTML = 'La taille du livre ne doit pas dépasser 20MB'
+				}
+				if(coverSize > 5 * 1024 * 1024 || Filesize > 20 * 1024 * 1024) return;
+			}
+			document.getElementById('validateCoverSize').innerHTML ='';
+			document.getElementById('validatePDFSize').innerHTML ='';
+			var $summaryUl = $("#validationSummaryCreate").find("ul");
+			$summaryUl.empty();
+			////debugger
+			//check textarea size
+			if ($("#InputDescription").val().length < 30) {
+				$("#InputDescription").css('border-color', 'red');
+				$("html, body").animate({ scrollTop: 0 }, 1000);
+				$summaryUl.append($('#DescriptionMinimumLength').val());
+				$summaryUl.show();
+				return
+			}
+
+			$summaryUl.empty();
+			$("#emptyFieldsMsg").empty();
+			$("#emptyFieldsMsg").hide();
+			var inputs = $("#CreateForm").find('.form-control');
+			var NbrEmptyFields = 0;
+			for (let field of inputs) {
+				let elt = $(field)[0];
+				$(elt).css('border-color', '');
+				if ($(elt).val() == '') {
+					$(elt).css('border-color', 'red');
+					NbrEmptyFields++;
+				}
+			}
+			//debugger
+			if (NbrEmptyFields > 0) {
+				$summaryUl.append("<li> " + $('#EmptyFields').val() + "</li>");
+				$summaryUl.show();
+				$("html, body").animate({ scrollTop: 0 }, 1000);
+			}
+			else {
+
+				$summaryUl.empty();
+				$('#CreateForm').submit();
+			}
+		});
+
+		$('#CreateForm').submit(function (e) {
+			e.preventDefault();
+			var form = $(this);
+			var formData = new FormData($(this)[0]);
+
+			//debugger;
+			console.log(formData)
+			$.ajax({
+				url: form.attr('action'),
+				type: 'post',
+				datatype: 'json',
+				contentType: false,
+				data: formData,
+				async: true,
+				cache: false,
+				processData: false,
+				success: function (data, textStatus, jQxhr) {
+					//debugger;
+					var $summaryUl = $("#validationSummaryCreate").find("ul");
+					$summaryUl.empty();
+					$('#CreateForm input').not(':input[type=hidden]').val('');
+					$('#CreateForm textarea').val('');
+
+					$("html, body").animate({ scrollTop: 0 }, 1000);
+					//show toast
+					$("#md-toast-success-Id").fadeTo(2000, 500).slideUp(2000, function () {
+						$(".md-toast-success").slideUp(500);
+					});
+				},
+				error: function (jqXhr, textStatus, errorThrown) {
+					//debugger;
+					$("html, body").animate({ scrollTop: 0 }, 1000);
+					var $summaryUl = $("#validationSummaryCreate").find("ul");
+					$summaryUl.empty();
+
+					$("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+						$(".md-toast-error").slideUp(500);
+					});
+				}
+			});
+		})
+
+		$("a.goBackBtn").click(function (e) {
+			e.preventDefault();
+			$("#pills-myaccount-body").load($(this).attr('href'));
+		});
+
+		$("#formauthorsId").validate({
+			// in 'rules' user have to specify all the constraints for respective fields
+
+			rules: {
+				Firstname: {
+					required: true
+				},
+				Lastname: {
+					required: true
+
+				}
+			}
+		});
+
+		$('#formauthorsId').submit(function (e) {
+			e.preventDefault();
+			var form = $(this);
+			var firstname = form.find('input[name=FirstName]').val();
+			var lastname = form.find('input[name=LastName]').val();
+
+			//debugger
+
+			if (firstname == '' || lastname == '') {
+				form.valid();
+				$("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+					$("#md-toast-error-Id").slideUp(500);
+				});
+				return false;
+			}
+
+			var formData = new FormData($(this)[0]);
+
+			$.ajax({
+				url: form.attr('action'),
+				type: 'post',
+				datatype: 'json',
+				contentType: false,
+				data: formData,
+				async: true,
+				cache: false,
+				processData: false,
+				success: function (data, textStatus, jQxhr) {
+					//debugger;
+
+					$('#formauthorsId input').not(':input[type=hidden]').val('');
+					$('#formauthorsId textarea').val('');
+					console.log('test');
+					$("#md-toast-success-Id").fadeTo(2000, 500).slideUp(500, function () {
+						$(".md-toast-success").slideUp(500);
+						$('#formauthorsId').each(function () {
+							this.reset();
+						});
+
+						var authorId = data.value.data;
+						// Create New Option.
+						var newOption = $('<option>');
+						newOption.attr('value', authorId).text(firstname + " " + lastname);
+						// Append that to the DropDownList.
+						$('#Inputauteur').append(newOption);
+						// Select the Option.
+						$("#Inputauteur > [value=" + authorId + "]").attr("selected", "true");
+
+						$("#pills-myaccount-body").load('Create');
+						$('#formauthorsId').modal('toggle');
+						$('.modal-backdrop').remove()
+						$(document.body).removeClass("modal-open");
+						$("ul.my__account-nav li a.add-book").trigger('click');
+					});
+				},
+				error: function (data, textStatus, jQxhr) {
+					//debugger;
+					$("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+						$("#md-toast-error-Id").slideUp(500);
+					});
+				}
+			});
+		})
+	});
+</script>

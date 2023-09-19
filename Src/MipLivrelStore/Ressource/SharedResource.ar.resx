@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountSideBar.Account" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="AccountSideBar.Close" xml:space="preserve">
+    <value>غلق</value>
+  </data>
+  <data name="AccountSideBar.Create" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="AccountSideBar.Accept" xml:space="preserve">
+    <value>أنا أقبل</value>
+  </data>
+  <data name="AccountSideBar.TermsAndConditions" xml:space="preserve">
+    <value>الاحكام والشروط العامة</value>
+  </data>
+  <data name="AccountSideBar.ForgotPass" xml:space="preserve">
+    <value>هل نسيت كلمة السر ؟</value>
+  </data>
+  <data name="AccountSideBar.Password" xml:space="preserve">
+    <value>كلمة السر</value>
+  </data>
+  <data name="AccountSideBar.ShowPassword" xml:space="preserve">
+    <value>إظهار كلمة السر</value>
+  </data>
+  <data name="AccountSideBar.Remember" xml:space="preserve">
+    <value>تذكرنى</value>
+  </data>
+  <data name="AccountSideBar.SignIn" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="AccountSideBar.Username" xml:space="preserve">
+    <value>اسم المستخدم أو البريد الالكتروني* </value>
+  </data>
+  <data name="AccountSideBar.FirstName" xml:space="preserve">
+    <value>الإسم</value>
+  </data>
+  <data name="AccountSideBar.LastName" xml:space="preserve">
+    <value>اللقب</value>
+  </data>
+  <data name="AccountSideBar.Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="AccountSideBar.ConfirmPassword" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="AccountSideBar.Or" xml:space="preserve">
+    <value>أو</value>
+  </data>
+  <data name="AccountSideBar.LoginAlternative" xml:space="preserve">
+    <value>قم بتسجيل الدخول بخطوة واحدة فقط</value>
+  </data>
+  <data name="AccountSideBar.InsertEmailOrUsername" xml:space="preserve">
+    <value>أدخل اسم المستخدم أو البريد الإلكتروني</value>
+  </data>
+  <data name="AccountSideBar.Gender" xml:space="preserve">
+    <value>الجنس</value>
+  </data>
+  <data name="AccountSideBar.Male" xml:space="preserve">
+    <value>رجل</value>
+  </data>
+  <data name="AccountSideBar.Female" xml:space="preserve">
+    <value>امرأة</value>
+  </data>
+  <data name="AccountSideBar.AlreadyHaveAccount" xml:space="preserve">
+    <value>هل لديك حساب ؟</value>
+  </data>
+  <data name="AccountSideBar.RecoverPassword" xml:space="preserve">
+    <value>إستعادة كلمة المرور</value>
+  </data>
+  <data name="AccountSideBar.RecoverPasswordMailText" xml:space="preserve">
+    <value>تم إرسال بريد إلى هذا العنوان.</value>
+  </data>
+  <data name="AccountSideBar.RememberPassword" xml:space="preserve">
+    <value>تذكر كلمة السر الخاصة بك؟</value>
+  </data>
+  <data name="AccountSideBar.EmptyFields" xml:space="preserve">
+    <value>يرجى تعمير الحقول المضللة</value>
+  </data>
+  <data name="AccountSideBar.DescriptionMinimumLength" xml:space="preserve">
+    <value>يجب أن يكون وصف الكتاب 30 حرفًا على الأقل.</value>
+  </data>
+  <data name="AccountSideBar.UserNotFound" xml:space="preserve">
+    <value>هذا المستخدم غير موجود ، يرجى التحقق من عنوان البريد الإلكتروني الذي تم إدخاله</value>
+  </data>
+  <data name="AccountSideBar.AdminNotAuthorized" xml:space="preserve">
+    <value>المسؤول(Admin) غير مصرح له باستخدام هذا الموقع</value>
+  </data>
+  <data name="AccountSideBar.EmailNotConfirmed" xml:space="preserve">
+    <value>لم يتم تأكيد هذا البريد الإلكتروني ، يرجى التحقق من البريد الإلكتروني المرسل إليك لتأكيده</value>
+  </data>
+  <data name="AccountSideBar.WrongPassword" xml:space="preserve">
+    <value>كلمة السر التي تم إدخالها خاطئة ، يرجى التحقق منها</value>
+  </data>
+  <data name="AccountSideBar.PasswordRequiresDigit" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة السر على رقم واحد على الأقل ("0" - "9")</value>
+  </data>
+  <data name="AccountSideBar.PasswordRequiresLower" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل ("a" - "z")</value>
+  </data>
+  <data name="AccountSideBar.PasswordRequiresUpper" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة السر على حرف كبير واحد على الأقل ("A" - "Z")</value>
+  </data>
+  <data name="AccountSideBar.PasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة السر على حرف واحد على الأقل ليس أبجديًا رقميًا(@,#,$...)</value>
+  </data>
+  <data name="AccountSideBar.WrongEmailFormat" xml:space="preserve">
+    <value>البريد الإلكتروني الذي تم إدخاله ليس بالشكل الصحيح</value>
+  </data>
+  <data name="AccountSideBar.DuplicateUserName" xml:space="preserve">
+    <value>البريد الإلكتروني الذي تم إدخاله مستعمل مسبقا</value>
+  </data>
+  <data name="AccountSideBar.Error_Password" xml:space="preserve">
+    <value>يجب ألا تقل كلمة المرور عن 6 أحرف ولا تزيد عن 25 حرفًا</value>
+  </data>
+  <data name="AccountSideBar.Error_ConfirmPassword" xml:space="preserve">
+    <value>كلمة السر وتأكيد كلمة السر غير متطابقتين</value>
+  </data>
+  <data name="AccountSideBar.RaisonSocial" xml:space="preserve">
+    <value>إسم دار النشر</value>
+  </data>
+  <data name="AccountSideBar.IdFiscal" xml:space="preserve">
+    <value>المعرف المالي</value>
+  </data>
+  <data name="Annonce.MSG1" xml:space="preserve">
+    <value>أنت شغوف بالقراءة!</value>
+  </data>
+  <data name="Annonce.MSG2" xml:space="preserve">
+    <value>سجل اليوم واحصل على كتاب مجاني!</value>
+  </data>
+  <data name="Blogs.Latest" xml:space="preserve">
+    <value>أحدث المدونات</value>
+  </data>
+  <data name="Book.Arrivals" xml:space="preserve">
+    <value>أقسام جديدة</value>
+  </data>
+  <data name="Book.Bestsellers" xml:space="preserve">
+    <value>الأكثر مبيعًا</value>
+  </data>
+  <data name="Book.Popular" xml:space="preserve">
+    <value>كُتبنا </value>
+  </data>
+  <data name="Book.Selection" xml:space="preserve">
+    <value>اختيارنا</value>
+  </data>
+  <data name="Book.Viewed" xml:space="preserve">
+    <value>الحائزة على جوائز</value>
+  </data>
+  <data name="Book.ByAuthor" xml:space="preserve">
+    <value>تأليف</value>
+  </data>
+  <data name="Book.Currency" xml:space="preserve">
+    <value>دت</value>
+  </data>
+  <data name="Book.AboutBook" xml:space="preserve">
+    <value>نبذة عن الكتاب</value>
+  </data>
+  <data name="Book.Quantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="Book.AddToCart" xml:space="preserve">
+    <value>أضف إلى السلة</value>
+  </data>
+  <data name="Book.RemoveFromCart" xml:space="preserve">
+    <value>إزالة من السلة</value>
+  </data>
+  <data name="Book.AddToLibrary" xml:space="preserve">
+    <value>أضف إلى المكتبة</value>
+  </data>
+  <data name="Book.RemoveFromLibrary" xml:space="preserve">
+    <value>إزالة من المكتبة</value>
+  </data>
+  <data name="Book.InLibrary" xml:space="preserve">
+    <value>في المكتبة</value>
+  </data>
+  <data name="Book.AddToWishlist" xml:space="preserve">
+    <value>أضف إلى قائمة المفضلة</value>
+  </data>
+  <data name="Book.RemoveFromWishlist" xml:space="preserve">
+    <value>إزالة من قائمة المفضلة</value>
+  </data>
+  <data name="Book.Share" xml:space="preserve">
+    <value>مشاركة</value>
+  </data>
+  <data name="xx.cc" xml:space="preserve">
+    <value>مشاركة</value>
+  </data>
+  <data name="Book.BookDetails" xml:space="preserve">
+    <value>عن الطبعة</value>
+  </data>
+  <data name="Book.BookDescription" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Book.NumberPages" xml:space="preserve">
+    <value>صفحة</value>
+  </data>
+  <data name="Book.PublicationDate" xml:space="preserve">
+    <value>نشر سنة</value>
+  </data>
+  <data name="Book.PublisherName" xml:space="preserve">
+    <value>تم النشر لدى</value>
+  </data>
+  <data name="Book.PublicationCountry" xml:space="preserve">
+    <value>بلد النشر</value>
+  </data>
+  <data name="Book.Language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="BookPrize.CustomersAlsoConsidered" xml:space="preserve">
+    <value>كما نظر الكتب أيضا إلى </value>
+  </data>
+  <data name="Book.CustomersAlsoConsidered" xml:space="preserve">
+    <value>كما نظر الحرفاء أيضا إلى </value>
+  </data>
+  <data name="Book.Category" xml:space="preserve">
+    <value>التصنيف </value>
+  </data>
+  <data name="Book.ISBN" xml:space="preserve">
+    <value>رمز ال  ISBN</value>
+  </data>
+  <data name="Book.Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Explore.view" xml:space="preserve">
+    <value>إظهار الكل</value>
+  </data>
+  <data name="Footer.About" xml:space="preserve">
+    <value>معلومات عنا</value>
+  </data>
+  <data name="Footer.Accessibility" xml:space="preserve">
+    <value>إمكانية الوصول</value>
+  </data>
+  <data name="Footer.Adresse" xml:space="preserve">
+    <value>شارع الحرف اليدوية ، المنطقة الصناعية الشرقية 2، أريانة</value>
+  </data>
+  <data name="Footer.Bookmarks" xml:space="preserve">
+    <value>إشارات مرجعية</value>
+  </data>
+  <data name="Footer.Contact" xml:space="preserve">
+    <value>اتصل</value>
+  </data>
+  <data name="Footer.ContactUs" xml:space="preserve">
+    <value>اتصل بنا</value>
+  </data>
+  <data name="Footer.CustomerService" xml:space="preserve">
+    <value>خدمة الزبائن</value>
+  </data>
+  <data name="Footer.EnterMail" xml:space="preserve">
+    <value>أدخل البريد الإلكتروني</value>
+  </data>
+  <data name="Footer.Explore" xml:space="preserve">
+    <value>للاستكشاف</value>
+  </data>
+  <data name="Footer.Guarantee" xml:space="preserve">
+    <value>ضمان استعادة الاموال</value>
+  </data>
+  <data name="Footer.Guarantee2" xml:space="preserve">
+    <value>خلال 30 يوما</value>
+  </data>
+  <data name="Footer.Help" xml:space="preserve">
+    <value>مساعدة</value>
+  </data>
+  <data name="Footer.Message1" xml:space="preserve">
+    <value>اشترك لتكون أول من يسمع عن الصفقات الحصرية والعروض الخاصة والمجموعات القادمة</value>
+  </data>
+  <data name="Footer.Message2" xml:space="preserve">
+    <value>كل الحقوق محفوظة</value>
+  </data>
+  <data name="Footer.MessageMail" xml:space="preserve">
+    <value>رجاء قم بإدخال بريد الكتروني صحيح</value>
+  </data>
+  <data name="Footer.Newsletter" xml:space="preserve">
+    <value>اشترك في صحيفتنا الإخبارية</value>
+  </data>
+  <data name="Footer.Paiement" xml:space="preserve">
+    <value>الدفع آمن</value>
+  </data>
+  <data name="Footer.Paiement2" xml:space="preserve">
+    <value>100٪ دفع آمن</value>
+  </data>
+  <data name="Footer.Pays" xml:space="preserve">
+    <value>تونس</value>
+  </data>
+  <data name="Footer.PhoneNumber" xml:space="preserve">
+    <value>+216 29 090 071</value>
+  </data>
+  <data name="Footer.Policy" xml:space="preserve">
+    <value>سياسة</value>
+  </data>
+  <data name="Footer.Privacy" xml:space="preserve">
+    <value>خصوصية</value>
+  </data>
+  <data name="Footer.ProductRecalls" xml:space="preserve">
+    <value>عمليات سحب المنتج</value>
+  </data>
+  <data name="Footer.ReturnPolicy" xml:space="preserve">
+    <value>سياسة العائدات</value>
+  </data>
+  <data name="Footer.Returns" xml:space="preserve">
+    <value>عائدات</value>
+  </data>
+  <data name="Footer.Security" xml:space="preserve">
+    <value>حماية</value>
+  </data>
+  <data name="Footer.SignJoin" xml:space="preserve">
+    <value>تسجيل الدخول / الانضمام</value>
+  </data>
+  <data name="Footer.Sitemap" xml:space="preserve">
+    <value>خريطة الموقع</value>
+  </data>
+  <data name="Footer.StorePickup" xml:space="preserve">
+    <value>الاستلام من المتجر</value>
+  </data>
+  <data name="Footer.Support" xml:space="preserve">
+    <value>24/7 دعم</value>
+  </data>
+  <data name="Footer.Support2" xml:space="preserve">
+    <value>في غضون يوم عمل واحد</value>
+  </data>
+  <data name="Footer.Terms" xml:space="preserve">
+    <value>تعليمات الاستخدام</value>
+  </data>
+  <data name="Library.Biblio" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="Menu.AudioBooks" xml:space="preserve">
+    <value>الكتب الصوتية</value>
+  </data>
+  <data name="Menu.Categories" xml:space="preserve">
+    <value>التصنيفات</value>
+  </data>
+  <data name="Menu.Contacts" xml:space="preserve">
+    <value>اتصل</value>
+  </data>
+  <data name="Menu.Editors" xml:space="preserve">
+    <value>دار النشر</value>
+  </data>
+  <data name="Menu.Promotions" xml:space="preserve">
+    <value>العروض</value>
+  </data>
+  <data name="Menu.FreeBooks" xml:space="preserve">
+    <value>الكتب المجانية</value>
+  </data>
+  <data name="Menu.Discount" xml:space="preserve">
+    <value>تخفيضات</value>
+  </data>
+  <data name="Menu.Home" xml:space="preserve">
+    <value>الصفحة الرئيسية</value>
+  </data>
+  <data name="Menu.News" xml:space="preserve">
+    <value>المستجدات</value>
+  </data>
+  <data name="Menu.Sales" xml:space="preserve">
+    <value>أفضل المبيعات</value>
+  </data>
+  <data name="Navbar.auteur" xml:space="preserve">
+    <value>الكاتب</value>
+  </data>
+  <data name="Navbar.categories" xml:space="preserve">
+    <value>التصنيفات</value>
+  </data>
+  <data name="Navbar.editeur" xml:space="preserve">
+    <value>المحرر</value>
+  </data>
+  <data name="Navbar.Livre" xml:space="preserve">
+    <value>الكتاب</value>
+  </data>
+  <data name="Navbar.Books" xml:space="preserve">
+    <value>الكتب</value>
+  </data>
+  <data name="Navbar.recherche" xml:space="preserve">
+    <value>البحث عن الكتب عن طريق الكلمات الرئيسية</value>
+  </data>
+  <data name="Slideshow.Auteur" xml:space="preserve">
+    <value>الكاتب</value>
+  </data>
+  <data name="Slideshow.BestBooks" xml:space="preserve">
+    <value>أفضل الكتب</value>
+  </data>
+  <data name="Slideshow.choice" xml:space="preserve">
+    <value>اختر كتابك</value>
+  </data>
+  <data name="Slideshow.Editeur" xml:space="preserve">
+    <value>محرر</value>
+  </data>
+  <data name="Slideshow.Explore" xml:space="preserve">
+    <value>للاستكشاف</value>
+  </data>
+  <data name="Slideshow.Messag1" xml:space="preserve">
+    <value>تنتهي التخفيضات في 30 أبريل 2022 في منتصف الليل</value>
+  </data>
+  <data name="Slideshow.Mounth" xml:space="preserve">
+    <value>هذا الشهر</value>
+  </data>
+  <data name="Div.Category1" xml:space="preserve">
+    <value>فنون</value>
+  </data>
+  <data name="Div.Category2" xml:space="preserve">
+    <value>الصحة</value>
+  </data>
+  <data name="Account.Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Booklist.bibliothèque" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="Valdationmsg.ChampNomlivre" xml:space="preserve">
+    <value>الرجاء إدخال اسم الكتاب هنا</value>
+  </data>
+  <data name="Valdationmsg.ChampDate" xml:space="preserve">
+    <value>الرجاء إدخال تاريخ الإصدار هنا</value>
+  </data>
+  <data name="Valdationmsg.ChampISBN" xml:space="preserve">
+    <value>الرجاء إدخال الرمز هنا</value>
+  </data>
+  <data name="Valdationmsg.ChampNbPage" xml:space="preserve">
+    <value>يرجى الإشارة إلى عدد الصفحات هنا</value>
+  </data>
+  <data name="Valdationmsg.Champprix" xml:space="preserve">
+    <value>الرجاء إدخال سعر الكتاب هنا</value>
+  </data>
+  <data name="Valdationmsg.ChampCategorie" xml:space="preserve">
+    <value>الرجاء إدخال فئة الكتاب هنا</value>
+  </data>
+  <data name="Valdationmsg.Champauteur" xml:space="preserve">
+    <value>الرجاء إدخال اسم المؤلف هنا</value>
+  </data>
+  <data name="Valdationmsg.Champlangue" xml:space="preserve">
+    <value>الرجاء إدخال لغة الكتاب هنا</value>
+  </data>
+  <data name="Valdationmsg.Champcoverpath" xml:space="preserve">
+    <value>الرجاء إدخال مسار غلاف الكتاب هنا</value>
+  </data>
+  <data name="Valdationmsg.ChampPdfpath" xml:space="preserve">
+    <value>الرجاء إدخال مسار PDF لهذا الكتاب هنا.</value>
+  </data>
+  <data name="Datamsg.file" xml:space="preserve">
+    <value>اختر الملف مناسب</value>
+  </data>
+  <data name="Form.BookDetails" xml:space="preserve">
+    <value>تفاصيل الكتاب</value>
+  </data>
+  <data name="Form.UpdateBook" xml:space="preserve">
+    <value>تحديث الكتاب</value>
+  </data>
+  <data name="Form.Country" xml:space="preserve">
+    <value>البلد</value>
+  </data>
+  <data name="Form.CoverPath" xml:space="preserve">
+    <value>غلاف الكتاب</value>
+  </data>
+  <data name="Form.Date" xml:space="preserve">
+    <value>تاريخ النشر</value>
+  </data>
+  <data name="Form.Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Form.ISBN" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="Form.Langues" xml:space="preserve">
+    <value>اللغات</value>
+  </data>
+  <data name="Form.NbPages" xml:space="preserve">
+    <value>عدد الصفحات</value>
+  </data>
+  <data name="Form.NomLivre" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Form.PDFPath" xml:space="preserve">
+    <value>ملف الكتاب</value>
+  </data>
+  <data name="Form.Prix" xml:space="preserve">
+    <value>السعر</value>
+  </data>
+  <data name="Form.OrderNumber" xml:space="preserve">
+    <value>رقم الطلب</value>
+  </data>
+  <data name="Form.Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Index.Account Details" xml:space="preserve">
+    <value>تفاصيل الحساب</value>
+  </data>
+  <data name="Index.Complete Account Details" xml:space="preserve">
+    <value>إكمال تفاصيل الحساب</value>
+  </data>
+  <data name="Index.GoBack" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Index.ShowMore" xml:space="preserve">
+    <value>عرض المزيد</value>
+  </data>
+  <data name="Index.FullList" xml:space="preserve">
+    <value>لم يتم العثور على المزيد من الكتب</value>
+  </data>
+  <data name="Index.Add Book" xml:space="preserve">
+    <value>إضافة كتاب</value>
+  </data>
+  <data name="Index.Dashboard" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="Index.Logout" xml:space="preserve">
+    <value>تسجيل خروج</value>
+  </data>
+  <data name="Index.MyAccount" xml:space="preserve">
+    <value>حسابي</value>
+  </data>
+  <data name="Index.MyList" xml:space="preserve">
+    <value>مكتبتي</value>
+  </data>
+  <data name="Index.MesLivres" xml:space="preserve">
+    <value>كتبي</value>
+  </data>
+  <data name="Index.Orders" xml:space="preserve">
+    <value>الطلبات</value>
+  </data>
+  <data name="Index.wishlist" xml:space="preserve">
+    <value>قائمة المفضلة</value>
+  </data>
+  <data name="Index.MyWallet" xml:space="preserve">
+    <value>محفظتي</value>
+  </data>
+  <data name="Index.MyWalletSeeDetails" xml:space="preserve">
+    <value>إقرأالمزيد</value>
+  </data>
+  <data name="Index.MyWalletTransactions" xml:space="preserve">
+    <value>معاملات المحفظة</value>
+  </data>
+  <data name="WalletTransaction.Refill" xml:space="preserve">
+    <value>إملأ محفظتك</value>
+  </data>
+  <data name="WalletTransaction.RefillPhrase" xml:space="preserve">
+    <value>أدخل المبلغ الذي تريد إضافته للمحفظة</value>
+  </data>
+  <data name="WalletTransaction.RefillInstruction" xml:space="preserve">
+    <value>أدخل الرقم كاملا</value>
+  </data>
+  <data name="WalletTransaction.Refilled" xml:space="preserve">
+    <value>تعمير المحفظة</value>
+  </data>
+  <data name="WalletTransaction.Withdrawed" xml:space="preserve">
+    <value>شراء كتاب</value>
+  </data>
+  <data name="WalletTransaction.Type" xml:space="preserve">
+    <value>التسمية</value>
+  </data>
+  <data name="WalletTransaction.Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="User.Hello" xml:space="preserve">
+    <value>مرحبا</value>
+  </data>
+  <data name="User.Text" xml:space="preserve">
+    <value>من لوحة معلومات حسابك ، يمكنك عرض طلباتك الأخيرة ، وإدارة عناوين الشحن والفوترة ، وتعديل كلمة السر وتفاصيل الحساب.</value>
+  </data>
+  <data name="Account.Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Account.Confirm" xml:space="preserve">
+    <value>تأكيد كلمة السر الجديدة</value>
+  </data>
+  <data name="Account.CurrentPassword" xml:space="preserve">
+    <value>كلمة السر الحالية</value>
+  </data>
+  <data name="Account.image" xml:space="preserve">
+    <value>الصورة</value>
+  </data>
+  <data name="Account.NewPassword" xml:space="preserve">
+    <value>كلمة مرور جديدة</value>
+  </data>
+  <data name="Account.Password" xml:space="preserve">
+    <value>تغيير كلمة السر ؟</value>
+  </data>
+  <data name="BookList.actions" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Booklist.Search" xml:space="preserve">
+    <value>البحث ...</value>
+  </data>
+  <data name="Booklist.SearchEditors" xml:space="preserve">
+    <value>البحث بكلمة رئيسية...</value>
+  </data>
+  <data name="PrizeBook.Edition" xml:space="preserve">
+    <value>الطبعة
+    </value>
+  </data>
+  <data name="Category.cat" xml:space="preserve">
+    <value>التصنيفات</value>
+  </data>
+  <data name="Category.TunisianEditions" xml:space="preserve">
+    <value>إصدارات تونسية</value>
+  </data>
+  <data name="Category.ForeignEditions" xml:space="preserve">
+    <value>إصدارات أجنبية</value>
+  </data>
+  <data name="Register.RegisterConfirmation" xml:space="preserve">
+    <value>تأكيد التسجيل</value>
+  </data>
+  <data name="Register.RegisterAccomplishment" xml:space="preserve">
+    <value>من أجل استكمال عملية التسجيل ، الرجاء إدخال عنوان البريد الإلكتروني الخاص بك</value>
+  </data>
+  <data name="Register.RegisterConfirmationText" xml:space="preserve">
+    <value>يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك.</value>
+  </data>
+  <data name="SearchResult.NoResultFoundText" xml:space="preserve">
+    <value>لا توجد عناصر في القائمة</value>
+  </data>
+  <data name="SearchResult.NoResultFound" xml:space="preserve">
+    <value>لم يتم العثور على نتائج</value>
+  </data>
+  <data name="SearchResult.Back" xml:space="preserve">
+    <value>العودة إلى الصفحة الرئيسية</value>
+  </data>
+  <data name="SearchResult.SearchResult" xml:space="preserve">
+    <value>نتيجة البحث</value>
+  </data>
+  <data name="UpdateUser.AlertSuccess" xml:space="preserve">
+    <value>تم تحديث المعلومات الخاصة بك بنجاح</value>
+  </data>
+  <data name="ContactPage.ChoixSujet" xml:space="preserve">
+    <value>اختر موضوع طلبك</value>
+  </data>
+  <data name="Combobox.Contact" xml:space="preserve">
+    <value>اتصال</value>
+  </data>
+  <data name="Combobox.JoinRequestAuteur" xml:space="preserve">
+    <value>طلب العضوية (المؤلف)</value>
+  </data>
+  <data name="Combobox.JoinRequestEditeur" xml:space="preserve">
+    <value>طلب العضوية (محرر)</value>
+  </data>
+  <data name="Combobox.Competition" xml:space="preserve">
+    <value>مسابقة سمّعني كتاب</value>
+  </data>
+  <data name="Combobox.CompetitionVoucherNumber" xml:space="preserve">
+    <value>رقم القسيمة</value>
+  </data>
+  <data name="Combobox.CompetitionVoucherValue" xml:space="preserve">
+    <value>قيمة القسيمة</value>
+  </data>
+  <data name="Combobox.CompetitionBooksList" xml:space="preserve">
+    <value>قائمة الكتب المرغوبة</value>
+  </data>
+  <data name="Combobox.MothersDay" xml:space="preserve">
+    <value>عيد الأم</value>
+  </data>
+  <data name="Contact.YourMail" xml:space="preserve">
+    <value>بريدك الإلكتروني</value>
+  </data>
+  <data name="Contact.MotherMail" xml:space="preserve">
+    <value>البريد الإلكتروني للأم</value>
+  </data>
+  <data name="Contact.BookToOffer" xml:space="preserve">
+    <value>الكتاب المرغوب</value>
+  </data>
+  <data name="Contact.aide" xml:space="preserve">
+    <value>clik2read يساعدك</value>
+  </data>
+  <data name="Contact.Envoyer" xml:space="preserve">
+    <value>ارسل</value>
+  </data>
+  <data name="Contact.Message" xml:space="preserve">
+    <value>هل لديك سؤال ؟
+    هل تحتاج إلى مساعدة في معلومات حول كتاب أو طلب ؟
+    هل تريد مشاركة التعليقات معنا؟ ندعوك للتواصل معنا على ،
+     على عنوان بريدنا الإلكتروني contact@clik2read.com أو عن طريق ملء النموذج أدناه :</value>
+  </data>
+  <data name="Contact.Objet" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationObject" xml:space="preserve">
+    <value>الرجاء إدخال الموضوع هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationDescription" xml:space="preserve">
+    <value>الرجاء إدخال وصفك هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationEmail" xml:space="preserve">
+    <value>رجاء قم بإدخال بريد الكتروني صحيح.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationFirstName" xml:space="preserve">
+    <value>الرجاء إدخال اسمك الأول هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationLastName" xml:space="preserve">
+    <value>الرجاء إدخال اسمك هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationPhone" xml:space="preserve">
+    <value>الرجاء إدخال الهاتف هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationRaisonSociale" xml:space="preserve">
+    <value>الرجاء إدخال إسم دار النشر هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationIdFiscal" xml:space="preserve">
+    <value>الرجاء إدخال المعرف المالي هنا.</value>
+  </data>
+  <data name="JoinRequestAuteur.ValidationMailExist" xml:space="preserve">
+    <value>عنوان البريد غير موجود.</value>
+  </data>
+  <data name="Competition.ValidationVoucherNumber" xml:space="preserve">
+    <value>الرجاء إدخال رقم القسيمة هنا.</value>
+  </data>
+  <data name="Competition.ValidationVoucherValue" xml:space="preserve">
+    <value>الرجاء إدخال قيمة القسيمة هنا.</value>
+  </data>
+  <data name="Competition.ValidationDesiredBooksList" xml:space="preserve">
+    <value>الرجاء اختيار كتاب واحد على الأقل.</value>
+  </data>
+  <data name="Competition.PlaceholderDesiredBooksList" xml:space="preserve">
+    <value>الرجاء إدخال عناوين الكتب المرغوبة</value>
+  </data>
+  <data name="Contact.ValidationDesiredBook" xml:space="preserve">
+    <value>الرجاء اختيار كتاب.</value>
+  </data>
+  <data name="Contact.PlaceholderDesiredBook" xml:space="preserve">
+     <value>الرجاء إدخال عنوان الكتاب المرغوب</value>
+  </data>
+  <data name="PostJoinRequest.toastalerts" xml:space="preserve">
+    <value>لم يتم إكمال النموذج بشكل صحيح. صحح الحقول المحددة.</value>
+  </data>
+  <data name="PostJoinRequest.toastSuccess" xml:space="preserve">
+    <value>تمت العملية بنجاح</value>
+  </data>
+  <data name="PostJoinRequest.toastError" xml:space="preserve">
+    <value>لم تنجح العملية</value>
+  </data>
+  <data name="Operations.View" xml:space="preserve">
+    <value>تفاصيل</value>
+  </data>
+  <data name="Operations.Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Operations.Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Operations.DeleteConfirmation" xml:space="preserve">
+    <value>تأكيد الحذف</value>
+  </data>
+  <data name="Operations.DeleteConfirmationText" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذا الكتاب؟</value>
+  </data>
+  <data name="Category.filter" xml:space="preserve">
+    <value>مصنف بواسطة</value>
+  </data>
+  <data name="Sidebar.help" xml:space="preserve">
+    <value>التعليمات والإعدادات</value>
+  </data>
+  <data name="sidebar.menu" xml:space="preserve">
+    <value>القائمة</value>
+  </data>
+  <data name="Cart.YourCart" xml:space="preserve">
+    <value>الطلبات</value>
+  </data>
+  <data name="Cart.Total" xml:space="preserve">
+    <value>المجموع</value>
+  </data>
+  <data name="Cart.SeeCart" xml:space="preserve">
+    <value>انظر السلة</value>
+  </data>
+  <data name="Cart.NumberofBooksInCart" xml:space="preserve">
+    <value>كتب في عربة التسوق الخاصة بك</value>
+  </data>
+  <data name="Cart.Payment" xml:space="preserve">
+    <value>دفع</value>
+  </data>
+  <data name="Cart.AlreadyInCart" xml:space="preserve">
+    <value>هذا الكتاب موجود مسبقا في السلة !</value>
+  </data>
+  <data name="Book.AlreadyExists" xml:space="preserve">
+    <value>هذا الكتاب موجود مسبقا في قائمة المفضلة !</value>
+  </data>
+  <data name="Sidebar.Arabic" xml:space="preserve">
+    <value>العربية  </value>
+  </data>
+  <data name="Sidebar.English" xml:space="preserve">
+    <value>الإنجليزية</value>
+  </data>
+  <data name="Sidebar.French" xml:space="preserve">
+    <value>الفرنسية</value>
+  </data>
+  <data name="Auteur.BtnClose" xml:space="preserve">
+    <value>اغلاق</value>
+  </data>
+  <data name="Auteur.PostAuteur" xml:space="preserve">
+    <value>+ المؤلف</value>
+  </data>
+  <data name="Auteur.SearchAuthor" xml:space="preserve">
+    <value>ابحث عن مؤلف</value>
+  </data>
+  <data name="Author.BooksAlsoConsidered" xml:space="preserve">
+    <value>كتب المؤلف</value>
+  </data>
+  <data name="Book.AboutAuthor" xml:space="preserve">
+    <value>سيرة ذاتية</value>
+  </data>
+  <data name="Book.ByAuthorBirthDate" xml:space="preserve">
+    <value>ولد في</value>
+  </data>
+  <data name="Menu.Authors" xml:space="preserve">
+    <value>المؤلفون</value>
+  </data>
+  <data name="Book.Free" xml:space="preserve">
+    <value>مجاني</value>
+  </data>
+  <data name="Prized.Edition" xml:space="preserve">
+    <value>الطبعة</value>
+  </data>
+  <data name="Book.Prized" xml:space="preserve">
+    <value>حائز على جائزة</value>
+  </data>
+  <data name="PrizeBook.Description" xml:space="preserve">
+    <value>توجت هذه المبادرة بسلسلة من الإجراءات التي نفذتها MIPLIVREL في المجال الثقافي ، ودعم إنتاج الأفلام ، والأنشطة الثقافية داخل الشركة ... وبالتالي تجسيد اختيارها للرغبة في أن تكون شركة مواطنة.</value>
+  </data>
+  <data name="PrizeBook.Description2" xml:space="preserve">
+    <value>تحت رعاية وزير الثقافة والمحافظة على التراث ، أقيمت مراسم توزيع الجوائز لجميع الجلسات في مكان مرموق بالمسرح البلدي لمدينة تونس.</value>
+  </data>
+  <data name="Menu.Awards" xml:space="preserve">
+    <value>الجوائز</value>
+  </data>
+  <data name="Book.Read" xml:space="preserve">
+    <value>إقرأ</value>
+  </data>
+  <data name="Book.AddedSuccessfully" xml:space="preserve">
+    <value>تمت إضافة الكتاب بنجاح</value>
+  </data>
+  <data name="Form.From" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="Form.To" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="Payment.RequestSuccessfully" xml:space="preserve">
+    <value>تم الدفع بنجاح</value>
+  </data>
+  <data name="Payment.RequestSuccessfullyText" xml:space="preserve">
+    <value>ستتلقى قريبًا رسالة بريد إلكتروني لتأكيد عملية الدفع الخاصة بك</value>
+  </data>
+  <data name="Payment.Details" xml:space="preserve">
+    <value>بيانات الدفع</value>
+  </data>
+  <data name="Authenticated.SuccessfullyAuthenticatedPart1" xml:space="preserve">
+    <value>لقد نجحت في الإثبات مع</value>
+  </data>
+  <data name="Authenticated.SuccessfullyAuthenticatedPart2" xml:space="preserve">
+    <value>الرجاء النقر هنا للانتقال إلى الخطوة التالية.</value>
+  </data>
+  <data name="Authenticated.Continue" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="PaiementType.Bank" xml:space="preserve">
+    <value>بطاقة بنكية</value>
+  </data>
+  <data name="PaiementType.PostOffice" xml:space="preserve">
+    <value>البريد</value>
+  </data>
+  <data name="Cart.SubTotal" xml:space="preserve">
+    <value>المجموع الجزئي</value>
+  </data>
+  <data name="Cart.Tax" xml:space="preserve">
+    <value>طابع جبائي</value>
+  </data>
+  <data name="Combobox.Laureat" xml:space="preserve">
+    <value>الفائز بالمعهد العالي للغات بتونس 22/23</value>
+  </data>
+  <data name="Laureat.InformationPanel" xml:space="preserve">
+    <value>قم أولاً بإنشاء حسابك على Clik2read</value>
+  </data>
+  <data name="Laureat.EmailPlaceHolder" xml:space="preserve">
+    <value>أدخل البريد الإلكتروني لحساب clik2read الخاص بك</value>
+  </data>
+  <data name="Laureat.VoucherValueLabel" xml:space="preserve">
+    <value>قيمة القسيمة</value>
+  </data>
+  <data name="Laureat.VoucherValuePlaceHolder" xml:space="preserve">
+    <value>أدخل قيمة قسيمتك</value>
+  </data>
+  <data name="Laureat.BooksLabel" xml:space="preserve">
+    <value>الكتب</value>
+  </data>
+  <data name="Laureat.BooksPlaceHolder" xml:space="preserve">
+    <value>حدد الكتب</value>
+  </data>
+  <data name="Laureat.BooksValuePanel" xml:space="preserve">
+    <value>يجب ألا تتجاوز قيمة الكتب المختارة قيمة القسيمة</value>
+  </data>
+  <data name="Register.TombolaMessage" xml:space="preserve">
+    <value>للمشاركة في السحب ، يجب عليك إضافة كتاب مجاني إلى مكتبتك.</value>
+  </data>
+  <data name="Register.FreeBooksLink" xml:space="preserve">
+    <value>انقر للوصول إلى صفحة الكتب المجانية.</value>
+  </data>
+</root>

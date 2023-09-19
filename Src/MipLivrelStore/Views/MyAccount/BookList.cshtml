@@ -1,0 +1,427 @@
+﻿<style>
+	table.table td i {
+		font-size: 19px;
+	}
+
+	th {
+		text-align: center;
+	}
+
+	.hint-text {
+		float: left;
+		margin-top: 6px;
+		font-size: 95%;
+	}
+
+	a:not([href]) {
+		color: #f75454;
+		text-decoration: none;
+		cursor: pointer;
+		background-color: transparent;
+	}
+
+	a:hover {
+		color: #f01000;
+		cursor: pointer;
+	}
+
+	a:not([href]):hover {
+		color: #f01000;
+	}
+
+	/* .deleteBookBtn {
+			color: white
+		}*/
+
+	.table-responsive {
+		overflow-y: auto; /* Trigger vertical scroll */
+		overflow-x: hidden; /* Hide the horizontal scroll */
+		max-height: 300px;
+	}
+</style>
+
+@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@using DDD.Application.Enum
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using DDD.Application.ViewModels;
+@model SearchResultVM
+
+@{
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+	var appUser = await UserManager.FindByNameAsync(User.Identity.Name);
+}
+
+<div class=" pt-5 pl-md-5 pt-lg-8 pl-lg-9 space-bottom-lg-2 mb-lg-4">
+	<div id="toast-container" class="toast-top-right">
+		@*<div class="toast toast-success mt-10" role="alert" data-delay="5000" style="display: none; background-color: #51a351; ">@SharedLocalizer["PostJoinRequest.toastSuccess"]</div>*@
+	</div>
+
+	<form asp-controller="MyAccount" asp-action="LoadEditorBookList" method="get">
+		<div class="font-size-5 mb-6">@SharedLocalizer["Booklist.bibliothèque"]</div>
+		<div class="d-flex justify-content-between">
+			<div class="d-inline-flex">
+			<div class="@(selectedCulture.Name.Equals("ar") ? "ml-auto" : "mr-auto")">
+				@{
+					<a id="addBookBtnId" asp-action="Create" asp-controller="MyAccount" class="addBookBtn btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt">+ @SharedLocalizer["Index.Add Book"]</a>
+
+				}
+			</div>
+			<div>
+					<a id="btnExport" href="#" onclick="exportReportToExcel(this);" class="ml-3 btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt text-white">Export</a>
+			</div>
+			</div>
+			<div class="site-search ">
+				@*ml-xl-0 ml-md-auto w-r-100 my-2 my-xl-0*@
+				<div class="row">
+					<div class="col-sm-6 mb-2">
+						<div class="input-group">
+							@*<div class="input-group-prepend"></div>
+							<i class="glph-icon flaticon-loupe input-group-text py-2d75 bg-white-100 border-white-100"></i>
+							*@
+							<input class="form-control bg-white-100 min-width-380 py-2d75 height-4 border-white-100 " id="filter" type="search" placeholder="@SharedLocalizer["Booklist.Search"]" aria-label="Search">
+						</div>
+						<button class="btn btn-outline-success my-2 my-sm-0 sr-only" type="submit">@SharedLocalizer["Booklist.Search"] </button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<table class="table" id="Mytable">
+			<thead>
+				<tr class="border ">
+					<th scope="col" class="py-2 border-bottom-0 font-weight-bold noExport"></th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold ">@SharedLocalizer["Form.NomLivre"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold">@SharedLocalizer["Form.Date"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold">@SharedLocalizer["Book.Category"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold">@SharedLocalizer["Slideshow.Auteur"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold">@SharedLocalizer["Book.Status"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold">@SharedLocalizer["Form.Prix"]</th>
+					<th scope="col" class=" border-bottom-0 font-weight-bold noExport">@SharedLocalizer["BookList.actions"]</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@foreach (var item in Model.BooksList)
+				{
+					<partial name="BooksTablePartialView" model="@item" />
+				}
+			</tbody>
+
+		</table>
+
+		@*<div id="DeleteBook" class="modal fade show bg-gray-200 border-2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+		<h4 class="modal-title" id="myModalLabel">@SharedLocalizer["Operations.DeleteConfirmation"]</h4>
+		<button id="closeBtnId" type="button" class="close" data-dismiss="modal" aria-label="Close">
+		<span class="closebtn">&times;</span>
+		</button>
+		</div>
+		</div>
+		</div>
+		</div>*@
+
+		<br />
+
+		<nav aria-label="Page navigation example">
+			<ul id="paginationListId" class="pagination pagination__custom justify-content-md-center flex-nowrap flex-md-wrap overflow-auto overflow-md-visble">
+				<li class="flex-shrink-0 flex-md-shrink-1 page-item">
+					<a id="PaginationPreviousId" class="page-link @(@Model.currentPageIndex == 0 ? "close disabled":"editorPaginationPrevious")">«</a>
+				</li>
+				@if (@Model.PageCount <= 3)
+				{
+					@for (int i = 0; i < @Model.PageCount; i++)
+					{
+						<li class="flex-shrink-0 flex-md-shrink-1 page-item @(@Model.currentPageIndex == @i ? "active disabled":"")"><a class="page-link editorPaginationLink" href="javascript:;">@(@i + 1)</a></li>
+
+					}
+				}
+				else
+				{
+					<li class="flex-shrink-0 flex-md-shrink-1 page-item @(@Model.currentPageIndex == 0 ? "active disabled":"")"><a class="page-link editorPaginationLink" href="javascript:;">1</a></li>
+					<li class="flex-shrink-0 flex-md-shrink-1 page-item @(@Model.currentPageIndex == 1 ? "active disabled":"")"><a class="page-link editorPaginationLink" href="javascript:;">2</a></li>
+					<li class="flex-shrink-0 flex-md-shrink-1 page-item @(@Model.currentPageIndex == 2 ? "active disabled":"")"><a class="page-link editorPaginationLink" href="javascript:;">3</a></li>
+
+					@if (@Model.PageCount > 4)
+					{
+						<li class="flex-shrink-0 flex-md-shrink-1 page-item"><a class="page-link close disabled" href="javascript:;">...</a></li>
+					}
+					<li class="flex-shrink-0 flex-md-shrink-1 page-item @(@Model.currentPageIndex == @Model.PageCount ? "active disabled":"")"><a class="page-link editorPaginationLink" href="javascript:;">@Model.PageCount</a></li>
+				}
+				<li class="flex-shrink-0 flex-md-shrink-1 page-item">
+					<a id="PaginationNextId" class="page-link @(@Model.currentPageIndex == @Model.PageCount ? "close disabled":"editorPaginationNext")">»</a>
+				</li>
+			</ul>
+		</nav>
+	</form>
+
+	<p id="Id_currentPageIndex" hidden>@Model.currentPageIndex</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+<script type="text/javascript">
+	function exportReportToExcel() {
+			let table = document.getElementsByTagName("table"); // you can use document.getElementById('tableId') as well by providing id to the table tag
+		var clone = table[0].cloneNode(true);
+		var row = clone.rows;
+            for (var j = 0; j < row.length; j++) {
+  
+                row[j].deleteCell(7);
+                row[j].deleteCell(0);
+            }
+		TableToExcel.convert(clone, { // html code may contain multiple tables so here we are refering to 1st table tag
+				name: `export.xlsx`, // fileName you could use any name
+				sheet: {
+					name: 'Sheet 1' // sheetName
+				},
+			});
+		}
+	$(document).ready(function () {
+
+		var isEmpty_Pagination = false;
+
+		$("body").on("click", "a.editorPaginationPrevious", function (e) {
+			if (isEmpty_Pagination) { return; }
+			////debugger
+			var currentIndex = parseInt($('#Id_currentPageIndex').text());
+			//alert(currentIndex - 2 );
+
+			$.ajax({
+				url: "/MyAccount/LoadEditorBookList",
+				method: 'get',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				data: { pageIndex: currentIndex - 1 },
+				dataType: "json",
+				success: function (response) {
+					////debugger
+					if (response.status == 0) {
+						isEmpty_Pagination = true;
+						return true;
+					}
+					$("html, body").animate({ scrollTop: 0 }, "slow");
+					$('#Mytable').empty();
+					$('#Mytable').append(response.tableRows);
+
+					$('#Id_currentPageIndex').text(currentIndex - 1);
+					setCurrentPageIndex(response.currentPageIndex, response.pageCount);
+				},
+				error: function (xhr, status, error) {
+					//debugger
+					alert("error");
+				}
+			});
+		});
+
+		$("body").on("click", "a.editorPaginationNext", function (e) {
+			if (isEmpty_Pagination) { return; }
+			var currentIndex = parseInt($('#Id_currentPageIndex').text());
+			////debugger
+			$.ajax({
+				url: "/MyAccount/LoadEditorBookList",
+				method: 'get',
+				contentType: "application/json; charset=utf-8",
+				data: { pageIndex: currentIndex + 1 },
+				dataType: "json",
+				success: function (response) {
+					////debugger
+					if (response.status == 0) {
+						isEmpty_Pagination = true;
+						return true;
+					}
+					$("html, body").animate({ scrollTop: 0 }, "slow");
+					$('#Mytable').empty();
+					$('#Mytable').append(response.tableRows);
+
+					$('#Id_currentPageIndex').text(currentIndex + 1);
+					setCurrentPageIndex(response.currentPageIndex, response.pageCount);
+				},
+				error: function (xhr, status, error) {
+					//debugger
+					alert("error");
+				}
+			});
+		});
+
+		$("body").on("click", "a.editorPaginationLink", function (e) {
+			if (isEmpty_Pagination) { return; }
+
+			var currentIndex = $(this).text();
+			////debugger
+
+			$.ajax({
+				url: "/MyAccount/LoadEditorBookList",
+				method: 'get',
+				contentType: "application/json; charset=utf-8",
+				data: { pageIndex: currentIndex - 1 },
+				dataType: "json",
+				success: function (response) {
+					////debugger
+					if (response.status == 0) {
+						isEmpty_Pagination = true;
+						return true;
+					}
+					$("html, body").animate({ scrollTop: 0 }, "slow");
+					$('#Mytable').empty();
+					$('#Mytable').append(response.tableRows);
+
+					$('#Id_currentPageIndex').text(currentIndex - 1);
+					setCurrentPageIndex(response.currentPageIndex, response.pageCount);
+				},
+				error: function (xhr, status, error) {
+					//debugger
+					alert("error");
+				}
+			});
+		});
+
+		function setCurrentPageIndex(index, max) {
+			var listItems = $("#paginationListId li a.editorPaginationLink");
+
+			listItems.each(function (idx, li) {
+				var id = $(li).text() - 1;
+				if (id == index) $(li).parent().addClass('active disabled');
+				else $(li).parent().removeClass('active disabled');
+			});
+
+			//set the Previous button
+			if (index == 0) {
+				$("#PaginationPreviousId").removeClass('editorPaginationPrevious').addClass('close disabled');
+			}
+			else {
+				$("#PaginationPreviousId").addClass('editorPaginationPrevious').removeClass('close disabled');
+			}
+
+			//set the Next button
+			//debugger
+			if ((index + 1) == max) {
+				$("#PaginationNextId").removeClass('editorPaginationNext').addClass('close disabled');
+			}
+			else {
+				$("#PaginationNextId").addClass('editorPaginationNext').removeClass('close disabled');
+			}
+		}
+
+		$("#filter").on("keyup", function () {
+			//debugger
+			var value = $(this).val().toLowerCase();
+			$("#Mytable > tbody > tr").filter(function () {
+				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+
+		$("body").on("click", "a.addBookBtn", function (e) {
+			e.preventDefault();
+			$("#pills-myaccount-body").load($(this).attr('href'));
+		});
+
+		$("body").on("click", "a.updateBookBtn", function (e) {
+			e.preventDefault();
+			$("#pills-myaccount-body").load($(this).attr('href'));
+		});
+
+		var _currentRow = "j d ";
+		$('a.bookDeleteRow').click(function () {
+			_currentRow = $(this).parent().parent();
+			////debugger
+		});
+
+		$("body").on("click", "a.deleteBookBtn", function (e) {
+			var bookId = $(this).attr("value");
+			////debugger
+			deleteBook(bookId, _currentRow);
+		});
+
+		function deleteBook(bookId, _currentRow) {
+			var result;
+			//debugger;
+			$.ajax({
+				method: "delete",
+				url: "/Book/deleteBook",
+				data: "BookId=" + JSON.stringify(bookId),
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				dataType: "json",
+				async: false,
+				success: function () {
+					$('.modal').modal('hide');
+					//$("#DeleteBook").modal('toggle');
+					$('.modal-backdrop').remove()
+					$(document.body).removeClass("modal-open");
+					_currentRow.remove();
+
+					//$(".toast-success").fadeTo(3000, 500).slideUp(500, function () {
+					//    $(".toast-success").slideUp(500);
+					//});
+					//show toast
+					$("#md-toast-success-Id").fadeTo(2000, 500).slideUp(2000, function () {
+						$(".md-toast-success").slideUp(500);
+					});
+				},
+				error: function (response, textStatus) {
+					//debugger
+					alert(textStatus);
+				}
+			});
+			return result;
+		}
+
+		var lastScrollTop = 0;
+		var call_time = 1;
+		var isloading = false;
+		var isEmpty = true;
+
+		//function scroll_style() {
+		//    var window_top = $(window).scrollTop() + $(window).height();
+		//    var div_top = $(document).height() - $('.site-footer_v2').innerHeight();
+		//    var st = $(this).scrollTop();
+
+		//    if (st > lastScrollTop) {
+		//        if (window_top > div_top && !isloading) {
+		//            ////debugger
+		//            if (isEmpty) { return; }
+		//            isloading = true;
+		//            //console.log("************YES*****" + call_time);
+		//            $.ajax({
+		//                url: "/MyAccount/LoadEditorBookList",
+		//                method: 'get',
+		//                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+		//                data: "PageIndex=" + JSON.stringify(call_time),
+		//                dataType: "json",
+		//                success: function (response) {
+		//                    //debugger
+		//                    call_time = call_time + 1;
+		//                    isloading = false;
+		//                    if (response.status == 0) {
+		//                        isEmpty = true;
+		//                        return true;
+		//                    }
+		//                    $('#Mytable tr:last').after(response.tableRows);
+		//                    //$('#list-view-zone ul.bookListView').append(response.booksListView);
+		//                },
+		//                error: function (xhr, status, error) {
+		//                    //debugger
+		//                    //var err = eval("(" + xhr.responseText + ")");
+		//                    alert("error");
+		//                    //alert("error");
+		//                }
+		//            });
+
+		//            div_top = div_top + div_top;
+		//        }
+		//    }
+
+		//    lastScrollTop = st;
+		//};
+
+		//$(function () {
+		//    $(window).scroll(scroll_style);
+		//});
+
+	});
+</script>

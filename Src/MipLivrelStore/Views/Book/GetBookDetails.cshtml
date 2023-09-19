@@ -1,0 +1,375 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@using DDD.Application.ViewModels;
+@model BookDetailsVM
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Mip Livrel";
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<div>
+	<main id="main">
+		<div class="product">
+			<div class="container border-bottom mb-8">
+				<div class="row">
+					<div class="text-center col-md-3 woocommerce-product-gallery woocommerce-product-gallery--with-images images">
+						<figure class="woocommerce-product-gallery__wrapper pt-6 mb-4">
+							<img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.Book.CoverPath}")" alt="Image Description" class="mx-auto img-fluid border">
+							@if (Model.Book.PromotionsPercentage != 0 && Model.Book.PromotionsPercentage != 100)
+							{
+								<span class="badge badge-md bg-primary position-absolute badge-pos--top-right text-white rounded-circle d-flex flex-column align-items-center justify-content-center text-uppercase"
+								  style="@(selectedCulture.Name.Equals("fr-FR") ? " font-size:0.725rem;" : "") transform: translate(-20%, 70%);">
+									- @Model.Book.PromotionsPercentage %
+								</span>
+							}
+						</figure>
+						<ul id="SocialMediaLoginIcons" class="list-inline text-center">
+							<li class="list-inline-item">
+								<span class=" font-weight-medium"><i class="flaticon-share mr-2"></i>@SharedLocalizer["Book.Share"]</span>
+							</li>
+							<li class="list-inline-item">
+								<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=@(ViewBag.FacebookShareUrl)&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">
+									<span class="fab fa-facebook btn-icon__inner"></span>
+								</a>
+							</li>
+							@*<li class="list-inline-item">
+							<div class="fb-share-button" data-href="@ViewBag.FacebookShareUrl" data-layout="button_count" data-size="small">
+							<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=@(ViewBag.FacebookShareUrl)&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">
+							<span class="fab fa-facebook btn-icon__inner"></span>
+							</a>
+							</div>
+							</li>*@
+							@*<li class="list-inline-item">
+							<a class="h-primary font-weight-bold text-gray-600  font-size-2 .my-btn .facebook" href="#">
+							<div class="fb-share-button" data-href="@ViewBag.FacebookShareUrl" data-layout="button_count" data-size="small">
+							<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=@(ViewBag.FacebookShareUrl)&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">
+							<span class="fab fa-facebook btn-icon__inner"></span>
+							</a>
+							</div>
+							</a>
+							</li>*@
+							<li class="list-inline-item">
+								<a class="h-primary  font-weight-bold font-size-2 text-gray-600" href="#">
+									<span class="fab fa-google btn-icon__inner"></span>
+								</a>
+							</li>
+							<li class="list-inline-item">
+								<a class="h-primary  font-weight-bold font-size-2 text-gray-600" href="#">
+									<span class="fab fa-twitter btn-icon__inner"></span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-md-8 pl-0 summary entry-summary @(selectedCulture.Name.Equals("ar") ? "border-right" : " border-left") ">
+						<div class="space-top-2 px-4 px-xl-7 px-6">
+							<h1 class="product_title entry-title font-size-7 mb-3">@Model.Book.Title</h1>
+							<div class="font-size-2 mb-3">
+								<span class=" font-weight-medium">@SharedLocalizer["Book.ByAuthor"]</span>
+								<a asp-controller="Author" asp-action="GetAuthorDetails" asp-route-authorInfos="@($"{Model.Book.AuthorId}#{Model.Book.AuthorName.Replace(" ","-")}")" class="font-weight-bold ml-1 text-gray-600">@Model.Book.AuthorName</a>
+							</div>
+							<p class="price font-size-22 font-weight-medium mb-3">
+								@if (Model.Book.PromotionsPercentage != 0 && Model.Book.PromotionsPercentage != 100)
+								{
+									<span class="woocommerce-Price-amount amount" style="text-decoration: line-through;">
+										@Model.Book.BusinessPrice <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span>
+									</span>
+									<span class="woocommerce-Price-amount amount px-2">
+										@(Model.Book.BusinessPrice - (Model.Book.BusinessPrice * Model.Book.PromotionsPercentage / 100)) <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span>
+									</span>
+								}
+								else if (Model.Book.PromotionsPercentage == 100)
+								{
+									<span class="woocommerce-Price-amount amount" style="text-decoration: line-through;">
+										@Model.Book.BusinessPrice <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span>
+									</span>
+									<span class=" text-primary-green text-uppercase text-dark h-dark font-weight-bold px-2">@SharedLocalizer["Book.Free"]</span>
+								}
+								else
+								{
+									<span class="woocommerce-Price-amount amount">
+										@Model.Book.BusinessPrice <span class="woocommerce-Price-currencySymbol">@SharedLocalizer["Book.Currency"]</span>
+									</span>
+								}
+							</p>
+							<div class="font-size-2 mb-4">
+								<span style="display: inline-block" class=" font-weight-bold mb-2">@SharedLocalizer["Book.AboutBook"]</span><br />
+								<p>@Model.Book.Description</p>
+							</div>
+							<a asp-action="Index" asp-controller="Category" asp-route-CategoryName="@Model.Book.CategoryName" value="7145" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt">@Model.Book.CategoryName</a><br />
+							<span class="font-size-2 font-weight-bold">@SharedLocalizer["Book.BookDetails"]</span>
+							<ul class="list-group list-group-flush border-bottom mb-4 ">
+								<li class="list-group-item">@Model.Book.PageNumbers @SharedLocalizer["Book.NumberPages"]</li>
+								<li class="list-group-item">@SharedLocalizer["Book.PublicationDate"] @Model.Book.PublicationDate.Year </li>
+								<li class="list-group-item"><label>@SharedLocalizer["Book.ISBN"]</label> : <label>@Model.Book.ISBN</label></li>
+								<li class="list-group-item">
+									@SharedLocalizer["Book.PublisherName"]
+									<a asp-controller="Home" asp-action="GetEditorDetails" asp-route-EditorInfos="@($"{Model.Book.PublisherId}")" class="font-weight-bold text-gray-600">@Model.Book.PublisherName</a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="px-xl-7 px-6 d-flex align-items-center mb-4">
+							<ul class="list-unstyled nav">
+								<li class="  mb-md-0">
+									@if (SignInManager.IsSignedIn(User))
+									{
+										<a onclick="getBookPDFContent(this);" data-id="@Model.Book.Id" data-Title="@Model.Book.Title" data-library-id="@(!string.IsNullOrWhiteSpace(Model.Book.LibraryId)?Model.Book.LibraryId:"-1")" data-current-page="@Model.Book.CurrentPage" class="h-primary arrow-cursor">
+											<i class="flaticon-multimedia"></i>
+											<span class="woocommerce-Price-amount amount">
+												@SharedLocalizer["Book.Read"]
+											</span>
+										</a>
+									}
+									else
+									{
+										<a id="sidebarNavTogglerLogin" href="javascript:;" role="button" class="text-black"
+									   aria-controls="sidebarContent"
+									   aria-haspopup="true"
+									   aria-expanded="false"
+									   data-unfold-event="click"
+									   data-unfold-hide-on-scroll="false"
+									   data-unfold-target="#sidebarContent"
+									   data-unfold-type="css-animation"
+									   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+									   data-unfold-animation-in="fadeInRight"
+									   data-unfold-animation-out="fadeOutRight"
+									   data-unfold-duration="50">
+											<i class="flaticon-multimedia"></i>
+											<span class="woocommerce-Price-amount amount">
+												@SharedLocalizer["Book.Read"]
+											</span>
+										</a>
+									}
+								</li>
+								<li id="CartLinkId" class="mx-4 mb-2 mb-md-0">
+									@if (!(Model.Book.PromotionsPercentage == 100) && !(Model.Book.inLibrary))
+									{
+										if (SignInManager.IsSignedIn(User))
+										{
+											@if (User.IsInRole("Subscriber") && !Model.Book.inLibrary)
+											{
+												<a value="@Model.Book.Id" data-cart="@Model.Book.inCart" class="addToCartLink h-primary arrow-cursor">
+													<i id="addToCartIcon" class="flaticon-icon-126515" style="@(Model.Book.inCart ? "color: #f75454":"")"></i>
+													<span class="woocommerce-Price-amount amount">
+														@(Model.Book.inCart ? @SharedLocalizer["Book.RemoveFromCart"] : @SharedLocalizer["Book.AddToCart"])
+													</span>
+												</a>
+											}
+										}
+										else
+										{
+											<a id="sidebarNavTogglerLogin" href="javascript:;" role="button"
+									   class="text-black h-primary arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+									   aria-controls="sidebarContent"
+									   aria-haspopup="true"
+									   aria-expanded="false"
+									   data-unfold-event="click"
+									   data-unfold-hide-on-scroll="false"
+									   data-unfold-target="#sidebarContent"
+									   data-unfold-type="css-animation"
+									   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+									   data-unfold-animation-in="fadeInRight"
+									   data-unfold-animation-out="fadeOutRight"
+									   data-unfold-duration="50">
+												<i class="flaticon-icon-126515"></i>
+												<span class="woocommerce-Price-amount amount">
+													@SharedLocalizer["Book.AddToCart"]
+												</span>
+											</a>
+										}
+									}
+									else
+									{
+										if (SignInManager.IsSignedIn(User))
+										{
+											if (!Model.Book.inLibrary)
+											{
+												if (Model.Book.CanBeAddedToLib)
+												{
+													<a value="@Model.Book.Id" data-library="@Model.Book.inLibrary" class="addToLibraryLink h-primary arrow-cursor">
+														<i class="flaticon-credit" style="@(Model.Book.inLibrary? "color: #f75454":"")"></i>
+														<span class="woocommerce-Price-amount amount">
+															
+													@SharedLocalizer["Book.AddToLibrary"]
+												
+														</span>
+													</a>
+												}
+												else
+												{
+													<a value="@Model.Book.Id" data-cart="@Model.Book.inCart" class="addToCartLink h-primary arrow-cursor">
+														<i id="addToCartIcon" class="flaticon-icon-126515" style="@(Model.Book.inCart ? "color: #f75454":"")"></i>
+														<span class="woocommerce-Price-amount amount">
+															@(Model.Book.inCart ? @SharedLocalizer["Book.RemoveFromCart"] : @SharedLocalizer["Book.AddToCart"])
+														</span>
+													</a>
+													@*<a value="@Model.Book.Id" data-cart="@Model.Book.inCart" class="addToCartLink text-uppercase text-dark h-dark font-weight-medium arrow-cursor" >
+														<i class="flaticon-icon-126515" style="@(Model.Book.inCart? "color: #f75454":"")"></i>
+														<span class="product__add-to-cart text-center" style="@(Model.Book.inCart ? "color: #f75454" : "") ">
+															@(
+													Model.Book.inCart ? @SharedLocalizer["Book.RemoveFromCart"] : @SharedLocalizer["Book.AddToCart"]
+													)
+														</span>
+													</a>*@
+												}
+											}
+											else
+											{
+												
+												<span class="product__add-to-cart text-center @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")" style=" color: #f75454 ">
+													<i class="flaticon-credit text-black" style="display: inline-block;color: #f75454 !important"></i>
+
+													@SharedLocalizer["Book.InLibrary"]
+												</span>
+											}
+										}
+										else
+										{
+											<a id="sidebarNavTogglerLogin" href="javascript:;" role="button"
+									   class="text-black h-primary arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+									   aria-controls="sidebarContent"
+									   aria-haspopup="true"
+									   aria-expanded="false"
+									   data-unfold-event="click"
+									   data-unfold-hide-on-scroll="false"
+									   data-unfold-target="#sidebarContent"
+									   data-unfold-type="css-animation"
+									   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+									   data-unfold-animation-in="fadeInRight"
+									   data-unfold-animation-out="fadeOutRight"
+									   data-unfold-duration="50">
+												<i class="flaticon-credit"></i>
+												<span class="woocommerce-Price-amount amount">
+													@SharedLocalizer["Book.AddToLibrary"]
+												</span>
+											</a>
+										}
+									}
+								</li>
+								<li class="  mb-2 mb-md-0 @(Model.Book.Price == 0 ? "py-1":"")">
+									@if (SignInManager.IsSignedIn(User))
+									{
+										@if (User.IsInRole("Subscriber"))
+										{
+											<a value="@Model.Book.Id" data-favorite="@Model.Book.isFavorite" class="addToFavoriteLink h-primary arrow-cursor">
+												<i id="addToFavoriteIcon" class="flaticon-heart" style="@(Model.Book.isFavorite? "color: #f75454":"")"></i>
+												<span class="woocommerce-Price-amount amount">
+													@(Model.Book.isFavorite ? @SharedLocalizer["Book.RemoveFromWishlist"] : @SharedLocalizer["Book.AddToWishlist"])
+												</span>
+											</a>
+										}
+									}
+									else
+									{
+										<a id="sidebarNavTogglerLogin" href="javascript:;" role="button" class="text-black"
+									   aria-controls="sidebarContent"
+									   aria-haspopup="true"
+									   aria-expanded="false"
+									   data-unfold-event="click"
+									   data-unfold-hide-on-scroll="false"
+									   data-unfold-target="#sidebarContent"
+									   data-unfold-type="css-animation"
+									   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+									   data-unfold-animation-in="fadeInRight"
+									   data-unfold-animation-out="fadeOutRight"
+									   data-unfold-duration="50">
+											<i class="flaticon-heart"></i>
+											<span class="woocommerce-Price-amount amount">
+												@SharedLocalizer["Book.AddToWishlist"]
+											</span>
+										</a>
+									}
+								</li>
+
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-- Nav Classic -->
+			<!-- End Nav Classic -->
+
+			<section class="space-bottom-3">
+				<div class="container">
+					<header class="mb-5 d-md-flex justify-content-between align-items-center">
+						<h2 class="font-size-7 mb-3 mb-md-0">@SharedLocalizer["Book.CustomersAlsoConsidered"]</h2>
+					</header>
+					<div class="js-slick-carousel products no-gutters  " style="margin:30px"
+						 data-arrows-classes="u-slick__arrow u-slick__arrow-centered--y"
+						 data-arrow-left-classes="fas fa-chevron-left u-slick__arrow-inner u-slick__arrow-inner--left ml-lg-n10"
+						 data-arrow-right-classes="fas fa-chevron-right u-slick__arrow-inner u-slick__arrow-inner--right mr-lg-n10"
+						 data-slides-show="4"
+						 data-responsive='[{
+                               "breakpoint": 1500,
+                               "settings": {
+                                 "slidesToShow": 4
+                               }
+                            },{
+                               "breakpoint": 1199,
+                               "settings": {
+                                 "slidesToShow": 3
+                               }
+                            }, {
+        "breakpoint": 992,
+                               "settings": {
+            "slidesToShow": 2
+                               }
+    }, {
+        "breakpoint": 554,
+                               "settings": {
+            "slidesToShow": 2
+                               }
+    }]'>
+
+						@foreach (var book in @Model.RelatedBooks)
+						{
+							<div class="sb__@book.Id">
+								<partial name="PartialSingleBook" model="book" />
+							</div>
+						}
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+</div>
+
+<script>
+	//function clickfacebookSahre() {
+	//    var fbpopup = window.open("https://www.facebook.com/sharer/sharer.php?u=https://miplivrel.azurewebsites.net/Book/GetBookDetails/%D8%A3%D8%AD%D8%A8%D8%A8%D8%AA%D9%83-%D8%A3%D9%83%D8%AB%D8%B1-%D9%85%D9%85%D8%A7-%D9%8A%D9%86%D8%A8%D8%BA%D9%8A%234c110c7c-5453-42a6-9e54-e4d797fb8045"+shareLink, "pop", "width=600, height=400, scrollbars=no");
+	//    return false;
+	//};
+</script>
+
+
+

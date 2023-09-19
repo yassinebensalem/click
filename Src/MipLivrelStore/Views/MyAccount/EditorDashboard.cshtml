@@ -1,0 +1,128 @@
+﻿@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using DDD.Application.ViewModels
+@using DDD.Domain.Models
+@using DDD.Application.Enum
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@model List<InvoiceVM>
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+<script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+
+<div class=" pt-5 pl-md-5 pt-lg-8 pl-lg-9 space-bottom-lg-2 mb-lg-4">
+    <a asp-controller="MyAccount" asp-action="Index" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt @(selectedCulture.Name.Equals("ar") ? "flaticon-next" : "flaticon-back")">  @SharedLocalizer["Index.GoBack"]</a><br />
+    <div class="row mx-1">
+        <div style="display: inline-block ; vertical-align: middle">
+            <label>@SharedLocalizer["Form.From"] :</label>
+        </div>
+        <div class="col-md-3 mb-4">
+            <input type="date" class="date form-control rounded-0 height-16" name="FromDate" id="FromDateId" required="" aria-label="Jack Wayley">
+        </div>
+        <label>@SharedLocalizer["Form.To"] :</label>
+        <div class="col-md-3 mb-4">
+            <input type="date" class="date form-control rounded-0 height-16" name="ToDate" id="ToDateId" required="" aria-label="Jack Wayley">
+        </div>
+        <div>
+            <a id="btnExport" onclick="exportReportToExcel(this);" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt text-white"
+               style=" height: 30PX; display: flex; align-items: center;">Export</a>
+        </div>
+        @*<button id="btnExport" onclick="exportReportToExcel(this)">EXPORT REPORT</button>*@
+        @*<button onclick="exportTableToExcel('tblData', 'members-data')">Export Table Data To Excel File</button>*@
+    </div>
+    <table id="tblData" class="table" data-cols-width="40,25,20,20">
+        <thead>
+            <tr class="border ">
+                <th scope="col" class=" border-bottom-0 font-weight-bold text-center" data-a-h="center" data-f-bold="true">@SharedLocalizer["Form.NomLivre"]</th>
+                <th scope="col" class=" border-bottom-0 font-weight-bold text-center" data-a-h="center" data-f-bold="true">@SharedLocalizer["Form.OrderNumber"]</th>
+                <th scope="col" class=" border-bottom-0 font-weight-bold text-center" data-a-h="center" data-f-bold="true">@SharedLocalizer["Form.Date"]</th>
+                <th scope="col" class=" border-bottom-0 font-weight-bold text-center" data-a-h="center" data-f-bold="true">@SharedLocalizer["Form.Country"]</th>
+                <th scope="col" class=" border-bottom-0 font-weight-bold text-center" data-a-h="center" data-f-bold="true">@SharedLocalizer["Form.Prix"]</th>
+            </tr>
+        </thead>
+        <tbody class="mainBody">
+            @foreach (var item in @Model)
+            {
+                <tr class="border select-filter filters" id="@item.Id">
+                    <td class="text-center" data-a-h="center" data-a-wrap="true">@item.Book.Title</td>
+                    <td class="text-center" data-a-h="center" data-a-v="true">@item.OrderNumber</td>
+                    <td class="text-center" data-a-h="center" data-a-v="true">@($"{@item.Date.Day}-{@item.Date.Month}-{@item.Date.Year}")</td>
+                    <td class="text-center" data-a-h="center" data-a-v="true">@item.User.Country.Name</td>
+                    <td class="text-center" data-a-h="center" data-a-v="true">@item.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <iframe id="txtArea1" style="display:none"></iframe>
+</div>
+
+<script>
+    function exportReportToExcel() {
+        let table = document.getElementsByTagName("table"); // you can use document.getElementById('tableId') as well by providing id to the table tag
+        TableToExcel.convert(table[0], { // html code may contain multiple tables so here we are refering to 1st table tag
+            name: `export.xlsx`, // fileName you could use any name
+            sheet: {
+                name: 'Sheet 1' // sheetName
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#FromDateId').val(today);
+        $('#ToDateId').val(today);
+    });
+
+    $('.date').change(function () {
+        var FromDate = $('#FromDateId').val();
+        var ToDate = $('#ToDateId').val();
+        display(FromDate, ToDate);
+    });
+
+    document.getElementById("FromDateId").onchange = function () {
+        var input = document.getElementById("ToDateId");
+        input.setAttribute("min", this.value);
+    }
+
+    document.getElementById("ToDateId").onchange = function () {
+        var input = document.getElementById("FromDateId");
+        input.setAttribute("max", this.value);
+    }
+
+    function display(startDate, endDate) {
+        $("table tbody.mainBody tr").each(function () {
+            var rowDate = $(this).find('td:eq(1)').html();
+            var tempDate = new Date(rowDate);
+            var d = new Date(rowDate.split("-").reverse().join("-"));
+            var dd = d.getDate();
+            var mm = d.getMonth() + 1;
+            var yy = d.getFullYear();
+            var newdate = yy + "-" + mm + "-" + dd;
+
+            //debugger
+
+            if (new Date(startDate) <= new Date(newdate) && new Date(newdate) <= new Date(endDate)) {
+                $(this).removeAttr("style");
+            }
+            else {
+                $(this).css("display", "none");
+            }
+        });
+    }
+
+    $("#ClearTableBtn").click(function () {
+        $("table tbody.mainBody tr").each(function () {
+            $(this).removeAttr("style");
+        });
+    })
+
+</script>
+
+

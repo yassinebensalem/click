@@ -1,0 +1,287 @@
+﻿@using DDD.Application.ViewModels;
+@using DDD.Infra.CrossCutting.Identity.Models.AccountViewModels;
+@using DDD.Domain.Models;
+
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@model BookViewModel
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<div class="mb-6 pb-6 mb-lg-8 pb-lg-9">
+    <form id="UpdateForm" class="pt-5 pl-md-5 pt-lg-8 pl-lg-9" asp-controller="Book" asp-action="UpdateBook" enctype="multipart/form-data">
+        <div class="font-size-6 mb-6">@SharedLocalizer["Form.BookDetails"]</div>
+
+        <a asp-action="BookList" asp-controller="MyAccount" class="goBackBtn btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt @(selectedCulture.Name.Equals("ar") ? "flaticon-next" : "flaticon-back")">  @SharedLocalizer["Index.GoBack"]</a><br />
+        @*<div id="toast-container" class="toast-top-right"><div class="toast toast-success" role="alert" data-delay="5000" style="display: none; background-color: #51a351; ">@SharedLocalizer["PostJoinRequest.toastSuccess"]</div></div>*@
+
+        <div class="row">
+            <div class="col-md-12 mb-4" hidden>
+                <div class="js-form-message">
+                    <input type="text" value="@Model.Id" name="Id">
+                </div>
+            </div>
+            <div id="validationSummaryUpdate" asp-validation-summary="All" class="text-danger validation-summary-valid"></div>
+            <div id="emptyFieldsMsg" class="text-danger validation-summary-valid mb-3" style="display:none;"></div>
+            <div class="col-md-12 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput1">@SharedLocalizer["Form.NomLivre"] *</label>
+                    <input type="text" value="@(@Model.Title == null ? null: @Model.Title)" class="form-control rounded-0 pl-3 placeholder-color-3" required="" id="exampleFormControlInput1"
+                           name="Title" aria-label="Jack Wayley" data-error-class="u-has-error"
+                           data-msg="@SharedLocalizer["Datamsg.Champ"]*" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput4">@SharedLocalizer["Book.BookDescription"] *</label>
+                    <textarea name="Description" type="text" rows="3"  class="form-control rounded-0 pl-3 placeholder-color-3"
+                              id="exampleFormControlInput4" required data-error-class="u-has-error"
+                              data-msg="@SharedLocalizer["Datamsg.Champ"]*"
+                              data-success-class="u-has-success">@(@Model.Description == null ? null : @Model.Description)</textarea>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput2">@SharedLocalizer["Form.Date"] *</label>
+                    <input type="date" value="@Model.PublicationDate.ToString("yyyy-MM-dd")" class="form-control rounded-0 " name="PublicationDate" id="PublicationDateId" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"] *" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput5">@SharedLocalizer["Book.ISBN"] *</label>
+                    <input type="text" value="@(@Model.ISBN == null ? null: @Model.ISBN)" class="form-control rounded-0 " name="ISBN" id="exampleFormControlInput5" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"]*" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput7">@SharedLocalizer["Form.NbPages"] *</label>
+                    <input type="text" oninput="this.value = this.value.replace(/\D/gm, '');" value="@Model.PageNumbers" class="form-control rounded-0" name="PageNumbers" id="PageNumbersId" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"] *" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput8">@SharedLocalizer["Form.Prix"] *</label>
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="@Model.Price" class="form-control rounded-0 " name="Price" id="PriceId" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"] *" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                @*<div class="input-group-prepend mr-0 d-xl-block">  *@
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput2">@SharedLocalizer["Menu.Categories"] *</label>
+                    <select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark "
+                            required="" data-msg="@SharedLocalizer["Datamsg.Champ"] *" id="inputGroupSelect2" name="CategoryId">
+                        @foreach (var item in ViewBag.categories)
+                        {
+                            @if (@item.Id == Model.CategoryId)
+                            {
+                                <option value="@item.Id" selected>@item.CategoryName</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.CategoryName</option>
+                            }
+                        }
+                    </select>
+                    @*</div>*@
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    @*<div class="input-group-prepend mr-0 d-xl-block">*@
+                    <label for="exampleFormControlInput3">@SharedLocalizer["Slideshow.Auteur"] *</label>
+                    <select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark" id="inputGroupSelect3" name="AuthorId"
+                            required="" data-msg="@SharedLocalizer["Datamsg.Champ"] *">
+                        @foreach (var item in ViewBag.authorsList)
+                        {
+                            @if (@item.Id == Model.AuthorId)
+                            {
+                                <option value="@item.Id" selected>@item.FirstName @item.LastName</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.FirstName @item.LastName</option>
+                            }
+                        }
+                    </select>
+                    @*</div>*@
+                </div>
+            </div>
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    @*<div class="input-group-prepend mr-0  d-xl-block">*@
+                    <label for="exampleFormControlInput6">@SharedLocalizer["Form.Langues"] *</label>
+
+                    <select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark" id="inputGroupSelect6" name="LanguageId" type="int"
+                            required="" data-msg="@SharedLocalizer["Datamsg.Champ"] *">
+                        @foreach (var item in ViewBag.language)
+                        {
+                            @if (@item.Id == Model.LanguageId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        }
+                    </select>
+                    @*</div>*@
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="js-form-message">
+                    @*<div class="input-group-prepend mr-0  d-xl-block">  *@
+                    <label for="exampleFormControlInput6">@SharedLocalizer["Form.Country"] *</label>
+                    <select class="custom-select pr-7 pl-4 rounded-right-0 height-5 shadow-none  text-dark" id="inputGroupSelect6" name="CountryId" type="int"
+                            required="" data-msg="@SharedLocalizer["Datamsg.Champ"] *">
+                        @foreach (var item in ViewBag.country)
+                        {
+                            @if (@item.Id == Model.CountryId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                @*</div>*@
+            </div>
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput2">@SharedLocalizer["Form.CoverPath"]</label>
+                    <input type="file" id="CoverFileId" name="CoverFile" value="@(@Model.CoverPath == null ? null: @Model.CoverPath)" accept="image/png, image/jpg, image/jpeg" class="form-control rounded-0 " aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"]" data-success-class="u-has-success">
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4 ">
+                <div class="js-form-message">
+                    <label for="exampleFormControlInput2">@SharedLocalizer["Form.PDFPath"]</label>
+                    <input type="file" id="PDFFileId" name="PDFFile" value="@(@Model.PDFPath == null ? null: @Model.PDFPath)" accept="application/pdf" class="form-control rounded-0" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["Datamsg.Champ"]" data-success-class="u-has-success">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button type="button" class="UpdateBookBtn btn btn-dark width-150">@SharedLocalizer["Form.Save"]</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("a.goBackBtn").click(function (e) {
+            e.preventDefault();
+            $("#pills-myaccount-body").load($(this).attr('href'));
+        });
+
+        $('.UpdateBookBtn').click(function () {
+            var $summaryUl = $("#validationSummaryUpdate").find("ul");
+            $summaryUl.empty();
+            
+            //check textarea size
+            if ($("#exampleFormControlInput4").val().length < 30) {
+                $("#exampleFormControlInput4").css('border-color', 'red');
+                $("html, body").animate({ scrollTop: 0 }, 1000);
+                $summaryUl.append($('#DescriptionMinimumLength').val());
+                $summaryUl.show();
+                return
+            }
+
+            $summaryUl.empty();
+            $("#emptyFieldsMsg").empty();
+            $("#emptyFieldsMsg").hide();
+            var inputs = $("#UpdateForm").find('.form-control');
+            var NbrEmptyFields = 0;
+            for (let field of inputs) {
+                let elt = $(field)[0];
+                $(elt).css('border-color', ''); 
+                if ($(elt).val() == '') {
+                    $(elt).css('border-color', 'red');
+                    NbrEmptyFields++;
+                }  
+            }
+            ////debugger
+            if ($('#PDFFileId').attr('value')) {
+                $('#PDFFileId').css('border-color', '');
+                NbrEmptyFields--;
+            }
+
+            if ($('#CoverFileId').attr('value')) {
+                $('#CoverFileId').css('border-color', '');
+                NbrEmptyFields--;
+            }
+             
+            if (NbrEmptyFields > 0) {
+                $summaryUl.append("<li> " + $('#EmptyFields').val() + "</li>");
+                $summaryUl.show();
+                $("html, body").animate({ scrollTop: 0 }, 1000);
+            }
+            else {
+                $summaryUl.empty();
+                $('#UpdateForm').submit();
+            }
+        });
+
+        $('#UpdateForm').submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var input = document.getElementById("CoverFileId");
+            var file = input.value.split("\\");
+            var fileName = file[file.length - 1];
+            var filevalue = input.value;
+            var formData = new FormData($(this)[0]);
+
+            ////debugger
+            $.ajax({
+                url: form.attr('action'),
+                type: 'put',
+                datatype: 'json',
+                contentType: false,
+                data: formData,
+                async: true,
+                cache: false,
+                processData: false,
+                success: function () {
+                    //debugger;
+                    var $summaryUl = $("#validationSummaryCreate").find("ul");
+                    $summaryUl.empty();
+
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    //show toast
+                    $("#md-toast-success-Id").fadeTo(2000, 500).slideUp(2000, function () {
+                        $(".md-toast-success").slideUp(500);
+                    });
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    //debugger;
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    var $summaryUl = $("#validationSummaryUpdate").find("ul");
+                    $summaryUl.empty();
+                     
+                    //$("#error-toast-message").text(textStatus.message);
+                    $("#md-toast-error-Id").fadeTo(2000, 500).slideUp(500, function () {
+                        $("#md-toast-error-Id").slideUp(500);
+                    });
+                }
+            });
+        })
+
+        $('#closeBtnId').click((function (e) {
+            e.preventDefault();
+            //debugger
+            var x = document.getElementById("successMsg");
+            x.style.display = "none";
+        }));
+         
+    });
+
+</script>

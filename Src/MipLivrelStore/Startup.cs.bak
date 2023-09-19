@@ -1,0 +1,144 @@
+using DDD.Infra.CrossCutting.IoC;
+using DDD.Infra.Data.Context;
+using DDD.Services.Api.StartupExtensions;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using MipLivrelStore.Configurations;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MipLivrelStore
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        {
+            Configuration = configuration;
+            _env = env;
+
+            var builder = new ConfigurationBuilder().AddConfiguration(configuration)
+           .SetBasePath(env.ContentRootPath)
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+           .AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
+
+        public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
+        private IApplicationBuilder app;
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // ----- Database -----
+            services.AddCustomizedDatabase(Configuration, _env);
+            // ----- Auth -----
+           services.AddCustomizedAuth(Configuration);
+
+            // ----- Http -----
+            //services.AddCustomizedHttp(Configuration);
+
+            // ----- AutoMapper -----
+            services.AddAutoMapperSetup();
+
+            // Adding MediatR for Domain Events and Notifications
+            services.AddMediatR(typeof(Startup));
+
+            services.AddCustomizedHash(Configuration);
+
+            // ----- Swagger UI -----
+            //services.AddCustomizedSwagger(_env);
+
+            // .NET Native DI Abstraction
+            RegisterServices(services);
+            services.AddRazorPages();
+        }
+
+        private static void RegisterServices(IServiceCollection services)
+        {
+            // Adding dependencies from another layers (isolated from Presentation)
+            NativeInjectorBootStrapper.RegisterServices(services);
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app)
+        {
+            this.app = app;
+            // ----- Error Handling -----
+            app.UseCustomizedErrorHandling(_env);
+            app.UseCustomizedAuth();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            //Localization
+
+            var supportedCultures = new[]
+           {
+                new CultureInfo("en-US"),
+                new CultureInfo("fr"),
+                new CultureInfo("ar")
+            };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("fr"),
+                // Formatting numbers, dates, etc.
+                SupportedCultures = supportedCultures,
+                // UI strings that we have localized.
+                SupportedUICultures = supportedCultures
+            });
+
+
+            // ----- Auth -----
+            // app.UseCustomizedAuth();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+        name: "Api",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+            });
+
+            // ----- Swagger UI -----
+            //app.UseCustomizedSwagger(_env);
+            UpdateDatabase();
+        }
+
+        private void UpdateDatabase()
+        {
+            //logger.LogInformation("Triggered UpdateDatabase");
+            try
+            {
+                using var serviceScope = app.ApplicationServices
+                    .GetRequiredService<IServiceScopeFactory>()
+                    .CreateScope();
+                using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                context.Database.Migrate();
+                //logger.LogInformation("Update Database done");
+            }
+            catch (Exception e)
+            {
+                //  logger.LogError("Error when excute migrate database", e);
+            }
+        }
+    }
+}

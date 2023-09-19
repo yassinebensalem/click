@@ -1,0 +1,78 @@
+﻿@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@using DDD.Application.ViewModels;
+@model PaymentDetailsVM
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<style type="text/css">
+    h5, h3 {
+        text-transform: capitalize;
+    }
+
+    .b-t {
+        border-top: 1px solid #ddd;
+    }
+
+    .pull-right {
+        float: none;
+        text-align: center;
+    }
+
+    .bg-light.p-5:nth-child(1) {
+        padding: 1rem !important;
+    }
+
+    .p-5 {
+        padding: 1rem !important;
+    }
+
+    .text-right h5:nth-child(3) {
+        padding-top: 15px !important;
+    }
+
+    .pt-5 {
+        padding-top: 1rem !important
+    }
+</style>
+
+<!-- ====== MAIN CONTENT ===== -->
+<main id="content">
+    <div class="container">
+        <div class="space-2 space-md-3 ">
+            <div class="d-flex flex-column align-items-center">
+                <div class="font-weight-medium font-size-11 font-size-xs-25 mb-3">
+                    @SharedLocalizer["Payment.RequestSuccessfully"]
+                </div>
+                <h6 class="font-weight-medium mb-2 col-lg-7 text-center text-lh-lg mb-5">@SharedLocalizer["Payment.RequestSuccessfullyText"]</h6>
+            </div>
+
+            <div class="d-flex flex-column align-items-center">
+                <div class="bg-light mb-3 p-5" style="width: 50% !important; ">
+                    <h5 style="text-align: center !important;">@SharedLocalizer["Payment.Details"]</h5>
+                    <div class="row b-t pt-5" style="justify-content: center;">
+                        <div class="col-md-6 text-center">
+                            <p>Order Number : @Model.OrderNumber</p>
+                            <p>@Model.UserName</p>
+                            <p>Amount : @Model.Amount @SharedLocalizer["Book.Currency"]</p>
+							<p class="@(String.IsNullOrWhiteSpace(@Model.AuthorizationCode)?"d-none":"d-block")">Authorization Number : @Model.AuthorizationCode</p>
+                            <p>@Model.Date</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center !important;">
+                <a href="~/Home/Index" value="7145" class="btn btn-dark border-0 rounded-1 p-2 mb-4 single_add_to_cart_button button alt">@SharedLocalizer["SearchResult.Back"]</a><br />
+            </div>
+        </div>
+    </div>
+</main>
+

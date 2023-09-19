@@ -1,0 +1,41 @@
+﻿@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using DDD.Application.ViewModels;
+@model List<ApplicationUser>
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+@foreach (var user in Model)
+{
+    <li class="product product__list">
+        <div class="product__inner overflow-hidden p-1 p-md-4d875">
+            <div class="woocommerce-LoopProduct-link woocommerce-loop-product__link row position-relative">
+                <div class="col-md-auto woocommerce-loop-product__thumbnail mb-3 mb-md-0">
+                    <a class="d-block">
+                        <img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{user.PhotoPath}")" width="180" height="180" class="img-fluid d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" alt="image-description">
+                    </a>
+                </div>
+                <div class="col-md woocommerce-loop-product__body product__body pt-3 bg-white mb-3 mb-md-0">
+                    <div class="text-uppercase font-size-1 mb-1 text-truncate"> </div>
+                    <h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 crop-text-2 h-dark">
+                        <a tabindex="0">@($"{user.FirstName}{user.LastName}")</a>
+                    </h2>
+                    @*<div class="font-size-2  mb-2 text-truncate"><a asp-controller="Author" asp-action="GetAuthorDetails" class="text-gray-700">@user.AuthorName</a></div>*@
+                    <p class="font-size-2 mb-2 crop-text-2"> </p>
+                    <div class="price d-flex align-items-center font-weight-medium font-size-3">
+                        
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </li>
+
+}
+
+

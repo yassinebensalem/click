@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
+<footer class="site-footer_v2">
+    <div class="pt-5" style="background-color:#471069;">
+        <div @*class="pb-5 space-bottom-lg-3"*@>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 mb-6 mb-lg-0">
+                        <h4 class="font-size-3 font-weight-medium mb-2 mb-xl-5 pb-xl-1 text-white"> @SharedLocalizer["Footer.Explore"]</h4>
+                        <ul class="list-unstyled mb-0">
+                            <li class="h-white pb-2">
+                                <a asp-controller="home" asp-action="AboutUs" class="widgets-hover transition-3d-hover font-size-2 text-gray-450">@SharedLocalizer["Footer.About"]</a>
+                            </li>
+                            @*<li class="h-white py-2">
+                                    <a class="font-size-2 text-gray-450 widgets-hover transition-3d-hover" href="#">@SharedLocalizer["Footer.Sitemap"]</a>
+                                </li>
+                                <li class="h-white pt-2">
+                                    <a class="font-size-2 text-gray-450 widgets-hover transition-3d-hover" href="#">@SharedLocalizer["Footer.SignJoin"]</a>
+                                </li>*@
+                        </ul>
+
+                        <ul class="list-unstyled mb-0 d-flex">
+                            <li class="h-white btn pl-0">
+                                <a class="text-gray-450" href="https://www.instagram.com/clik2read">
+                                    <span class="fab fa-instagram"></span>
+                                </a>
+                            </li>
+                            <li class="h-white btn">
+                                <a class="text-gray-450" href="https://www.facebook.com/profile.php?id=100085660252450">
+                                    <span class="fab fa-facebook-f"></span>
+                                </a>
+                            </li>
+                            <li class="h-white btn">
+                                <a class="text-gray-450" href="https://www.linkedin.com/company/clik2read/">
+                                    <span class="fab fa-linkedin fa-linkedin-in"></span>
+                                </a>
+                            </li>
+                            <li class="h-white btn">
+                                <a class="text-gray-450" href="https://twitter.com/clik2read">
+                                    <span class="fab fa-twitter"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-5 mb-6 mb-lg-0">
+                        <div class="pb-lg-6">
+                            <h4 class="font-size-3 font-weight-medium mb-2 mb-xl-5 pb-xl-1 text-white">@SharedLocalizer["Footer.ContactUs"] </h4>
+                            <address class="font-size-2 mb-3">
+                                <span class="mb-2 font-weight-normal text-gray-450">
+                                    @SharedLocalizer["Footer.Adresse"]. @*<br>*@@SharedLocalizer["Footer.Pays"]
+                                </span>
+                            </address>
+                            <div class="mb-2 h-white">
+                                <a href="mailto:contact@clik2read.com" class="font-size-2 d-block text-gray-450 mb-1">contact@clik2read.com</a>
+                                <a href="tel:+21629090071" class="font-size-2 d-block text-gray-450" style="direction: ltr; display: inline-block">@SharedLocalizer["Footer.PhoneNumber"]</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-lg-0">
+                        <!-- Newsletter -->
+                        <div>
+                            <div class="mb-5">
+                                <h5 class="font-size-3 font-weight-medium text-white mb-2 mb-xl-5 pb-xl-1">
+                                    @SharedLocalizer["Footer.Newsletter"]
+                                </h5>
+                                <p class="text-gray-450 font-size-2"> @SharedLocalizer["Footer.Message1"]</p>
+                            </div>
+                            <form class="mb-4 js-validate js-form-message" novalidate="novalidate">
+                                <div class="input-group">
+                                    <input type="email" class="form-control height-50 font-size-2 pl-4 border-0 rounded-left-pill" name="email" id="subscribeSrEmail" placeholder="@SharedLocalizer["Footer.EnterMail"]" aria-label="Your email" aria-describedby="subscribeButton" required="" data-msg="Please enter a valid email address.">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary text-white px-3 py-2 font-size-4 border-0" id="subscribeButton">
+                                            <span class="flaticon-send mx-1"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- End  Newsletter -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="py-2 border-top border-gray-750">
+            <div class="container">
+                <div class="d-lg-flex text-center text-lg-left justify-content-between align-items-center">
+                    <!-- Copyright -->
+                    <div class="my-2 mb-lg-0 font-size-2 text-gray-450">©2022 MipLivrel. @SharedLocalizer["Footer.Message2"]</div>
+                    <!-- End Copyright -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

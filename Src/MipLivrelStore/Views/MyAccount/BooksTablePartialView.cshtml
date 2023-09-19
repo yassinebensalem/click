@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using DDD.Application.ViewModels;
+@model BookViewModel
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+    //var appUser = await UserManager.FindByEmailAsync(User.Identity.Name);
+
+}
+
+<tr class="border select-filter filters" id="@Model.Id">
+    <td class="align-middle py-2"> <img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.CoverPath}")" style="height: 90px !important; width: 60px;" /> </td>
+    <td class="align-middle text-center">@Model.Title</td>
+    <td class="align-middle text-center">@($"{Model.statusUpdateDate.Day}/{Model.statusUpdateDate.Month}/{Model.statusUpdateDate.Year}")</td>
+    <td class="align-middle text-center">@Model.CategoryName</td>
+    <td class="align-middle text-center">@Model.AuthorName</td>
+    <td class="align-middle text-center">@Model.Status</td>
+	<td class="align-middle text-center">@Model.Price</td>
+    @if (selectedCulture.Name.Equals("ar"))
+    {
+        <td class="align-middle text-center py-5" style="white-space: nowrap;">
+            <a role="button" title="@SharedLocalizer["Operations.Delete"]" data-toggle="modal" data-target="#zizi" value="@Model.Id" class="bookDeleteRow"><i class="flaticon-error"></i></a>
+            <a asp-action="Update" asp-controller="Book" asp-route-BookId="@Model.Id" value="@Model.Id" title="@SharedLocalizer["Operations.Edit"]" data-toggle="tooltip" class="updateBookBtn "><i class="flaticon-resume px-1"></i></a>
+            <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{Model.Id}#{Model.Title.Replace(" ", "-")}")" title="@SharedLocalizer["Operations.View"]" data-toggle="tooltip" class=""><i class="flaticon-view"></i></a>
+
+            <div id="zizi" class="modal fade show " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-gray-200">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">@SharedLocalizer["Operations.DeleteConfirmation"]</h4>
+                            <button id="closeBtnId" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span class="closebtn">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            @SharedLocalizer["Operations.DeleteConfirmationText"]
+                        </div>
+                        <div class="modal-footer p-1">
+                            <a   class="deleteBookBtn btn bg-danger mr-1 text-white" value="@Model.Id">@SharedLocalizer["AccountSideBar.ConfirmPassword"]</a>
+                            <button id="closeBtnId" type="button" class="btn btn-dark" data-dismiss="modal">@SharedLocalizer["Index.GoBack"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    }
+    else
+    {
+        <td class="align-middle text-center py-5" style="white-space: nowrap;">
+            <a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{Model.Id}#{Model.Title.Replace(" ", "-")}")" title="@SharedLocalizer["Operations.View"]" data-toggle="tooltip" class=""><i class="flaticon-view"></i></a>
+            <a asp-action="Update" asp-controller="Book" asp-route-BookId="@Model.Id" value="@Model.Id" title="@SharedLocalizer["Operations.Edit"]" data-toggle="tooltip" class="updateBookBtn"><i class="flaticon-resume px-1"></i></a>
+            <a data-row="@Model.Id" value="@Model.Id" role="button" title="@SharedLocalizer["Operations.Delete"]" data-toggle="modal" data-target="#zizi" class="bookDeleteRow"><i class="flaticon-error"></i></a>
+
+            <div id="zizi" class="modal fade show " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-gray-200">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">@SharedLocalizer["Operations.DeleteConfirmation"]</h4>
+                            <button id="closeBtnId" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span class="closebtn">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            @SharedLocalizer["Operations.DeleteConfirmationText"]
+                        </div>
+                        <div class="modal-footer p-1">
+                            <a   class="deleteBookBtn btn bg-danger mr-1 text-white" value="@Model.Id">@SharedLocalizer["AccountSideBar.ConfirmPassword"]</a>
+                            <button id="closeBtnId" type="button" class="btn btn-dark" data-dismiss="modal">@SharedLocalizer["Index.GoBack"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    }
+</tr>

@@ -1,0 +1,9 @@
+﻿@model IEnumerable<DDD.Application.ViewModels.CategoryViewModel>;
+
+    <ul id="homeDropdownMenu0" class="dropdown-unfold dropdown-menu font-size-2 rounded-0 border-gray-900"
+        aria-labelledby="homeDropdownInvoker0" style="height: 500px; overflow: auto"> 
+        @foreach (var category in Model)
+        {
+            <li><a class="dropdown-item link-black-100" asp-action="Index" asp-controller="Category">@category.CategoryName </a></li>
+        }
+    </ul>

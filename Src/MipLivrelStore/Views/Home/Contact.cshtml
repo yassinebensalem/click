@@ -1,0 +1,965 @@
+﻿@using DDD.Application.ViewModels;
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@using DDD.Domain.Models;
+@using MipLivrelStore;
+@model JoinRequestVM;
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    var selectedCulture = requestCulture.RequestCulture.Culture;
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "Contact";
+}
+<style>
+    .selectedBook {
+        background: #5e6264;
+        border-radius: 4px;
+        color: #fff;
+        cursor: initial;
+        display: inline-block;
+        margin: 5px 10px 5px 0;
+        padding: 3px 7px;
+    }
+
+    label.error {
+        color: red;
+        font-size: 1rem;
+        display: block;
+        margin-top: 5px;
+    }
+
+    input.error, textarea.error {
+        border: 1px dashed red;
+        font-weight: 300;
+        color: red;
+    }
+
+    @@media (max-width: 768px) {
+        #description {
+            padding-top: 35px;
+        }
+    }
+</style>
+
+
+@*<div id="toast-container" class="toast-top-right"><div class="toast toast-success" role="alert" data-delay="5000" style="display: none; background-color: #51a351; ">@SharedLocalizer["PostJoinRequest.toastSuccess"]</div></div>
+
+    <div id="toast-container" class="toast-top-right">
+        <div role="alert" data-delay="5000" class="toast md-toast-error" style="display:none; background-color: #ff3547; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHOSURBVEhLrZa/SgNBEMZzh0WKCClSCKaIYOED+AAKeQQLG8HWztLCImBrYadgIdY+gIKNYkBFSwu7CAoqCgkkoGBI/E28PdbLZmeDLgzZzcx83/zZ2SSXC1j9fr+I1Hq93g2yxH4iwM1vkoBWAdxCmpzTxfkN2RcyZNaHFIkSo10+8kgxkXIURV5HGxTmFuc75B2RfQkpxHG8aAgaAFa0tAHqYFfQ7Iwe2yhODk8+J4C7yAoRTWI3w/4klGRgR4lO7Rpn9+gvMyWp+uxFh8+H+ARlgN1nJuJuQAYvNkEnwGFck18Er4q3egEc/oO+mhLdKgRyhdNFiacC0rlOCbhNVz4H9FnAYgDBvU3QIioZlJFLJtsoHYRDfiZoUyIxqCtRpVlANq0EU4dApjrtgezPFad5S19Wgjkc0hNVnuF4HjVA6C7QrSIbylB+oZe3aHgBsqlNqKYH48jXyJKMuAbiyVJ8KzaB3eRc0pg9VwQ4niFryI68qiOi3AbjwdsfnAtk0bCjTLJKr6mrD9g8iq/S/B81hguOMlQTnVyG40wAcjnmgsCNESDrjme7wfftP4P7SP4N3CJZdvzoNyGq2c/HWOXJGsvVg+RA/k2MC/wN6I2YA2Pt8GkAAAAASUVORK5CYII=) !important; ">
+            <div class="md-toast-message">@SharedLocalizer["PostJoinRequest.toastalerts"]</div>
+        </div>
+    </div>
+    <div id="toast-container" class="toast-top-right">
+        <div id="md-toast-error-Id" role="alert" data-delay="5000" class="toast md-toast-error" style="display:none; background-color: #ff3547; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHOSURBVEhLrZa/SgNBEMZzh0WKCClSCKaIYOED+AAKeQQLG8HWztLCImBrYadgIdY+gIKNYkBFSwu7CAoqCgkkoGBI/E28PdbLZmeDLgzZzcx83/zZ2SSXC1j9fr+I1Hq93g2yxH4iwM1vkoBWAdxCmpzTxfkN2RcyZNaHFIkSo10+8kgxkXIURV5HGxTmFuc75B2RfQkpxHG8aAgaAFa0tAHqYFfQ7Iwe2yhODk8+J4C7yAoRTWI3w/4klGRgR4lO7Rpn9+gvMyWp+uxFh8+H+ARlgN1nJuJuQAYvNkEnwGFck18Er4q3egEc/oO+mhLdKgRyhdNFiacC0rlOCbhNVz4H9FnAYgDBvU3QIioZlJFLJtsoHYRDfiZoUyIxqCtRpVlANq0EU4dApjrtgezPFad5S19Wgjkc0hNVnuF4HjVA6C7QrSIbylB+oZe3aHgBsqlNqKYH48jXyJKMuAbiyVJ8KzaB3eRc0pg9VwQ4niFryI68qiOi3AbjwdsfnAtk0bCjTLJKr6mrD9g8iq/S/B81hguOMlQTnVyG40wAcjnmgsCNESDrjme7wfftP4P7SP4N3CJZdvzoNyGq2c/HWOXJGsvVg+RA/k2MC/wN6I2YA2Pt8GkAAAAASUVORK5CYII=) !important; ">
+            <div id="error-toast-message" class="md-toast-message"></div>
+        </div>
+    </div>*@
+
+<main id="content">
+
+    <div>
+        <div class="space-top-1 bg-gray-200" style="background-image:url(../../assets/img/1920x588/img1.jpg); ">
+            <div class="media d-block d-lg-flex">
+                <div id="description" class="media-body align-self-center mb-4 mb-lg-0 col-md-8">
+
+                    <div class="col-md-12 d-flex justify-content-center ">
+                        <h2 class="banner__title font-size-10 font-weight-bold " style="margin-top:15px">@SharedLocalizer["Contact.aide"]</h2>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <p class=" font-size-4  font-weight-bold text mb-2 animated fadeInUp">
+                            <small>
+                                @SharedLocalizer["Contact.Message"]
+                            </small>
+                        </p>
+                    </div>
+                </div>
+                <img src="/Template/Image/img1.png" class="img-fluid" alt="image-description" style="padding-top: 10px;">
+            </div>
+
+        </div>
+        <div class="col-md-12 d-flex justify-content-center mt-4">
+            <div class="col-md-3 ">
+                <div class="js-form-message font-size-3 text-center">
+                    <label class="text-center" for="exampleFormControlInput4">@SharedLocalizer["ContactPage.ChoixSujet"]</label>
+                    <div class="row mb-3 justify-content-center">
+                        <select id="ComboboxContact" type="text" class="custom-select text-center rounded-right-0 height-5 shadow-none  text-dark" placeholder="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="Please enter your name." data-success-class="u-has-success">
+                            <option value="1">@SharedLocalizer["Combobox.Contact"]</option>
+                            <option value="2">@SharedLocalizer["Combobox.JoinRequestAuteur"]</option>
+                            <option value="3">@SharedLocalizer["Combobox.JoinRequestEditeur"]</option>
+                            @*							<option value="4">@SharedLocalizer["Combobox.Competition"]</option>
+                            <option value="5">@SharedLocalizer["Combobox.MothersDay"]</option>*@
+                            <option value="6">@SharedLocalizer["Combobox.Laureat"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" mb-3">
+            <div id="formcontact" class="col-md-12">
+                <form id="contactForm" onsubmit="return false">
+                    <div class="row mb-3 justify-content-center mt-3">
+                        <div class="col-md-4 ">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label" for="FirstName">@SharedLocalizer["AccountSideBar.FirstName"]*</label>
+                                <input asp-for="FirstName" type="text" class="form-control rounded-0 height-4 px-4" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinLastNameLabel" class="form-label" for="LastName">@SharedLocalizer["AccountSideBar.LastName"]*</label>
+                                <input asp-for="LastName" type="text" class="form-control rounded-0 height-4 px-4" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label" for="Email">@SharedLocalizer["AccountSideBar.Email"]*</label>
+                                <input asp-for="Email" type="text" class="form-control rounded-0 height-4 px-4" />
+                                <span id="contactMailVerification" style="color:red"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinObjetLabel" class="form-label" for="Subject">@SharedLocalizer["Contact.Objet"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" asp-for="Subject" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label id="contactdescriptionlabel" for="Description">@SharedLocalizer["Book.BookDescription"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" asp-for="Description" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationDescription"]" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center">
+
+                        <div class="col-md-4" align="right">
+
+                            <button type="submit" id="myBtn" onclick="contact_RequestJoin()" class="submit btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class=" mb-3">
+            <div id="FormAuteur" class="col-md-12" style="display:none;">
+                <form class="formJoinRequest" id="formJoinRequestAuteur" onsubmit="return false">
+                    <input type="hidden" name="RequesterType" value="@((int)DDD.Domain.Common.Constants.GlobalConstant.JoinRequestType.Author)" />
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-2 justify-content-center ">
+                            <div class="js-form-message js-focus-state">
+                                <label id="contactFirstNameLabel" class="form-label" for="JoinRequestFirstName">@SharedLocalizer["AccountSideBar.FirstName"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="Firstname" id="JoinRequestFirstName" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg='@SharedLocalizer["JoinRequestAuteur.ValidationFirstName"]'>
+                                <h1 id="passcheck" style="font-size: 13px;"> </h1>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label id="contactLastNameLabel" class="form-label" for="JoinRequestLastName">@SharedLocalizer["AccountSideBar.LastName"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="Lastname" id="JoinRequestLastName" required="" aria-describedby="signinLastNameLabel" data-msg='@SharedLocalizer["JoinRequestAuteur.ValidationLastName"]'>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label id="emailFirstNameLabel" class="form-label" for="JoinRequestEmail">@SharedLocalizer["AccountSideBar.Email"]*</label>
+                                <input type="email" class="form-control rounded-0 height-4 px-4" name="Email" id="auteurEmail" required="" aria-label="jackwayley@gmail.com" aria-describedby="signinEmailLabel" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="auteurMailVerification" style="color:red"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-2 justify-content-center ">
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label id="JoinRequestPhone" class="form-label" for="signinLastName">@SharedLocalizer["Account.Phone"]* </label>
+                                <input type="tel" class="form-control rounded-0 height-4 px-4" name="PhoneNumber" id="JoinRequestPhone" aria-describedby="JoinRequestPhone" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationPhone"]">
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label for="exampleFormControlInput6">@SharedLocalizer["Form.Country"]* </label>
+                                @await Component.InvokeAsync("Country")
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label id="descriptionlabel" for="JoinRequestbiographie">@SharedLocalizer["Book.BookDescription"]*</label>
+                                <textarea name="Description" type="text" placeholder="" id="JoinRequestbiographie" rows="3" size="30" class="form-control rounded-0 pl-3 placeholder-color-3" data-error-class="u-has-error" data-success-class="u-has-success" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationDescription"]"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" id="myBtnAuteur" onclick="auteur_RequestJoin()" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class=" mb-3">
+            <div id="formEditeur" class="col-md-12 " style="display:none;">
+                <form class="formJoinRequest" id="formJoinRequestEditeur" onsubmit="return false">
+                    <input type="hidden" name="RequesterType" value="@((int)DDD.Domain.Common.Constants.GlobalConstant.JoinRequestType.Editor)" />
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-2 justify-content-center ">
+                            <div class="js-form-message js-focus-state">
+                                <label id="contactFirstNameLabel" class="form-label" for="JoinRequestFirstName">@SharedLocalizer["AccountSideBar.FirstName"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="FirstName" id="JoinRequestFirstName" required="" aria-label="Jack Wayley" data-error-class="u-has-error" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationFirstName"]">
+                                <h1 id="passcheck" style="font-size: 13px;"> </h1>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label id="contactLastNameLabel" class="form-label" for="JoinRequestLastName">@SharedLocalizer["AccountSideBar.LastName"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="LastName" id="JoinRequestLastName" required="" aria-describedby="signinLastNameLabel" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationLastName"]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-2 justify-content-center ">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinRaisonSocialLabel" class="form-label " for="signinRaisonSocial">@SharedLocalizer["AccountSideBar.RaisonSocial"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="RaisonSocial" id="signinRaisonSocial" aria-describedby="signinRaisonSocialLabel" required="" aria-label="Jack Wayley" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationRaisonSociale"]">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinIdFiscalLabel" class="form-label " for="signinIdFiscal">@SharedLocalizer["AccountSideBar.IdFiscal"]*</label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="IdFiscal" id="signinIdFiscal" aria-describedby="signinIdFiscalLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationIdFiscal"]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinEmailLabel" class="form-label " for="JoinRequestEmaile">@SharedLocalizer["AccountSideBar.Email"]*</label>
+                                <input type="email" class="form-control rounded-0 height-4 px-4" name="Email" id="editeurEmail" aria-describedby="signinEmailLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="editeurMailVerification" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label id="signinPhoneLabel" class="form-label" for="signinLastName">@SharedLocalizer["Account.Phone"]* </label>
+                                <input type="tel" class="form-control rounded-0 height-4 px-4" name="PhoneNumber" id="signinLastName" aria-describedby="signinPhoneLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationPhone"]">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label for="exampleFormControlInput6">@SharedLocalizer["Form.Country"]*</label>
+                                @await Component.InvokeAsync("Country")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label for="exampleFormControlInput4">@SharedLocalizer["Book.BookDescription"]*</label>
+                                <textarea name="Description" type="text" placeholder="" rows="3" size="30" class="form-control rounded-0 pl-3 placeholder-color-3" id="exampleFormControlInput4" data-error-class="u-has-error" data-success-class="u-has-success" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationDescription"]"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" id="myBtnEditeur" onclick="editeur_RequestJoin()" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class=" mb-3">
+            <div id="formCompetition" class="col-md-12 " style="display:none;">
+                <form class="formCompetitionRequest" id="formCompetitionRequest" onsubmit="return false">
+                    <input type="hidden" name="RequesterType" value="@((int)DDD.Domain.Common.Constants.GlobalConstant.JoinRequestType.Competition)" />
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label " for="JoinRequestEmaile">@SharedLocalizer["AccountSideBar.Email"]*</label>
+                                <input type="email" class="form-control rounded-0 height-4 px-4" name="Email" id="competitionEmail" aria-describedby="signinEmailLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="competitionMailVerification" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label" for="signinLastName">@SharedLocalizer["Combobox.CompetitionVoucherNumber"]* </label>
+                                <input type="text" class="form-control rounded-0 height-4 px-4" name="VoucherNumber" aria-describedby="signinPhoneLabel" required="" data-msg="@SharedLocalizer["Competition.ValidationVoucherNumber"]">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="js-form-message js-focus-state">
+                                <label for="exampleFormControlInput6">@SharedLocalizer["Combobox.CompetitionVoucherValue"]*</label>
+                                <input type="number" class="form-control rounded-0 height-4 px-4" name="VoucherValue" aria-describedby="signinPhoneLabel" required="" data-msg="@SharedLocalizer["Competition.ValidationVoucherValue"]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label for="exampleFormControlInput4">@SharedLocalizer["Combobox.CompetitionBooksList"]*</label>
+                                <div id="selections" class="d-flex flex-column">
+                                    <div id="clone" style="display:none;"><span class="selectedBook mr-1"></span></div>
+                                </div>
+                                <input id="Name" class="form-control" placeholder="@SharedLocalizer["Competition.PlaceholderDesiredBooksList"]" />
+                                <span id="competitionBooksListValidation" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" onclick="competition_Request()" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class=" mb-3">
+            <div id="formMothersDay" class="col-md-12 " style="display:none;">
+                <form class="formMothersDayRequest" id="formMothersDayRequest" onsubmit="return false">
+                    <input type="hidden" name="RequesterType" value="@((int)DDD.Domain.Common.Constants.GlobalConstant.JoinRequestType.MothersDay)" />
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label " for="JoinRequestEmaile">@SharedLocalizer["Contact.YourMail"]*</label>
+                                <input type="email" class="form-control rounded-0 height-4 px-4" name="Email" id="RequesterEmail" aria-describedby="signinEmailLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="YourMailVerification" style="color:red"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label " for="JoinRequestEmaile">@SharedLocalizer["Contact.MotherMail"]*</label>
+                                <input type="email" class="form-control rounded-0 height-4 px-4" name="ReceiverEmail" id="ReceiverEmail" aria-describedby="signinEmailLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="ReceiverMailVerification" style="color:red"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label for="exampleFormControlInput4">@SharedLocalizer["Contact.BookToOffer"]*</label>
+                                @*<div id="offeSelections" class="d-flex flex-column">
+                                <div id="motherDayBooCclone" style="display:none;"><span class="selectedBook mr-1"></span></div>
+                                </div>*@
+                                <input id="bookToOffer" class="form-control" placeholder="@SharedLocalizer["Contact.PlaceholderDesiredBook"]" />
+                                <input id="idBookToOffer" type="hidden" />
+                                <span id="MothersDayBookValidation" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" onclick="MothersDay_Request()" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class=" mb-3">
+            <div id="formLaureat" class="col-md-12 " style="display:none;">
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card" style="border-color:#fa909073 !important;background-color:#fa909073 !important">
+                            <div class="card-body">
+                                @SharedLocalizer["Laureat.InformationPanel"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="formLaureatRequest" id="formLaureatRequest" onsubmit="return false">
+                    <input type="hidden" name="RequesterType" value="@((int)DDD.Domain.Common.Constants.GlobalConstant.JoinRequestType.Laureat)" />
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label class="form-label " for="JoinRequestEmaile">@SharedLocalizer["AccountSideBar.Email"]*</label>
+                                <input type="email" placeholder="@SharedLocalizer["Laureat.EmailPlaceHolder"]" class="form-control rounded-0 height-4 px-4" name="Email" id="laureatEmail" aria-describedby="signinEmailLabel" required="" data-msg="@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]">
+                                <span id="laureatMailVerification" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message js-focus-state">
+                                <label for="exampleFormControlInput6">@SharedLocalizer["Laureat.VoucherValueLabel"]*</label>
+                                <input type="number" placeholder="@SharedLocalizer["Laureat.VoucherValuePlaceHolder"]" class="form-control rounded-0 height-4 px-4" name="VoucherValue" aria-describedby="signinPhoneLabel" required="" data-msg="@SharedLocalizer["Competition.ValidationVoucherValue"]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="js-form-message">
+                                <label for="exampleFormControlInput4">@SharedLocalizer["Laureat.BooksLabel"]*</label>
+                                <div id="laureatSelections" class="d-flex flex-column">
+                                    <div id="cloneLaureatSelection" style="display:none;"><span class="selectedBook mr-1"></span></div>
+                                </div>
+                                <input id="LaureatBooks" class="form-control" placeholder="@SharedLocalizer["Laureat.BooksPlaceHolder"]" />
+                                <span id="laureatBooksListValidation" style="color:red"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 justify-content-center ">
+
+                        <span class="d-flex flex-wrap" style="align-items: center;">
+                            <i class="fas fa-info-circle" style="color:#fa9090eb;"></i>
+                                @SharedLocalizer["Laureat.BooksValuePanel"]
+                            </span>
+                           
+                       
+                    </div>
+                    <div class="row mb-3 justify-content-center">
+                        <div class="col-md-4" align="right">
+                            <div class="ml">
+                                <button type="submit" onclick="laureat_Request()" class="btn btn-dark width-150 rounded-0 btn-wide font-weight-medium">@SharedLocalizer["Contact.Envoyer"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="toast bg-primary text-white fade" style="position: absolute; bottom: 0; right: 20px;" id="failureToast">
+        <div class="toast-body">
+            @SharedLocalizer["PostJoinRequest.toastError"]
+        </div>
+    </div>
+    <div class="toast bg-success text-white fade" style="position: absolute; bottom: 0; right: 20px;" id="successToast">
+        <div class="toast-body">
+            @SharedLocalizer["PostJoinRequest.toastSuccess"]
+        </div>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#Name").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Home/Autocomplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.title, value: item.id };
+                        }))
+
+                    }
+                })
+            },
+            focus: function (event, ui) {
+                $(this).val(ui.item.label);
+                return false;
+            },
+            select: function (event, ui) {
+                var label = ui.item.label;
+                var value = ui.item.value;
+                var closeIcon = "<i class='fas fa-times fa-xs removeParent ml-1'></i>"
+                $("#clone").clone(true)
+                    .attr('id', ui.item.value)
+                    .attr('class', 'desired_book_list')
+                    .attr('data-value', label)
+                    .find('span') //Find the 'p' tag inside the cloned element
+                    .html(ui.item.label + closeIcon) // change the html of the 'p' tag
+                    .end()
+                    .appendTo("#selections").show();;
+                $(this).val("");
+                document.getElementById('competitionBooksListValidation').innerHTML = ''
+
+                event.preventDefault();
+            }
+        });
+        $("#bookToOffer").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Home/Autocomplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.title, value: item.id };
+                        }))
+
+                    }
+                })
+            },
+            focus: function (event, ui) {
+                $(this).val(ui.item.label);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#idBookToOffer').val(ui.item.value)
+                $(this).val(ui.item.label);
+                document.getElementById('MothersDayBookValidation').innerHTML = ''
+                return false;
+            }
+        });
+
+        $("#LaureatBooks").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Home/Autocomplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.title, value: item.id };
+                        }))
+
+                    }
+                })
+            },
+            focus: function (event, ui) {
+                $(this).val(ui.item.label);
+                return false;
+            },
+            select: function (event, ui) {
+                var label = ui.item.label;
+                var value = ui.item.value;
+                var closeIcon = "<i class='fas fa-times fa-xs removeParent ml-1'></i>"
+                $("#cloneLaureatSelection").clone(true)
+                    .attr('id', ui.item.value)
+                    .attr('class', 'desired_book_list')
+                    .attr('data-value', label)
+                    .find('span') //Find the 'p' tag inside the cloned element
+                    .html(ui.item.label + closeIcon) // change the html of the 'p' tag
+                    .end()
+                    .appendTo("#laureatSelections").show();;
+                $(this).val("");
+                document.getElementById('laureatBooksListValidation').innerHTML = ''
+
+                event.preventDefault();
+            }
+        });
+        $(document).on("click", ".removeParent", function () {
+            $(this).parent().remove();
+        });
+        $("#failureToast").toast({
+            delay: 5000
+
+        });
+
+        $("#successToast").toast({
+            delay: 5000
+
+        });
+        var culture = '@selectedCulture.Name';
+
+        jQuery("#contactForm").validate({
+            //lang: culture,
+            // Specify validation rules
+            rules: {
+                FirstName: "required",
+                LastName: "required",
+                Email: {
+                    required: true,
+                    email: true,
+                },
+                Subject: "required",
+                Description: "required",
+            },
+            messages: {
+                'FirstName': {
+                    required: '@SharedLocalizer["JoinRequestAuteur.ValidationFirstName"]',
+                },
+                'LastName': {
+                    required: '@SharedLocalizer["JoinRequestAuteur.ValidationLastName"]',
+                },
+                'Email': {
+                    required: '@SharedLocalizer["JoinRequestAuteur.ValidationEmail"]',
+                },
+                'Subject': {
+                    required: '@SharedLocalizer["JoinRequestAuteur.ValidationObject"]',
+                },
+                'Description': {
+                    required: '@SharedLocalizer["JoinRequestAuteur.ValidationDescription"]',
+                }
+            }
+        });
+    });
+
+    function contact_RequestJoin() {
+        var mail = $('#Email').val();
+        var data = $("#contactForm").serialize();
+        console.log(data);
+        if ($('#contactForm').valid() === true) {
+            $.ajax({
+                url: "https://emailvalidation.abstractapi.com/v1/?api_key=79b70da2212444209b6b059ec2e995cd" + "&email=" + mail,
+                type: 'Get',
+                contenttype: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.deliverability == 'DELIVERABLE') {
+                        document.getElementById('contactMailVerification').innerHTML = ''
+                        $.ajax({
+                            type: 'POST',
+                            url: '/MyAccount/SendContactMail',
+                            contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // when we use .serialize() this generates the data in query string format. this needs the default contentType (default content type is: contentType: 'application/x-www-form-urlencoded; charset=UTF-8') so it is optional, you can remove it
+                            data: data,
+                            success: function (result) {
+                                $("#successToast").toast("show");
+                                //Reset Form
+                                $('#contactForm').each(function () {
+                                    this.reset();
+                                });
+                            },
+                            error: function () {
+                                $("#failureToast").toast("show");
+
+                            }
+                        })
+                    } else {
+                        document.getElementById('contactMailVerification').innerHTML = '@SharedLocalizer["JoinRequestAuteur.ValidationMailExist"]'
+                    }
+                },
+                error: function (jqxhr, textstatus, errorthrown) {
+                    $("#failureToast").toast("show");
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+
+    function auteur_RequestJoin() {
+        var mail = $('#auteurEmail').val();
+        var data = $("#formJoinRequestAuteur").serialize();
+        console.log(data);
+
+        if ($('#formJoinRequestAuteur').valid() === true) {
+            $.ajax({
+                url: "https://emailvalidation.abstractapi.com/v1/?api_key=79b70da2212444209b6b059ec2e995cd" + "&email=" + mail,
+                type: 'Get',
+                contenttype: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.deliverability == 'DELIVERABLE') {
+                        document.getElementById('auteurMailVerification').innerHTML = ''
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Home/AddJoinRequest',
+                            contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // when we use .serialize() this generates the data in query string format. this needs the default contentType (default content type is: contentType: 'application/x-www-form-urlencoded; charset=UTF-8') so it is optional, you can remove it
+                            data: data,
+                            success: function (result) {
+                                $("#successToast").toast("show");
+
+
+                                $('#formJoinRequestAuteur').each(function () {
+                                    this.reset();
+                                });
+                            },
+                            error: function () {
+                                $("#failureToast").toast("show");
+                            }
+                        })
+                    } else {
+                        document.getElementById('auteurMailVerification').innerHTML = '@SharedLocalizer["JoinRequestAuteur.ValidationMailExist"]'
+                    }
+                },
+                error: function (jqxhr, textstatus, errorthrown) {
+                    $("#failureToast").toast("show");
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+
+    function editeur_RequestJoin() {
+        var mail = $('#editeurEmail').val();
+        var data = $("#formJoinRequestEditeur").serialize();
+        console.log(data);
+        if ($('#formJoinRequestEditeur').valid() === true) {
+            $.ajax({
+                url: "https://emailvalidation.abstractapi.com/v1/?api_key=79b70da2212444209b6b059ec2e995cd" + "&email=" + mail,
+                type: 'Get',
+                contenttype: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.deliverability == 'DELIVERABLE') {
+                        document.getElementById('editeurMailVerification').innerHTML = ''
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Home/AddJoinRequest',
+                            contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // when we use .serialize() this generates the data in query string format. this needs the default contentType (default content type is: contentType: 'application/x-www-form-urlencoded; charset=UTF-8') so it is optional, you can remove it
+                            data: data,
+                            success: function (result) {
+                                $("#successToast").toast("show");
+                                //Reset Form
+                                $('#formJoinRequestEditeur').each(function () {
+                                    this.reset();
+                                });
+                            },
+                            error: function () {
+                                $("#failureToast").toast("show");
+                            }
+                        });
+                    } else {
+                        document.getElementById('editeurMailVerification').innerHTML = '@SharedLocalizer["JoinRequestAuteur.ValidationMailExist"]'
+                    }
+                },
+                error: function (jqxhr, textstatus, errorthrown) {
+                    $("#failureToast").toast("show");
+
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+    function competition_Request() {
+        var mail = $('#competitionEmail').val();
+        var data = $("#formCompetitionRequest").serializeArray();
+        var a = [];
+
+        $('.desired_book_list').each(function (i) {
+            var b = { Id: $(this).attr('id'), Title: $(this).data('value') };
+            a.push(b);
+        });
+        data.push({ name: "DesiredBooks", value: a });
+        if (a.length == 0) {
+            document.getElementById('competitionBooksListValidation').innerHTML = '@SharedLocalizer["Competition.ValidationDesiredBooksList"]'
+            return false;
+        }
+        var jsonObj = {};
+        jQuery.map(data, function (n, i) {
+            jsonObj[n.name] = n.value;
+        });
+        console.log(data);
+        if ($('#formCompetitionRequest').valid() === true) {
+            $.ajax({
+                url: "https://emailvalidation.abstractapi.com/v1/?api_key=79b70da2212444209b6b059ec2e995cd" + "&email=" + mail,
+                type: 'Get',
+                contenttype: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.deliverability == 'DELIVERABLE') {
+                        document.getElementById('competitionMailVerification').innerHTML = ''
+                        $.ajax({
+                            type: 'Post',
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                            url: '/Home/competitionRequest',
+                            data: JSON.stringify({
+                                "Email": jsonObj["Email"],
+                                "DesiredBooks": jsonObj["DesiredBooks"],
+                                "RequesterType": Number(jsonObj["RequesterType"]),
+                                "VoucherNumber": jsonObj["VoucherNumber"],
+                                "VoucherValue": jsonObj["VoucherValue"]
+                            }),
+                            success: function (result) {
+                                $("#successToast").toast("show");
+                                //Reset Form
+                                $('#formCompetitionRequest').each(function () {
+                                    this.reset();
+                                });
+                                $('.desired_book_list').each(function (i) {
+                                    $(this).remove();
+                                });
+                            },
+                            error: function () {
+                                $("#failureToast").toast("show");
+                            }
+                        });
+                    } else {
+                        document.getElementById('competitionMailVerification').innerHTML = '@SharedLocalizer["joinrequestauteur.validationmailexist"]'
+                    }
+                },
+                error: function (jqxhr, textstatus, errorthrown) {
+                    $("#failuretoast").toast("show");
+
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+
+    function MothersDay_Request() {
+        var requesterMail = $('#RequesterEmail').val();
+        var senderMail = $('#ReceiverEmail').val();
+        var data = $("#formMothersDayRequest").serializeArray();
+        var a = [];
+
+
+        if (document.getElementById("bookToOffer").value == '' || $('#idBookToOffer').val() == '') {
+            document.getElementById('MothersDayBookValidation').innerHTML = '@SharedLocalizer["Contact.PlaceholderDesiredBook"]'
+            return false;
+        }
+        var b = { Id: $('#idBookToOffer').val(), Title: document.getElementById("bookToOffer").value };
+        a.push(b);
+        data.push({ name: "DesiredBooks", value: a });
+        var jsonObj = {};
+        jQuery.map(data, function (n, i) {
+            jsonObj[n.name] = n.value;
+        });
+        console.log(data);
+        if ($('#formMothersDayRequest').valid() === true) {
+            $.ajax({
+                type: 'Post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                url: '/Home/MothersDayRequest',
+                data: JSON.stringify({
+                    "Email": jsonObj["Email"],
+                    "DesiredBooks": jsonObj["DesiredBooks"],
+                    "RequesterType": Number(jsonObj["RequesterType"]),
+                    "ReceiverEmail": jsonObj["ReceiverEmail"],
+                }),
+                success: function (result) {
+                    $("#successToast").toast("show");
+                    //Reset Form
+                    $('#formMothersDayRequest').each(function () {
+                        this.reset();
+                    });
+                    document.getElementById("bookToOffer").value == '';
+                    $('#idBookToOffer').val() == ''
+                },
+                error: function () {
+                    $("#failureToast").toast("show");
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+
+    function laureat_Request() {
+        var mail = $('#laureatEmail').val();
+        var data = $("#formLaureatRequest").serializeArray();
+        var a = [];
+
+        $('.desired_book_list').each(function (i) {
+            var b = { Id: $(this).attr('id'), Title: $(this).data('value') };
+            a.push(b);
+        });
+        data.push({ name: "DesiredBooks", value: a });
+        if (a.length == 0) {
+            document.getElementById('laureatBooksListValidation').innerHTML = '@SharedLocalizer["Competition.ValidationDesiredBooksList"]'
+            return false;
+        }
+        var jsonObj = {};
+        jQuery.map(data, function (n, i) {
+            jsonObj[n.name] = n.value;
+        });
+        console.log(data);
+        if ($('#formLaureatRequest').valid() === true) {
+            $.ajax({
+                url: "https://emailvalidation.abstractapi.com/v1/?api_key=79b70da2212444209b6b059ec2e995cd" + "&email=" + mail,
+                type: 'Get',
+                contenttype: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.deliverability == 'DELIVERABLE') {
+                        document.getElementById('laureatMailVerification').innerHTML = ''
+                        $.ajax({
+                            type: 'Post',
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                            url: '/Home/laureatRequest',
+                            data: JSON.stringify({
+                                "Email": jsonObj["Email"],
+                                "DesiredBooks": jsonObj["DesiredBooks"],
+                                "RequesterType": Number(jsonObj["RequesterType"]),
+                                "VoucherValue": jsonObj["VoucherValue"]
+                            }),
+                            success: function (result) {
+                                $("#successToast").toast("show");
+                                //Reset Form
+                                $('#formLaureatRequest').each(function () {
+                                    this.reset();
+                                });
+                                $('.desired_book_list').each(function (i) {
+                                    $(this).remove();
+                                });
+                            },
+                            error: function () {
+                                $("#failureToast").toast("show");
+                            }
+                        });
+                    } else {
+                        document.getElementById('laureatMailVerification').innerHTML = '@SharedLocalizer["joinrequestauteur.validationmailexist"]'
+                    }
+                },
+                error: function (jqxhr, textstatus, errorthrown) {
+                    $("#failuretoast").toast("show");
+
+                }
+            });
+        }
+        else {
+            $("#failureToast").toast("show");
+        }
+    }
+</script>

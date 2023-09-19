@@ -1,0 +1,21 @@
+﻿@using DDD.Application.ViewModels;
+@model CountryComponentVM;
+
+<select class="custom-select pl-4 height-4 shadow-none  text-dark" name="CountryId" formnovalidate="formnovalidate"  type="int">
+    @if (Model.Countries != null)
+    {
+		<option selected="@Model.SelectedCountryId==0?selected:" value="0">----------------</option>
+
+        @foreach (var item in Model.Countries)
+        {
+            @if (@item.Id == Model.SelectedCountryId)
+            {
+                <option selected="@item.Id == @Model.SelectedCountryId?selected:" value="@item.Id">@item.Name</option>
+            }
+            else
+            {
+                <option value="@item.Id">@item.Name</option>
+            } 
+        }
+    }
+</select>

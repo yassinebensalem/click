@@ -1,0 +1,48 @@
+﻿<!-- ====== MAIN CONTENT ===== -->
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+<main id="content">
+    <div class="container">
+        <div class="space-2 space-md-3 space-lg-4 space-top-xl-6 space-bottom-xl-5">
+            <div class="d-flex flex-column align-items-center">
+                <div class="font-weight-medium font-size-15 font-size-xs-25 mb-3 text-success">
+                    Congratulation !
+                </div>
+                <h6 class="font-weight-medium mb-2 col-lg-7 text-center text-lh-lg mb-5">Thank your for confirming your email.</h6>
+                <h6 class="font-weight-medium mb-2 col-lg-7 text-center text-lh-lg mb-0">
+                    @SharedLocalizer["Register.TombolaMessage"]
+                </h6>
+                <a asp-action="FreeBooks" asp-controller="Book" class="mb-5" style="color: #0000ffba !important; text-decoration: underline #0000ffba;">
+                    @SharedLocalizer["Register.FreeBooksLink"]
+                </a>
+                <div class="d-flex align-items-center flex-column">
+                    <button id="btnLoginFromConfirm" type="button"
+                            aria-controls="sidebarContent"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            data-unfold-event="click"
+                            data-unfold-hide-on-scroll="false"
+                            data-unfold-target="#sidebarContent"
+                            data-unfold-type="css-animation"
+                            data-unfold-overlay='{
+                                        "className": "u-sidebar-bg-overlay",
+                                        "background": "rgba(0, 0, 0, .7)",
+                                        "animationSpeed": 500
+                                    }'
+                            data-unfold-animation-in="fadeInRight"
+                            data-unfold-animation-out="fadeOutRight"
+                            data-unfold-duration="50"
+                            class="btn btn-dark rounded-0 btn-wide height-60 width-250 font-weight-medium">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- ====== END MAIN CONTENT ===== -->

@@ -1,0 +1,245 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using DDD.Application.ViewModels;
+@model BookViewModel
+
+
+@{
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+<div class="product product__space product__space-primary border bg-white ">
+	<div class="product__inner overflow-hidden p-3 p-md-3d25">
+		<div class="woocommerce-LoopProduct-link woocommerce-loop-product__link d-block position-relative">
+			<div class="col-md-auto woocommerce-loop-product__thumbnail mb-3 mb-md-0">
+				<a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{Model.Id}#{Model.Title.Replace(" ", "-")}")" class="d-block mb-2">
+					<img loading="lazy" src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.CoverPath}")" class="img-fluid single-book  d-block mx-auto attachment-shop_catalog size-shop_catalog wp-post-image img-fluid" alt="Book Cover">
+				</a>
+				@if (Model.PromotionsPercentage != 0 && Model.PromotionsPercentage != 100)
+				{
+					<span class="badge badge-md bg-primary position-absolute badge-pos--top-right text-white rounded-circle d-flex flex-column align-items-center justify-content-center text-uppercase " style="@(selectedCulture.Name.Equals("fr-FR") ? " font-size:0.625rem;" : "")">
+						@*@SharedLocalizer["Book.Free"]*@ - @Model.PromotionsPercentage %
+					</span>
+				}
+				else if (Model.PromotionsPercentage == 100)
+				{
+					<span class="badge badge-md badge-primary-green position-absolute badge-pos--top-right text-white rounded-circle d-flex flex-column align-items-center justify-content-center text-uppercase " style="@(selectedCulture.Name.Equals("fr-FR") ? " font-size:0.625rem;" : "")">
+						@SharedLocalizer["Book.Free"]
+					</span>
+				}
+			</div>
+			<div class="col-md woocommerce-loop-product__body product__body pt-3 bg-white mb-3 mb-md-0">
+				<div class="text-uppercase font-size-1 mb-1 text-truncate"><a asp-action="Index" asp-controller="Category" asp-route-CategoryName="@Model.CategoryName">@Model.CategoryName</a></div>
+				<h2 class="woocommerce-loop-product__title product__title h6 text-lh-md mb-1 text-height-2 crop-text-2 h-dark">
+					<a asp-action="GetBookDetails" asp-controller="Book" asp-route-BookInfos="@($"{Model.Id}#{Model.Title.Replace(" ","-")}")">@Model.Title</a>
+				</h2>
+				<div class="font-size-2  mb-2 text-truncate"><a asp-controller="Author" asp-action="GetAuthorDetails" asp-route-authorInfos="@($"{Model.AuthorId}#{Model.AuthorName?.Replace(" ","-")}")" class="text-gray-700">@Model.AuthorName</a></div>
+
+				<div class="price d-flex align-items-center font-weight-medium font-size-3">
+					@if (Model.PromotionsPercentage != 0 && Model.PromotionsPercentage != 100)
+					{
+						<span class="woocommerce-Price-amount amount height-38 width-60" style="text-decoration: line-through;">
+							@Model.BusinessPrice @SharedLocalizer["Book.Currency"]
+						</span>
+						<span class="woocommerce-Price-amount amount height-38 width-60 px-2">
+							@(Model.BusinessPrice - (Model.BusinessPrice * Model.PromotionsPercentage / 100)) @SharedLocalizer["Book.Currency"]
+						</span>
+					}
+					else if (@Model.PromotionsPercentage == 100)
+					{
+						<span class="woocommerce-Price-amount amount height-38 width-60" style="text-decoration: line-through;">
+							@Model.BusinessPrice @SharedLocalizer["Book.Currency"]
+						</span>
+					}
+					else
+					{
+						<span class="woocommerce-Price-amount amount height-38 width-60">
+							@Model.BusinessPrice @SharedLocalizer["Book.Currency"]
+						</span>
+					}
+				</div>
+			</div>
+			<div class="product__hover d-flex align-items-center pb-1">
+				@if (!(Model.PromotionsPercentage == 100) && !(Model.inLibrary))
+				{
+					if (SignInManager.IsSignedIn(User))
+					{
+						@if (User.IsInRole("Subscriber"))
+						{
+							<a value="@Model.Id" data-cart="@Model.inCart" class="addToCartLink text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+				   style="font-size: 14px;">
+								<span class="product__add-to-cart text-center" style="@(Model.inCart ? "color: #f75454" : "") ">
+									@(Model.inCart ? @SharedLocalizer["Book.RemoveFromCart"] : @SharedLocalizer["Book.AddToCart"])
+								</span>
+								<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0" style="@(Model.inCart ? "background-color: #f75454" : "")">
+									<i class="flaticon-icon-126515 text-black" style="display: inline-block;"></i>
+								</span>
+							</a>
+
+						}
+					}
+					else
+					{
+						<a id="sidebarNavTogglerLogin" href="javascript:;" role="button" style="font-size: 14px;"
+				   class="text-black text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+							<span class="product__add-to-cart text-center" style="font-size:14px;">
+								@SharedLocalizer["Book.AddToCart"]
+							</span>
+							<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0">
+								<i class="flaticon-icon-126515 text-black" style="display: inline-block;"></i>
+							</span>
+						</a>
+					}
+				}
+				else
+				{
+					if (SignInManager.IsSignedIn(User))
+					{
+						if (!Model.inLibrary)
+						{
+							if (Model.CanBeAddedToLib)
+							{
+								<a value="@Model.Id" data-library="@Model.inLibrary" data-promotion="@Model.PromotionId" class="addToLibraryLink text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")" style="font-size:14px;">
+									<span class="product__add-to-cart text-center" style="@(Model.inLibrary ? "color: #f75454" : "")">
+										@SharedLocalizer["Book.AddToLibrary"]
+									</span>
+									<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0" style="@(Model.inLibrary ? "background-color: #f75454" : "")">
+										<i class="flaticon-credit text-black" style="display: inline-block;"></i>
+									</span>
+								</a>
+							}
+							else
+							{
+								<a value="@Model.Id" data-cart="@Model.inCart" class="addToCartLink text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+				   style="font-size: 14px;">
+									<span class="product__add-to-cart text-center" style="@(Model.inCart ? "color: #f75454" : "") ">
+										@(Model.inCart ? @SharedLocalizer["Book.RemoveFromCart"] : @SharedLocalizer["Book.AddToCart"])
+									</span>
+									<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0" style="@(Model.inCart ? "background-color: #f75454" : "")">
+										<i class="flaticon-icon-126515 text-black" style="display: inline-block;"></i>
+									</span>
+								</a>
+							} 
+						}
+						else
+						{
+							<span class="product__add-to-cart text-center @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")" style=" color: #f75454 ">
+								@SharedLocalizer["Book.InLibrary"]
+							</span>
+							<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0 @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")" style=" background-color: #f75454 ">
+								<i class="flaticon-credit text-black" style="display: inline-block;"></i>
+							</span>
+						}
+					}
+					else
+					{
+						<a id="sidebarNavTogglerLogin" href="javascript:;" role="button"
+				   class="text-black text-uppercase text-dark h-dark font-weight-medium arrow-cursor @(selectedCulture.Name.Equals("ar") ? "ml-auto" : " mr-auto")"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+							<span class="product__add-to-cart text-center" style="font-size:14px;">
+								@SharedLocalizer["Book.AddToLibrary"]
+							</span>
+							<span class="product__add-to-cart-icon h-p-bg btn btn-outline-primary border-0">
+								<i class="flaticon-credit text-black" style="display: inline-block;"></i>
+							</span>
+						</a>
+					}
+				}
+
+				@if (SignInManager.IsSignedIn(User))
+				{
+					<a onclick="getBookPDFContent(this);" data-id="@Model.Id" data-Title="@Model.Title" data-library-id="@(!string.IsNullOrWhiteSpace(Model.LibraryId)?Model.LibraryId:"-1")" data-current-page="@Model.CurrentPage" class="mr-1 h-p-bg btn btn-outline-primary border-0 font-weight-bold">
+						<i class="flaticon-multimedia"></i>
+					</a>
+					@if (User.IsInRole("Subscriber"))
+					{
+						<a value="@Model.Id" data-favorite="@Model.isFavorite" style="@(Model.isFavorite?"background-color: #f75454":"")" class="addToFavoriteLink h-p-bg btn btn-outline-primary border-0">
+							<i id="addToFavoriteIcon" class="flaticon-heart"></i>
+						</a>
+					}
+				}
+				else
+				{
+					<a id="sidebarNavTogglerLogin" href="javascript:;" role="button" class="h-p-bg btn btn-outline-primary border-0"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+						<i class="flaticon-multimedia"></i>
+					</a>
+					<a id="sidebarNavTogglerLogin" href="javascript:;" role="button" class="h-p-bg btn btn-outline-primary border-0"
+				   aria-controls="sidebarContent"
+				   aria-haspopup="true"
+				   aria-expanded="false"
+				   data-unfold-event="click"
+				   data-unfold-hide-on-scroll="false"
+				   data-unfold-target="#sidebarContent"
+				   data-unfold-type="css-animation"
+				   data-unfold-overlay='{
+
+			                                                        "className": "u-sidebar-bg-overlay",
+			                                                        "background": "rgba(0, 0, 0, .7)",
+			                                                        "animationSpeed": 500
+		                                                        }'
+				   data-unfold-animation-in="fadeInRight"
+				   data-unfold-animation-out="fadeOutRight"
+				   data-unfold-duration="50">
+						<i class="flaticon-heart"></i>
+					</a>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+

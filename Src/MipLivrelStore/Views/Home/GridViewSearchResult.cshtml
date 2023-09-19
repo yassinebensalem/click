@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@using DDD.Domain.Common.Constants 
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using DDD.Application.ViewModels;
+@model List<BookViewModel>
+ 
+@foreach (var book in Model)
+{
+    <li data-category-name="@book.CategoryName" data-author-name="@book.AuthorName" data-language-name="@book.LanguageName" data-Edition="@book.AwardEdition">
+		<div class="sb__@book.Id">
+			<partial name="PartialSingleBook" model="book" />
+		</div>
+    </li> 
+}

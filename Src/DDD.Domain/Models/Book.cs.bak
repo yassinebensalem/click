@@ -1,0 +1,70 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using DDD.Domain.Core.Models;
+
+namespace DDD.Domain.Models
+{
+
+    public class Book : EntityAudit
+    {
+        public string Title { get;  set; }
+        public int PageNumbers { get;  set; }
+        public string CoverPath{ get;  set; }
+        public double Price { get;  set; }
+        public string AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public ApplicationUser Author { get; set; }
+
+        public string PublisherId { get; set; }
+
+        [ForeignKey("PublisherId")]
+        public ApplicationUser Publisher { get; set; }
+
+        public Guid CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
+
+        public string Description { get; set; }
+
+        public Guid CountryId { get; set; }
+
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
+
+        public Guid LanguageId { get; set; }
+
+        [ForeignKey("LanguageId")]
+        public Language Language { get; set; }
+        public DateTime PublicationDate { get; set; }
+        public string ISBN { get; set; }
+        public string ISSN { get; set; }
+        public string EISBN { get; set; }
+        public string PDFPath { get; set; }
+
+        public Book(Guid id, string title, int pageNumbers, string coverPath, double price, string AuthorId, string PublisherId, Guid CategoryId, Guid CountryId, Guid LanguageId,
+            string description/*, string country*/, DateTime publicationDate, string ISBN, string ISSN, string EISBN, string PDFPath)
+        {
+            Id = id;
+            Title = title;
+            PageNumbers = pageNumbers;
+            CoverPath = coverPath;
+            Price = price; 
+            Description = description;
+            PublicationDate = publicationDate;
+            this.AuthorId = AuthorId;
+            this.PublisherId = PublisherId;
+            this.CategoryId = CategoryId;
+            this.CountryId = CountryId;
+            this.LanguageId = LanguageId;
+            this.ISBN = ISBN;
+            this.ISSN = ISSN;
+            this.EISBN = EISBN;
+            this.PDFPath = PDFPath;
+        }
+
+        // Empty constructor for EF
+        protected Book() { }
+    }
+}

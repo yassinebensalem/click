@@ -1,0 +1,118 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DDD.Domain.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@using DDD.Application.ViewModels;
+@model SingleEditorDetailsVM
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Mip Livrel";
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	var selectedCulture = requestCulture.RequestCulture.Culture;
+}
+
+
+<div class="page-header border-bottom ">
+	<div class="container">
+		<div class="d-md-flex justify-content-between align-items-center py-4">
+			<h1 class="page-title font-size-4 font-weight-medium m-0 text-lh-lg">
+				@Model.Editor.RaisonSocial
+			</h1>
+			<nav class="woocommerce-breadcrumb font-size-2">
+				<a href="~/" class="h-primary">@SharedLocalizer["Menu.Home"]</a>
+				<span class="breadcrumb-separator mx-1"><i class="fas  @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+				<a asp-controller="Home" asp-action="GetEditorsList" class="h-primary"> @SharedLocalizer["Menu.Editors"]</a>
+				<span class="breadcrumb-separator mx-1"><i class="fas @(selectedCulture.Name.Equals("ar") ? "fa-angle-left" : " fa-angle-right")"></i></span>
+				<span id="ModelEditorId" value="@Model.Editor.Id">
+					@Model.Editor.RaisonSocial
+				</span>
+			</nav>
+		</div>
+	</div>
+</div>
+<div class="page-header ">
+	<div class="container">
+	</div>
+</div>
+
+<div class="site-content " id="content">
+
+	@if (Model.PublishedBooks.Count == 0)
+	{
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-12 text-center">
+					<img src="~/Template/Image/NoResultFound.png" class="resultNotFound" alt="No Result Found" />
+					<div class="mb-4 lead">@SharedLocalizer["SearchResult.NoResultFound"]</div>
+					<p>@SharedLocalizer["SearchResult.NoResultFoundText"]</p>
+					<a asp-action="GetEditorsList" asp-controller="Home" class="btn btn-dark rounded-0 my-4">@*<i class="fa fa-home"></i> *@@SharedLocalizer["Index.GoBack"]</a>
+
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="container">
+			<div class="row">
+				<div id="secondary" class="mt-5 order-1" role="complementary">
+					<div id="widgetAccordion">
+						<div id="woocommerce_product_categories-2" class="widget p-4d875 border woocommerce widget_product_categories">
+							<figure class="text-center woocommerce-product-gallery__wrapper m-3">
+								@if (Model.Editor.PhotoPath != null & Model.Editor.PhotoPath != "")
+								{
+									<img src="@($"https://miplivrelstorage.blob.core.windows.net/bookscover/{Model.Editor.PhotoPath}")" alt="Image Description" class="mx-auto img-fluid">
+								}
+								else
+								{
+									<img src="~/Template/Image/Standard-Editor-Pic.jpg" alt="Image Description" class="mx-auto img-fluid">
+								}
+							</figure>
+							<ul class="list-group list-group-flush border-bottom mb-4 ">
+								@if (!string.IsNullOrEmpty(@Model.Editor.Email))
+								{
+									<li class="list-group-item">@Model.Editor.Email</li>
+								}
+								@if (!string.IsNullOrEmpty(@Model.Editor.PhoneNumber))
+								{
+									<li class="list-group-item">@Model.Editor.PhoneNumber</li>
+								}
+								@if (!string.IsNullOrEmpty(@Model.Editor.Address))
+								{
+									<li class="list-group-item">@Model.Editor.Address</li>
+								}
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div id="primary" class="content-area order-2 border-bottom mt-5">
+					<div class="tab-content" id="pills-tabContent1_ED" @*style="overflow-y: auto; max-height: 80%; width: 100%;"*@>
+						<div class="tab-pane fade show active mb-8" id="grid-view-zone_ED" role="tabpanel" aria-labelledby="pills-one-example1-tab">
+							<ul class="bookGridView show products list-unstyled row no-gutters row-cols-2 row-cols-lg-3 row-cols-wd-4 ">
+								<partial name="../Home/GridViewSearchResult" model="@Model.PublishedBooks" />
+							</ul>
+						</div>
+						@*add load button here*@
+						<div class="Full_List_Panel text-center mb-4" style="display: none;">
+							<div class="alert alert-info alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								@SharedLocalizer["Index.FullList"]
+							</div>
+						</div>
+						<div id="Div_loadMore_ED" class="mb-4 text-center" style=" display: @(@Model.PublishedBooks.Count < 12 ? "none": "block")">
+							<button id="loadMore_ED" type="button" class="btn btn-dark width-150">@SharedLocalizer["Index.ShowMore"]</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	}
+</div>
